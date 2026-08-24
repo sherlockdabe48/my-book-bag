@@ -2,18 +2,13 @@ import React, { useContext } from "react"
 import BookInBag from "./BookInBag"
 import { toggleClassContext } from "./App"
 
-export default function BagBookList({ bagBooks, toggleClass }) {
+export default function BagBookList({ bagBooks }) {
   const { handleActiveShelfHighLight } = useContext(toggleClassContext)
   return (
     <>
       {bagBooks.map((bagBook) => {
         return (
-          <BookInBag
-            key={bagBook.id}
-            {...bagBook}
-            bagBook={bagBook}
-            toggleClass={toggleClass}
-          />
+          <BookInBag key={bagBook.id} {...bagBook} />
         )
       })}
 

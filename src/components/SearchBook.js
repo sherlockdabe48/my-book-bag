@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { searchBookContext } from "./App"
 
 export default function SearchBook(props) {
@@ -12,18 +12,7 @@ export default function SearchBook(props) {
     shelfBooks,
   } = props
   const { handleMoveToShelfFromSearch } = useContext(searchBookContext)
-
-  const [isAlreadyAdded, setAlreadyAdded] = useState(false)
-
-  useEffect(
-    (id) => {
-      const alreadyAddedBook = shelfBooks.find(
-        (shelfBook) => shelfBook.id === id
-      )
-      if (alreadyAddedBook) setAlreadyAdded(true)
-    },
-    [isAlreadyAdded, shelfBooks]
-  )
+  const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
     <>
@@ -54,10 +43,7 @@ export default function SearchBook(props) {
             {!isAlreadyAdded && (
               <button
                 className="btn btn--primary btn--in-search-book mr-1"
-                onClick={() => {
-                  handleMoveToShelfFromSearch(id)
-                  setAlreadyAdded(true)
-                }}
+                onClick={() => handleMoveToShelfFromSearch(id)}
               >
                 Add to Shelf
               </button>

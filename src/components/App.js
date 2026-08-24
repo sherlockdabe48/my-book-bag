@@ -10,7 +10,8 @@ import axios from "axios"
 
 const BAG_BOOKS_LOCAL_STORAGE_KEY = "myBookBag.bagBooks"
 const SHELF_BOOKS_LOCAL_STORAGE_KEY = "myBookBag.shelfBooks"
-const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes?q="
+const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
+const GOOGLE_BOOKS_API_KEY = process.env.REACT_APP_GOOGLE_BOOKS_API_KEY
 
 export const bookBagContext = React.createContext()
 export const toggleClassContext = React.createContext()
@@ -33,10 +34,10 @@ function App() {
   const inputRef = useRef([])
 
   function handleNextPageInSearchBook() {
-    setStartIndex((prevStartIndex) => prevStartIndex + 21)
+    setStartIndex((prevStartIndex) => prevStartIndex + 20)
   }
   function handlePrevPageInSearchBook() {
-    setStartIndex((prevStartIndex) => prevStartIndex - 21)
+    setStartIndex((prevStartIndex) => prevStartIndex - 20)
   }
 
   function handleGetSearchBooksData(volumes) {
@@ -74,36 +75,48 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(searchBooks)
-  }, [searchBooks])
-
-  useEffect(() => {
-    console.log(bookData)
     handleGetSearchBooksData(bookData)
   }, [bookData])
 
   useEffect(() => {
-    console.log("ahah")
-  }, [toggleClass])
+    if (!searchInputValue.trim()) {
+      setLoading(false)
+      setBookData([])
+      setSearchBooks([])
+      setTotalSearchItems(0)
+      return
+    }
 
-  useEffect(() => {
     setLoading(true)
-    let cancel
+    const controller = new AbortController()
+    const params = {
+      q: searchInputValue,
+      printType: "books",
+      startIndex,
+      maxResults: 20,
+    }
+
+    if (GOOGLE_BOOKS_API_KEY) {
+      params.key = GOOGLE_BOOKS_API_KEY
+    }
+
     axios
-      .get(
-        `${SEARCH_URI}${searchInputValue}&printType=books&startIndex=${startIndex}&maxResults=20`,
-        {
-          cancelToken: new axios.CancelToken((c) => (cancel = c)),
-        }
-      )
+      .get(SEARCH_URI, {
+        params,
+        signal: controller.signal,
+      })
       .then((res) => {
         setLoading(false)
         if (!res.data.items) return
         setTotalSearchItems(res.data.totalItems)
         setBookData(res.data.items.map((i) => i))
       })
+      .catch((err) => {
+        if (axios.isCancel(err)) return
+        setLoading(false)
+      })
 
-    return () => cancel()
+    return () => controller.abort()
   }, [searchInputValue, startIndex])
 
   //load data
@@ -136,15 +149,11 @@ function App() {
     handleBookSelect,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
+    handleBagBookProgressChange,
   }
 
   const toggleClassContextValue = {
     handleActiveShelfHighLight,
-    handleToggleClassHide,
-  }
-
-  function handleToggleClassHide() {
-    setToggleClass(!toggleClass)
   }
 
   function handleActiveShelfHighLight() {
@@ -169,6 +178,8 @@ function App() {
     const bookFromSearch = searchBooks.find(
       (searchBook) => searchBook.id === id
     )
+    if (!bookFromSearch || shelfBooks.some((shelfBook) => shelfBook.id === id))
+      return
     setSelectedBookId(bookFromSearch.id)
     setShelfBooks([...shelfBooks, bookFromSearch])
   }
@@ -178,6 +189,15 @@ function App() {
     setSelectedBookId(bookFromBag.id)
     setShelfBooks([...shelfBooks, bookFromBag])
     setBagBooks(bagBooks.filter((bagBook) => bagBook.id !== id))
+  }
+
+  function handleBagBookProgressChange(id, currentPage) {
+    setBagBooks(
+      bagBooks.map((bagBook) => {
+        if (bagBook.id !== id) return bagBook
+        return { ...bagBook, currentPage }
+      })
+    )
   }
 
   function handleBookDeleteFromShelf(id) {

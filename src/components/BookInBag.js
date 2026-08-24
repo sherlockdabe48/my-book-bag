@@ -1,56 +1,46 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useState } from "react"
 import { bookBagContext } from "./App"
-import { toggleClassContext } from "./App"
 
 export default function BookInBag(props) {
-  const {
-    id,
-    title,
-    author,
-    currentPage,
-    allPages,
-    imageURL,
-    toggleClass,
-    bagBook,
-  } = props
-  const { handleMoveToShelfFromBag } = useContext(bookBagContext)
-  const { handleToggleClassHide } = useContext(toggleClassContext)
-  const [textOnActionButton, setTextOnActionButton] = useState("Finish")
-  const [buttonClass, setButtonClass] = useState("btn--primary")
+  const { id, title, author, currentPage, allPages, imageURL } = props
+  const { handleMoveToShelfFromBag, handleBagBookProgressChange } =
+    useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
-  const progressRef = useRef()
+  const [isEditing, setIsEditing] = useState(false)
+  const isFinished = Number(currentPage) === Number(allPages)
 
   function handleChangeProgress(e) {
     const max = parseInt(e.target.max)
-    if (parseInt(e.target.value) > max) {
-      e.target.value = max
-    }
-    setProgress(e.target.value)
-  }
+    let nextProgress = parseInt(e.target.value)
 
-  function finishBook() {
-    bagBook.currentPage = allPages
-
-    if (parseInt(bagBook.currentPage) === allPages) {
-      alert("Congratulations! You just finished a book")
-      toggleFinishButton()
+    if (Number.isNaN(nextProgress) || nextProgress < 0) {
+      nextProgress = 0
     }
+
+    if (nextProgress > max) {
+      nextProgress = max
+    }
+
+    setProgress(nextProgress)
   }
 
   function handleSubmit(e) {
     e.preventDefault()
+    handleBagBookProgressChange(id, progress)
+    setIsEditing(false)
   }
 
-  function toggleFinishButton() {
-    setTextOnActionButton((prevText) => {
-      setButtonClass((prevButtonClass) => {
-        return prevButtonClass === "btn--primary" ? "btn--add" : "btn--primary"
-      })
-      return prevText === "Finish" ? "Read Again" : "Finish"
-    })
-  }
+  function handleFinishBook() {
+    if (isFinished) {
+      setProgress(1)
+      handleBagBookProgressChange(id, 1)
+      return
+    }
 
-  useEffect(() => {}, [progress])
+    setProgress(allPages)
+    handleBagBookProgressChange(id, allPages)
+    alert("Congratulations! You just finished a book")
+  }
 
   return (
     <div className="book-in-bag__container">
@@ -71,26 +61,24 @@ export default function BookInBag(props) {
           </span>
           <button
             className="btn btn--normal btn--small book-in-bag__edit-progress-button"
-            onClick={handleToggleClassHide}
+            onClick={() => setIsEditing((prevIsEditing) => !prevIsEditing)}
           >
             EDIT
           </button>
         </div>
-        <div className={toggleClass ? "" : "hide"}>
+        <div className={isEditing ? "" : "hide"}>
           <div className="book-in-bag__edit-progress-section">
             <form onSubmit={handleSubmit}>
               <input
                 type="number"
-                placeholder={progress}
+                value={progress}
                 max={allPages}
-                ref={progressRef}
                 className="book-in-bag__edit-progress-input"
-                onInput={(e) => handleChangeProgress(e)}
+                onChange={handleChangeProgress}
               />
               <button
                 className="btn btn--small btn--add book-in-bag__save-progress-button"
                 type="submit"
-                onClick={handleToggleClassHide}
               >
                 SAVE
               </button>
@@ -99,15 +87,12 @@ export default function BookInBag(props) {
         </div>
 
         <button
-          className={`btn btn--in-bag ${buttonClass}`}
-          onClick={() => {
-            if (currentPage !== allPages) {
-              setProgress(allPages)
-              finishBook()
-            }
-          }}
+          className={`btn btn--in-bag ${
+            isFinished ? "btn--add" : "btn--primary"
+          }`}
+          onClick={handleFinishBook}
         >
-          {textOnActionButton}
+          {isFinished ? "Read Again" : "Finish"}
         </button>
         <button className="btn btn--optional btn--in-bag">
           Add to Favorite
