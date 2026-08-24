@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from "react"
 import { BrowserRouter as Router } from "react-router-dom"
-import Header from "./Header.js"
-import SearchPage from "./SearchPage.js"
-import ShelfBagWrapper from "./ShelfBagWrapper.js"
-import WelcomeMessage from "./WelcomeMessage.js"
+import Header from "./Header.jsx"
+import SearchPage from "./SearchPage.jsx"
+import ShelfBagWrapper from "./ShelfBagWrapper.jsx"
+import WelcomeMessage from "./WelcomeMessage.jsx"
 import "../css/app.css"
-import MobileSearchBox from "./MobileSearchBox.js"
+import MobileSearchBox from "./MobileSearchBox.jsx"
 import axios from "axios"
 
 const BAG_BOOKS_LOCAL_STORAGE_KEY = "myBookBag.bagBooks"
 const SHELF_BOOKS_LOCAL_STORAGE_KEY = "myBookBag.shelfBooks"
 const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
-const GOOGLE_BOOKS_API_KEY = process.env.REACT_APP_GOOGLE_BOOKS_API_KEY
+const GOOGLE_BOOKS_API_KEY = import.meta.env.REACT_APP_GOOGLE_BOOKS_API_KEY
 
 export const bookBagContext = React.createContext()
 export const toggleClassContext = React.createContext()

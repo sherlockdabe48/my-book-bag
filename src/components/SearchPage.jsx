@@ -8,8 +8,8 @@ export default function SearchPage({
   loading,
   startIndex,
   totalSearchItems,
-  shelfBooks,
-  searchError,
+  shelfBooks
+
 }) {
   const { handleClearSearchInputValue } = useContext(searchBookContext)
 
@@ -17,13 +17,7 @@ export default function SearchPage({
     <>
       <div>
         <h2 className="topic">{searchInputValue} </h2>
-        <span className="sub-topic">Search Result: 20 items</span>
-
-        {searchError && (
-          <div className="search-page__error" style={{ color: "#b42318", margin: "12px 0" }}>
-            {searchError}
-          </div>
-        )}
+        <span className="sub-topic">Search Result: {totalSearchItems} items</span>
 
         <div className="search-page__container">
           <div className="search-page__close-btn-container ">

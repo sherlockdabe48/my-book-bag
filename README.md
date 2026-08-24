@@ -79,7 +79,7 @@ Each book in your bag shows your current page. Hit **EDIT** to update it, **SAVE
 | HTTP | [Axios 1.x](https://axios-http.com/) |
 | Data source | [Google Books API](https://developers.google.com/books) |
 | Persistence | `localStorage` |
-| Build tool | [Create React App](https://create-react-app.dev/) (react-scripts 5) |
+| Build tool | [Vite 4](https://vitejs.dev/) |
 | Testing | [React Testing Library 14](https://testing-library.com/) |
 
 ---

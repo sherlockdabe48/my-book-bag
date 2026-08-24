@@ -94,9 +94,6 @@ export default function BookInBag(props) {
         >
           {isFinished ? "Read Again" : "Finish"}
         </button>
-        <button className="btn btn--optional btn--in-bag">
-          Add to Favorite
-        </button>
         <button
           className="btn btn--danger btn--in-bag"
           onClick={() => handleMoveToShelfFromBag(id)}

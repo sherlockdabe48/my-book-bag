@@ -12,6 +12,7 @@ export default function SearchBook(props) {
     shelfBooks,
   } = props
   const { handleMoveToShelfFromSearch } = useContext(searchBookContext)
+
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
@@ -43,7 +44,9 @@ export default function SearchBook(props) {
             {!isAlreadyAdded && (
               <button
                 className="btn btn--primary btn--in-search-book mr-1"
-                onClick={() => handleMoveToShelfFromSearch(id)}
+                onClick={() => {
+                  handleMoveToShelfFromSearch(id)
+                }}
               >
                 Add to Shelf
               </button>
