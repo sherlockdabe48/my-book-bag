@@ -33,14 +33,14 @@ npm install
 npm start
 ```
 
-The app opens at [http://localhost:3000](http://localhost:3000).
+The app opens at [http://localhost:5173](http://localhost:5173).
 
 ### Optional: Google Books API key
 
 Without an API key the app still works but is subject to Google's unauthenticated rate limits. To add a key:
 
 1. Get a key from the [Google Books API console](https://console.developers.google.com/)
-2. Create a `.env` file in the project root:
+2. Add to the existing `.env` file in the project root:
 
 ```
 REACT_APP_GOOGLE_BOOKS_API_KEY=your_key_here
@@ -89,20 +89,25 @@ Each book in your bag shows your current page. Hit **EDIT** to update it, **SAVE
 ```
 src/
 ├── components/
-│   ├── App.js               # Root component, state & context
-│   ├── Header.js            # Desktop search bar
-│   ├── MobileSearchBox.js   # Mobile search bar
-│   ├── SearchPage.js        # Search results overlay
-│   ├── SearchBookList.js    # List of search result cards
-│   ├── SearchBook.js        # Individual search result card
-│   ├── ShelfBagWrapper.js   # Layout wrapper for shelf + bag
-│   ├── Shelf.js             # Shelf section
-│   ├── ShelfBookList.js     # List of shelf book cards
-│   ├── BookInShelf.js       # Individual shelf book card
-│   ├── Bag.js               # Bag section
-│   ├── BagBookList.js       # List of bag book cards
-│   ├── BookInBag.js         # Individual bag book card with progress
-│   └── WelcomeMessage.js    # Empty-state welcome screen
+│   ├── App.tsx              # Root component, state & context
+│   ├── Header.tsx           # Desktop search bar
+│   ├── MobileSearchBox.tsx  # Mobile search bar
+│   ├── SearchPage.tsx       # Search results overlay
+│   ├── SearchBookList.tsx   # List of search result cards
+│   ├── SearchBook.tsx       # Individual search result card
+│   ├── ShelfBagWrapper.tsx  # Layout wrapper for shelf + bag
+│   ├── Shelf.tsx            # Shelf section
+│   ├── ShelfBookList.tsx    # List of shelf book cards
+│   ├── BookInShelf.tsx      # Individual shelf book card
+│   ├── Bag.tsx              # Bag section
+│   ├── BagBookList.tsx      # List of bag book cards
+│   ├── BookInBag.tsx        # Individual bag book card with progress
+│   └── WelcomeMessage.tsx   # Empty-state welcome screen
+├── hooks/
+│   ├── useSearch.ts         # Google Books API fetch, pagination, error state
+│   └── useBookBag.ts        # Shelf/bag state and localStorage persistence
+├── types/
+│   └── book.ts              # Shared Book interface
 ├── css/                     # Per-component stylesheets
 └── fonts/                   # Rubik font files
 ```
