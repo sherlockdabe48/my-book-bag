@@ -1,15 +1,25 @@
-.btn {
-background:none;
-border: none;
-outline: none;
-font-weight: 500;
-font-size: inherit;
-border-radius: 5px;
-padding: 10px 20px;
-cursor: pointer;
-color: white;
-transition: all 0.2s;
+/* ── Design tokens ─────────────────────────────────── */
+/*
+  Nav / charcoal:  #2f2f2f
+  Primary CTA:     #f5f0e8  warm cream, dark text — main actions
+  Normal:          #6b7280  slate — secondary actions
+  Danger:          #9b2226  deep muted red
+  Optional:        #9b6200  deep amber
+  Muted:           #6b7280  medium grey
+*/
 
+/* ── Base ──────────────────────────────────────────── */
+.btn {
+    background: none;
+    border: none;
+    outline: none;
+    font-weight: 500;
+    font-size: inherit;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.18s, color 0.18s;
 }
 
 .btn--container {
@@ -17,77 +27,83 @@ transition: all 0.2s;
     padding-bottom: 20px;
 }
 
+/* ── Variants ──────────────────────────────────────── */
+
+/* Primary — warm cream, main call-to-action */
 .btn--primary {
-background-color: hsl(209, 98%, 60%) ;
-color: white;
-}
-.btn--secondary {
-background-color: hsl(51, 95%, 63%) ;
-color: white;
+    background-color: #f5f0e8;
+    color: #2f2f2f;
+    border: 1px solid #d9d2c5;
 }
 .btn--primary:hover {
-background-color: hsl(209, 98%, 45%) ;
+    background-color: #ede6d8;
+    border-color: #c5bcae;
 }
+
+/* Normal — medium grey */
 .btn--normal {
-    background-color: hsl(0, 0%, 57%) ;
+    background-color: #6b7280;
     color: white;
 }
 .btn--normal:hover {
-    background-color: hsl(0, 0%, 35%) ;
+    background-color: #4b5563;
 }
 
-.btn--optional {
-background-color: hsl(32, 100%, 60%);
-}
-.btn--optional:hover {
-background-color: hsl(32, 100%, 35%);
-}
+/* Add / confirm — same cream as primary (equal CTA weight) */
 .btn--add {
-background-color: hsl(138, 100%, 42%);
+    background-color: #f5f0e8;
+    color: #2f2f2f;
+    border: 1px solid #d9d2c5;
 }
 .btn--add:hover {
-background-color: hsl(138, 100%, 35%);
+    background-color: #ede6d8;
+    border-color: #c5bcae;
 }
 
+/* Danger — deep muted red */
 .btn--danger {
-background-color: hsl(0, 100%, 60%);
+    background-color: #9b2226;
+    color: white;
 }
-
 .btn--danger:hover {
-background-color: hsl(0, 100%, 35%);
+    background-color: #6a1518;
 }
 
+/* Optional — amber ghost (border only) */
+.btn--optional {
+    background-color: transparent;
+    color: #9b6200;
+    border: 1.5px solid #9b6200;
+}
+.btn--optional:hover {
+    background-color: #9b6200;
+    color: white;
+}
+
+/* Secondary — keep for completeness */
+.btn--secondary {
+    background-color: #9b6200;
+    color: white;
+}
+
+/* ── Shape modifiers ───────────────────────────────── */
 .btn--see-more {
-    border-radius:20px ;
-}
-
-.btn--in-bag {
-   padding: 5px 5px ;
-    font-size: 14px;
-    max-width: 150px;
-}
-.btn--in-search-book {
-   padding: 10px 20px ;
-    font-size: 14px;
-    max-width: 150px;
-    max-height: 40px;
-   
+    border-radius: 20px;
 }
 
 .btn--close-page {
     font-size: 1.5rem;
     padding: 2px 10px;
-    background-color:#2f2f2f;
-    align-items: center;
+    background-color: #2f2f2f;
     margin-right: 0;
+}
+.btn--close-page:hover {
+    background-color: #1a1a1a;
 }
 
 .btn--circle {
     display: table;
     text-align: center;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     line-height: 15px;
     height: 40px;
     width: 40px;
@@ -98,9 +114,19 @@ background-color: hsl(0, 100%, 35%);
 }
 
 .btn--small {
-   transform: scale(0.5, 0.5);
+    transform: scale(0.5, 0.5);
 }
 
+/* ── Size modifiers ────────────────────────────────── */
+.btn--in-bag {
+    padding: 5px 5px;
+    font-size: 14px;
+    max-width: 150px;
+}
 
-
-
+.btn--in-search-book {
+    padding: 10px 20px;
+    font-size: 14px;
+    max-width: 150px;
+    max-height: 40px;
+}

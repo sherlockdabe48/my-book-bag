@@ -23,8 +23,27 @@
     margin-top: -15px;
 }
 
-.book-in-bag__edit-progress-button {
-    margin-left: -15px;
+.book-in-bag__edit-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin-left: 8px;
+    background: none;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    color: #6b7280;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.book-in-bag__edit-icon-btn:hover {
+    background-color: #2f2f2f;
+    border-color: #2f2f2f;
+    color: white;
 }
 
 .book-in-bag__save-progress-button{
@@ -40,3 +59,49 @@
     font-size: 1rem;
 }
 
+
+.book-in-bag__progress-bar-wrapper {
+    width: 100%;
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 4px 0 8px;
+}
+
+.book-in-bag__progress-bar {
+    height: 100%;
+    background-color: #2f2f2f;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.book-in-bag__title {
+    font-family: 'Lora', Georgia, serif !important;
+    font-size: 1.2rem !important;
+    font-weight: 600;
+    color: #1f2328;
+}
+
+.book-in-bag__detail-grid label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #57606a;
+}
+
+.book-in-bag__detail-grid > div > span:not(.book-in-bag__title) {
+    font-size: 0.8rem;
+    color: #57606a;
+}
+
+.book-in-bag__detail-grid > div > span:first-of-type {
+    font-size: 0.8rem;
+    color: #57606a;
+}
+
+.book-in-bag__progress-text {
+    font-size: 0.88rem;
+    color: #57606a;
+}

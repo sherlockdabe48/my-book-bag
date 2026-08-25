@@ -34,7 +34,8 @@ html {
 }
 
 .topic {
-    font-weight: normal;
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 600;
     font-size: 24px;
 }
 
@@ -58,4 +59,23 @@ html {
 
 .text-center {
     text-align: center;
+}
+
+.app-footer {
+    margin-top: 60px;
+    padding: 16px 40px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: #57606a;
+}
+
+.app-footer a {
+    color: #57606a;
+    text-decoration: underline;
+}
+
+.app-footer a:hover {
+    color: #1f2328;
 }

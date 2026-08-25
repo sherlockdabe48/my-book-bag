@@ -9,24 +9,26 @@ export default function BookInShelf({ id, title, imageURL }: BookInShelfProps) {
 
   return (
     <div className="book-in-shelf__container">
-      <div className="book-in-shelf__buttons-container">
+      <div className="book-in-shelf__cover-wrapper">
         <img
           className="book-image-in-shelf"
           src={imageURL}
-          alt="book in shelf"
+          alt={title}
         />
-        <div className="btn--hide">
+        <div className="book-in-shelf__overlay">
           <button
-            className="btn btn--add btn--circle book-in-shelf__add-button"
+            className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--add"
             onClick={() => handleAddToBagFromShelf(id)}
+            title="Add to Bag"
           >
-            +
+            Add to Bag
           </button>
           <button
-            className=" btn btn--small btn--danger btn--circle book-in-shelf__delete-btn"
+            className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--remove"
             onClick={() => handleBookDeleteFromShelf(id)}
+            title="Remove"
           >
-            &times;
+            Remove
           </button>
         </div>
       </div>

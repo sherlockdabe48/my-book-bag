@@ -25,44 +25,40 @@ export default function SearchPage({
   const { handleClearSearchInputValue } = useContext(searchBookContext)
 
   return (
-    <>
-      <div>
-        <h2 className="topic">{searchInputValue} </h2>
-        <span className="sub-topic">Search Result: {totalSearchItems} items</span>
-
-        <div className="search-page__container">
-          <div className="search-page__close-btn-container ">
-            <button
-              className="btn btn--close-page"
-              onClick={handleClearSearchInputValue}
-            >
-              &times;
-            </button>
-          </div>
-          {searchError ? (
-            <p className="search-page__error">{searchError}</p>
-          ) : (
-            <SearchBookList
-              loading={loading}
-              searchBooks={searchBooks}
-              startIndex={startIndex}
-              totalSearchItems={totalSearchItems}
-              shelfBooks={shelfBooks}
-            />
-          )}
-
-          {totalSearchItems > 20 && (
-            <div className="search-page__close-btn-container ">
-              <button
-                className="btn btn--close-page"
-                onClick={handleClearSearchInputValue}
-              >
-                &times;
-              </button>
-            </div>
+    <div>
+      <div className="search-page__header">
+        <div className="search-page__header-meta">
+          <h2 className="search-page__header-title">{searchInputValue}</h2>
+          {totalSearchItems > 0 && (
+            <span className="search-page__header-count">{totalSearchItems} results</span>
           )}
         </div>
+        <button
+          className="search-page__close-btn"
+          onClick={handleClearSearchInputValue}
+          aria-label="Close search"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          Close
+        </button>
       </div>
-    </>
+
+      <div className="search-page__container">
+        {searchError ? (
+          <p className="search-page__error">{searchError}</p>
+        ) : (
+          <SearchBookList
+            loading={loading}
+            searchBooks={searchBooks}
+            startIndex={startIndex}
+            totalSearchItems={totalSearchItems}
+            shelfBooks={shelfBooks}
+          />
+        )}
+      </div>
+    </div>
   )
 }

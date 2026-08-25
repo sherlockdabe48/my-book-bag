@@ -10,9 +10,11 @@
 
 .header__logo {
     color: white;
-    font-weight: 500;
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 600;
     font-size: 28px;
     cursor: pointer;
+    letter-spacing: 0.5px;
 }
 
 .header__input-search-box {

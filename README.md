@@ -23,7 +23,7 @@ A personal book management web app built with React. Search for any book via the
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 16+
 - npm 8+
 
 ### Install & run
@@ -43,7 +43,7 @@ Without an API key the app still works but is subject to Google's unauthenticate
 2. Add to the existing `.env` file in the project root:
 
 ```
-REACT_APP_GOOGLE_BOOKS_API_KEY=your_key_here
+VITE_GOOGLE_BOOKS_API_KEY=your_key_here
 ```
 
 3. Restart the dev server.
@@ -66,7 +66,7 @@ Click a book on your shelf to move it into your reading bag. From the bag you ca
 
 ### Track reading progress
 
-Each book in your bag shows your current page. Hit **EDIT** to update it, **SAVE** to confirm, or **Finish** when you're done. Finished books can be reset with **Read Again**.
+Each book in your bag shows your current page and a progress bar. Click the ✏️ pencil icon to edit your current page, hit **SAVE** to confirm, or **Finish** when you're done. Finished books can be reset with **Read Again**.
 
 ---
 
@@ -119,3 +119,7 @@ src/
 ```bash
 npm test
 ```
+
+---
+
+*v2.0 redesign (2026) — built with [IBM Bob](https://www.ibm.com/) · [Adélier Classics](https://github.com/sherlockdabe48)*

@@ -19,49 +19,38 @@ export default function SearchBook({
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
-    <>
-      <div className="search-book__container">
-        <div>
-          <img
-            className="search-book__book-image"
-            src={imageURL}
-            alt="search book"
-          />
-        </div>
-        <div className="search-book__book-detail-grid">
-          <div>
-            <label className="search-book__label">Title: </label>
-            <span className="search-book__title">{title}</span>
-            <br />
-            <label className="search-book__label">By:</label>
-            <span className="search-book__author">{author}</span>
-          </div>
+    <div className={`search-book__container${isAlreadyAdded ? " search-book__container--added" : ""}`}>
+      <img
+        className="search-book__book-image"
+        src={imageURL}
+        alt={title}
+      />
+      <div className="search-book__details">
+        <div className="search-book__meta">
+          <h3 className="search-book__title">{title}</h3>
+          <p className="search-book__author">{author}</p>
           {description && (
-            <span className="search-book__desciption">{description}</span>
+            <p className="search-book__description">{description}</p>
           )}
-          <div>
-            <label className="search-book__label">Pages: </label>
-            <span className="search-book__pages">{allPages} pages</span>
-          </div>
-          <div className="search-book__btn-wrapper">
-            {!isAlreadyAdded && (
-              <button
-                className="btn btn--primary btn--in-search-book mr-1"
-                onClick={() => handleMoveToShelfFromSearch(id)}
-              >
-                Add to Shelf
+        </div>
+        <div className="search-book__footer">
+          <span className="search-book__pages">{allPages === "N/A" ? "Pages unknown" : `${allPages} pages`}</span>
+          {!isAlreadyAdded ? (
+            <button
+              className="btn btn--primary search-book__btn"
+              onClick={() => handleMoveToShelfFromSearch(id)}
+            >
+              + Add to Shelf
+            </button>
+          ) : (
+            <a href="#in-my-shelf">
+              <button className="btn btn--normal search-book__btn">
+                ✓ In Shelf
               </button>
-            )}
-            {isAlreadyAdded && (
-              <a href="#in-my-shelf">
-                <button className="btn btn--normal btn--in-search-book">
-                  See in Shelf
-                </button>
-              </a>
-            )}
-          </div>
+            </a>
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }

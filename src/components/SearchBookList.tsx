@@ -20,7 +20,13 @@ export default function SearchBookList({
 }: SearchBookListProps) {
   const { handleNextPageInSearchBook, handlePrevPageInSearchBook } = useContext(searchBookContext)
 
-  if (loading) return <h2 className="text-center">"Loading..."</h2>
+  if (loading) return <div className="search-book-list__spinner" aria-label="Loading" />
+
+  if (!loading && searchBooks.length === 0) {
+    return <p className="search-book-list__empty">No results found. Try a different search.</p>
+  }
+
+  const hasNextPage = startIndex + 20 < totalSearchItems
 
   return (
     <>
@@ -38,7 +44,7 @@ export default function SearchBookList({
             &lt; Prev Page
           </button>
         )}
-        {totalSearchItems > 20 && (
+        {hasNextPage && (
           <button
             className="btn btn--normal btn--see-more search-book-list__pagination-button"
             onClick={handleNextPageInSearchBook}

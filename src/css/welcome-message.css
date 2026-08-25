@@ -9,7 +9,9 @@ height: 500px;
 }
 
 .welcome-message__topic {
+font-family: 'Lora', Georgia, serif;
 font-size: 1.5rem;
+font-weight: 600;
 margin-top: -100px;
 }
 

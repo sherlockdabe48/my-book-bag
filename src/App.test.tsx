@@ -54,7 +54,7 @@ describe("BookInBag", () => {
       </bookBagContext.Provider>
     )
 
-    fireEvent.click(screen.getByText("EDIT"))
+    fireEvent.click(screen.getByRole("button", { name: "Edit progress" }))
     fireEvent.change(screen.getByDisplayValue("10"), {
       target: { value: "25", max: "300" },
     })
