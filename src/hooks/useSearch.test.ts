@@ -5,7 +5,9 @@ import useSearch from "./useSearch"
 
 const mock = new MockAdapter(axios)
 
-const SEARCH_URI = "/.netlify/functions/search"
+// In Jest, NODE_ENV=test so import.meta.env.DEV resolves to true,
+// meaning the hook calls Google directly (same as local dev)
+const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
 
 const fakeVolume = {
   id: "book-1",

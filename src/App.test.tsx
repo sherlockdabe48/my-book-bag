@@ -54,11 +54,11 @@ describe("BookInBag", () => {
       </bookBagContext.Provider>
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "Edit progress" }))
-    fireEvent.change(screen.getByDisplayValue("10"), {
-      target: { value: "25", max: "300" },
+    fireEvent.click(screen.getByRole("button", { name: "10" }))
+    fireEvent.change(screen.getByRole("spinbutton", { name: "Current page" }), {
+      target: { value: "25" },
     })
-    fireEvent.click(screen.getByText("SAVE"))
+    fireEvent.blur(screen.getByRole("spinbutton", { name: "Current page" }))
 
     expect(handleBagBookProgressChange).toHaveBeenCalledWith("book-1", 25)
   })

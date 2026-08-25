@@ -56,7 +56,10 @@
     justify-self: center;
     background-color: white;
     max-width: 860px;
+    width: 100%;
     margin: 0 auto;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .search-page__error {
@@ -147,9 +150,11 @@
     font-size: 1rem;
     font-weight: 600;
     color: #1f2328;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .search-book__author {
@@ -222,10 +227,6 @@
     .search-book__book-image {
         width: 64px;
         height: 96px;
-    }
-
-    .search-book__title {
-        font-size: 0.9375rem;
     }
 
     .search-book__footer {

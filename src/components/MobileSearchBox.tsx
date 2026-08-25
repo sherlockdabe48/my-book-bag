@@ -26,7 +26,7 @@ export default function MobileSearchBox({ inputRef }: MobileSearchBoxProps) {
     <div className="mobile__search-box-wrapper">
       <form onSubmit={handleSubmit}>
         <input
-          className="mobile__input-search-box mr-1"
+          className="mobile__input-search-box"
           type="text"
           placeholder="Find other book..."
           value={inputValue}

@@ -89,7 +89,28 @@
     font-size: 0.8rem;
     line-height: 1.3;
     color: #1f2328;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+/* ── Mobile ───────────────────────────────────────── */
+@media (max-width: 600px) {
+    .book-in-shelf__container {
+        width: 100%;
+    }
+
+    .book-in-shelf__cover-wrapper {
+        width: 100%;
+        height: 0;
+        padding-bottom: 150%;  /* 2:3 aspect ratio */
+    }
+
+    .book-image-in-shelf {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
 }

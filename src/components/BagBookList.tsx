@@ -11,7 +11,7 @@ export default function BagBookList({ bagBooks }: BagBookListProps) {
   const { handleActiveShelfHighLight } = useContext(toggleClassContext)
 
   return (
-    <>
+    <div className="bag-book-list">
       {bagBooks.map((bagBook) => (
         <BookInBag key={bagBook.id} {...bagBook} />
       ))}
@@ -25,6 +25,6 @@ export default function BagBookList({ bagBooks }: BagBookListProps) {
           </button>
         </a>
       </div>
-    </>
+    </div>
   )
 }
