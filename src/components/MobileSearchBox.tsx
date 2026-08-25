@@ -31,6 +31,7 @@ export default function MobileSearchBox({ inputRef }: MobileSearchBoxProps) {
           placeholder="Find other book..."
           value={inputValue}
           onChange={handleChange}
+          onFocus={(e) => e.target.select()}
           ref={(el) => { inputRef.current[1] = el }}
         />
         <input

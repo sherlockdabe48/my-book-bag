@@ -8,6 +8,8 @@ import "../css/App.css"
 import MobileSearchBox from "./MobileSearchBox"
 import useSearch from "../hooks/useSearch"
 import useBookBag from "../hooks/useBookBag"
+import useAuth from "../hooks/useAuth"
+import type { AuthContextValue } from "../types/auth"
 
 export interface SearchBookContextValue {
   handleGetSearchInputValue: (value: string) => void
@@ -32,9 +34,12 @@ export interface ToggleClassContextValue {
 export const bookBagContext = React.createContext<BookBagContextValue>({} as BookBagContextValue)
 export const toggleClassContext = React.createContext<ToggleClassContextValue>({} as ToggleClassContextValue)
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
+export const authContext = React.createContext<AuthContextValue>({} as AuthContextValue)
 
 function App() {
   const inputRef = useRef<(HTMLInputElement | null)[]>([])
+
+  const auth = useAuth()
 
   const {
     searchInputValue,
@@ -60,7 +65,7 @@ function App() {
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
     handleBookDeleteFromShelf,
-  } = useBookBag(searchBooks)
+  } = useBookBag(searchBooks, auth.user?.accessToken)
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
 
@@ -86,37 +91,39 @@ function App() {
 
   return (
     <Router>
-      <searchBookContext.Provider value={searchBookContextValue}>
-        <Header inputRef={inputRef} />
-        <MobileSearchBox inputRef={inputRef} />
-        {searchInputValue && (
-          <SearchPage
-            loading={loading}
-            searchBooks={searchBooks}
-            searchInputValue={searchInputValue}
-            startIndex={startIndex}
-            totalSearchItems={totalSearchItems}
-            shelfBooks={shelfBooks}
-            searchError={searchError}
-          />
-        )}
-      </searchBookContext.Provider>
-      {!haveSomeBook && <WelcomeMessage />}
-      <bookBagContext.Provider value={bookBagContextValue}>
-        <toggleClassContext.Provider value={toggleClassContextValue}>
-          {haveSomeBook && (
-            <ShelfBagWrapper
-              bagBooks={bagBooks}
+      <authContext.Provider value={auth}>
+        <searchBookContext.Provider value={searchBookContextValue}>
+          <Header inputRef={inputRef} />
+          <MobileSearchBox inputRef={inputRef} />
+          {searchInputValue && (
+            <SearchPage
+              loading={loading}
+              searchBooks={searchBooks}
+              searchInputValue={searchInputValue}
+              startIndex={startIndex}
+              totalSearchItems={totalSearchItems}
               shelfBooks={shelfBooks}
-              shelfHighLight={shelfHighLight}
-              inputRef={inputRef}
+              searchError={searchError}
             />
           )}
-        </toggleClassContext.Provider>
-      </bookBagContext.Provider>
-      <footer className="app-footer">
-        v2.0 redesign · 2026 · crafted with <a href="https://www.ibm.com/" target="_blank" rel="noreferrer">IBM Bob</a> &amp; Adélier Classics
-      </footer>
+        </searchBookContext.Provider>
+        {!haveSomeBook && <WelcomeMessage />}
+        <bookBagContext.Provider value={bookBagContextValue}>
+          <toggleClassContext.Provider value={toggleClassContextValue}>
+            {haveSomeBook && (
+              <ShelfBagWrapper
+                bagBooks={bagBooks}
+                shelfBooks={shelfBooks}
+                shelfHighLight={shelfHighLight}
+                inputRef={inputRef}
+              />
+            )}
+          </toggleClassContext.Provider>
+        </bookBagContext.Provider>
+        <footer className="app-footer">
+          v2.0 redesign · 2026 · crafted with <a href="https://www.ibm.com/" target="_blank" rel="noreferrer">IBM Bob</a> &amp; Adélier Classics
+        </footer>
+      </authContext.Provider>
     </Router>
   )
 }
