@@ -115,7 +115,7 @@ function App() {
         </toggleClassContext.Provider>
       </bookBagContext.Provider>
       <footer className="app-footer">
-        v2.0 redesign · 2026 · crafted with <a href="https://www.ibm.com/" target="_blank" rel="noreferrer">IBM Bob</a> &amp; <a href="https://www.adelierclassics.com/" target="_blank" rel="noreferrer">Adélier Classics</a>
+        v2.0 redesign · 2026 · crafted with <a href="https://www.ibm.com/" target="_blank" rel="noreferrer">IBM Bob</a> &amp; Adélier Classics
       </footer>
     </Router>
   )

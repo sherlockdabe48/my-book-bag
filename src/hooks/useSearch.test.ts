@@ -5,7 +5,7 @@ import useSearch from "./useSearch"
 
 const mock = new MockAdapter(axios)
 
-const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
+const SEARCH_URI = "/.netlify/functions/search"
 
 const fakeVolume = {
   id: "book-1",

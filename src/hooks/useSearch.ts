@@ -2,8 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import type { Book } from "../types/book"
 
-const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
-const GOOGLE_BOOKS_API_KEY = import.meta.env.REACT_APP_GOOGLE_BOOKS_API_KEY
+const SEARCH_URI = "/.netlify/functions/search"
 
 interface GoogleVolume {
   id: string
@@ -71,13 +70,8 @@ export default function useSearch() {
     const controller = new AbortController()
     const params: Record<string, string | number> = {
       q: searchInputValue,
-      printType: "books",
       startIndex,
       maxResults: 20,
-    }
-
-    if (GOOGLE_BOOKS_API_KEY) {
-      params.key = GOOGLE_BOOKS_API_KEY
     }
 
     axios
