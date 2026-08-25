@@ -199,6 +199,21 @@
 
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 600px) {
+    .search-page__header {
+        padding: 10px 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .search-page__header-title {
+        font-size: 0.95rem;
+    }
+
+    .search-page__close-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
     .search-book__container {
         padding: 16px;
         gap: 14px;

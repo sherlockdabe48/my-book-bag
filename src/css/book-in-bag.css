@@ -1,6 +1,7 @@
 .book-in-bag__container{
     display: flex;
-    padding: 40px 40px;
+    padding: 40px;
+    gap: 24px;
 }
 
 .book-in-bag__detail-grid {
@@ -74,6 +75,41 @@
     background-color: #2f2f2f;
     border-radius: 3px;
     transition: width 0.3s ease;
+}
+
+.book-in-bag__action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+@media (max-width: 600px) {
+    .book-in-bag__container {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 16px;
+        gap: 16px;
+    }
+
+    .book-image-in-bag {
+        width: 120px;
+        height: 180px;
+    }
+
+    .book-in-bag__detail-grid {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .book-in-bag__action-row {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .book-in-bag__action-row .btn--in-bag {
+        flex: 1;
+        max-width: none;
+    }
 }
 
 .book-in-bag__title {

@@ -102,18 +102,20 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             </form>
           </div>
         </div>
-        <button
-          className={`btn btn--in-bag ${isFinished ? "btn--add" : "btn--primary"}`}
-          onClick={handleFinishBook}
-        >
-          {isFinished ? "Read Again" : "Finish"}
-        </button>
-        <button
-          className="btn btn--danger btn--in-bag"
-          onClick={() => handleMoveToShelfFromBag(id)}
-        >
-          Remove
-        </button>
+        <div className="book-in-bag__action-row">
+          <button
+            className={`btn btn--in-bag ${isFinished ? "btn--add" : "btn--primary"}`}
+            onClick={handleFinishBook}
+          >
+            {isFinished ? "Read Again" : "Finish"}
+          </button>
+          <button
+            className="btn btn--danger btn--in-bag"
+            onClick={() => handleMoveToShelfFromBag(id)}
+          >
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   )

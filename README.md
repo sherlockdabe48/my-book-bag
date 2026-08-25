@@ -35,24 +35,18 @@ npm start
 
 The app opens at [http://localhost:5173](http://localhost:5173).
 
-### Google Books API key (for public deploys)
+### Optional: Google Books API key
 
-The app uses a Netlify serverless function as a proxy so the API key is **never exposed to the browser**. To add a key:
+Without an API key the app still works but is subject to Google's unauthenticated rate limits. To add a key:
 
-**Local dev:**
 1. Get a key from the [Google Books API console](https://console.developers.google.com/)
-2. Create a `.env` file in the project root (see `.env.example`):
-```
-GOOGLE_BOOKS_API_KEY=your_key_here
-```
-3. Run with `netlify dev` instead of `npm run dev` (requires [Netlify CLI](https://docs.netlify.com/cli/get-started/): `npm i -g netlify-cli`)
+2. Add to the existing `.env` file in the project root:
 
-**Netlify deploy:**
-1. Go to **Site settings → Environment variables** in your Netlify dashboard
-2. Add `GOOGLE_BOOKS_API_KEY` with your key value
-3. Redeploy — the function picks it up automatically
+```
+VITE_GOOGLE_BOOKS_API_KEY=your_key_here
+```
 
-The app works without a key too, but will be subject to Google's shared unauthenticated rate limit.
+3. Restart the dev server.
 
 ---
 
@@ -68,7 +62,7 @@ Search for any book by title or author. Results come from the Google Books API. 
 
 Click a book on your shelf to move it into your reading bag. From the bag you can move it back to the shelf at any time.
 
-![My Book Bag Add](./public/images/my-book-bag-add.jpg)
+![My Book In Bag Add](./public/images/my-book-in-bag.jpg)
 
 ### Track reading progress
 
@@ -125,7 +119,3 @@ src/
 ```bash
 npm test
 ```
-
----
-
-*v2.0 redesign (2026) — built with [IBM Bob](https://www.ibm.com/) · [Adélier Classics](https://github.com/sherlockdabe48)*

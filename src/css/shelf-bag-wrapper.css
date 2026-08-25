@@ -1,13 +1,22 @@
 .shelf-bag-wrapper {
     display: flex;
     justify-content: space-around;
+    gap: 24px;
+    padding: 24px;
 }
+
 .topic {
     margin-left: 40px;
 }
 
-@media (max-width:900px ) {
-.shelf-bag-wrapper {
-    display: grid;
-}
+@media (max-width: 900px) {
+    .shelf-bag-wrapper {
+        flex-direction: column;
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .topic {
+        margin-left: 16px;
+    }
 }

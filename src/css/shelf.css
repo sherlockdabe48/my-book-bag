@@ -26,6 +26,16 @@
 
 @media (max-width: 1080px) {
     .shelf-book-list__grid {
-        grid-template-columns: repeat(2,auto);
+        grid-template-columns: repeat(2, auto);
+    }
+}
+
+@media (max-width: 600px) {
+    .shelf-container {
+        padding: 16px;
+    }
+
+    .shelf-book-list__grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

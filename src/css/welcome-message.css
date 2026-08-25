@@ -1,18 +1,36 @@
 .welcome-message__container {
-display: flex;
-flex-direction: column;
-text-align: center;
-color: #2f2f2f;
-justify-content: center;
-align-items: center;
-height: 500px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    color: #2f2f2f;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .welcome-message__topic {
-font-family: 'Lora', Georgia, serif;
-font-size: 1.5rem;
-font-weight: 600;
-margin-top: -100px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: -100px;
+}
+
+@media (max-width: 600px) {
+    .welcome-message__container {
+        height: auto;
+        padding: 60px 24px;
+    }
+
+    .welcome-message__topic {
+        margin-top: 0;
+        font-size: 1.25rem;
+    }
+
+    .welcome-message__tip-list {
+        max-width: 100%;
+    }
 }
 
 

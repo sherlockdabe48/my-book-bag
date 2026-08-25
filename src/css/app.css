@@ -71,6 +71,13 @@ html {
     color: #57606a;
 }
 
+@media (max-width: 600px) {
+    .app-footer {
+        padding: 16px;
+        margin-top: 40px;
+    }
+}
+
 .app-footer a {
     color: #57606a;
     text-decoration: underline;
