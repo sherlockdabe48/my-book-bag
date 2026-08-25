@@ -1,22 +1,22 @@
 import React, { useContext, useState } from "react"
 import { bookBagContext } from "./App"
+import type { Book } from "../types/book"
 
-export default function BookInBag(props) {
-  const { id, title, author, currentPage, allPages, imageURL } = props
-  const { handleMoveToShelfFromBag, handleBagBookProgressChange } =
-    useContext(bookBagContext)
+type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL">
+
+export default function BookInBag({ id, title, author, currentPage, allPages, imageURL }: BookInBagProps) {
+  const { handleMoveToShelfFromBag, handleBagBookProgressChange } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
   const isFinished = Number(currentPage) === Number(allPages)
 
-  function handleChangeProgress(e) {
+  function handleChangeProgress(e: React.ChangeEvent<HTMLInputElement>) {
     const max = parseInt(e.target.max)
     let nextProgress = parseInt(e.target.value)
 
     if (Number.isNaN(nextProgress) || nextProgress < 0) {
       nextProgress = 0
     }
-
     if (nextProgress > max) {
       nextProgress = max
     }
@@ -24,7 +24,7 @@ export default function BookInBag(props) {
     setProgress(nextProgress)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     handleBagBookProgressChange(id, progress)
     setIsEditing(false)
@@ -36,9 +36,8 @@ export default function BookInBag(props) {
       handleBagBookProgressChange(id, 1)
       return
     }
-
-    setProgress(allPages)
-    handleBagBookProgressChange(id, allPages)
+    setProgress(Number(allPages))
+    handleBagBookProgressChange(id, Number(allPages))
     alert("Congratulations! You just finished a book")
   }
 
@@ -61,7 +60,7 @@ export default function BookInBag(props) {
           </span>
           <button
             className="btn btn--normal btn--small book-in-bag__edit-progress-button"
-            onClick={() => setIsEditing((prevIsEditing) => !prevIsEditing)}
+            onClick={() => setIsEditing((prev) => !prev)}
           >
             EDIT
           </button>
@@ -72,7 +71,7 @@ export default function BookInBag(props) {
               <input
                 type="number"
                 value={progress}
-                max={allPages}
+                max={Number(allPages)}
                 className="book-in-bag__edit-progress-input"
                 onChange={handleChangeProgress}
               />
@@ -85,11 +84,8 @@ export default function BookInBag(props) {
             </form>
           </div>
         </div>
-
         <button
-          className={`btn btn--in-bag ${
-            isFinished ? "btn--add" : "btn--primary"
-          }`}
+          className={`btn btn--in-bag ${isFinished ? "btn--add" : "btn--primary"}`}
           onClick={handleFinishBook}
         >
           {isFinished ? "Read Again" : "Finish"}

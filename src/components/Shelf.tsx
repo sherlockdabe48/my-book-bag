@@ -1,10 +1,17 @@
 import React from "react"
 import ShelfBookList from "./ShelfBookList"
+import type { Book } from "../types/book"
 
-export default function Shelft({ shelfBooks, shelfHighLight, inputRef }) {
+interface ShelfProps {
+  shelfBooks: Book[]
+  shelfHighLight: boolean
+  inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
+}
+
+export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfProps) {
   function focus() {
-    inputRef.current[0].focus()
-    inputRef.current[1].focus()
+    inputRef.current[0]?.focus()
+    inputRef.current[1]?.focus()
   }
 
   return (

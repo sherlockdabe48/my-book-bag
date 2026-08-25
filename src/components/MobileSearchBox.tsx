@@ -1,20 +1,25 @@
 import React, { useContext, useState } from "react"
 import { searchBookContext } from "./App"
 
-export default function MobileSearchBox({ inputRef }) {
+interface MobileSearchBoxProps {
+  inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
+}
+
+export default function MobileSearchBox({ inputRef }: MobileSearchBoxProps) {
   const { handleGetSearchInputValue } = useContext(searchBookContext)
   const [inputValue, setInputValue] = useState("")
-  function handleChange(e) {
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(e.target.value)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     handleGetSearchInputValue(inputValue)
     e.preventDefault()
   }
 
   function focus() {
-    inputRef.current[1].focus()
+    inputRef.current[1]?.focus()
   }
 
   return (
@@ -26,7 +31,7 @@ export default function MobileSearchBox({ inputRef }) {
           placeholder="Find other book..."
           value={inputValue}
           onChange={handleChange}
-          ref={(el) => (inputRef.current[1] = el)}
+          ref={(el) => { inputRef.current[1] = el }}
         />
         <input
           type="submit"

@@ -1,7 +1,11 @@
-import React from "react"
 import BagBookList from "./BagBookList"
+import type { Book } from "../types/book"
 
-export default function Bag({ bagBooks }) {
+interface BagProps {
+  bagBooks: Book[]
+}
+
+export default function Bag({ bagBooks }: BagProps) {
   return (
     <div>
       <h2 className="topic">In my Bag</h2>

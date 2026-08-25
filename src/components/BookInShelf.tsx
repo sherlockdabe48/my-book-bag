@@ -1,16 +1,18 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import { bookBagContext } from "./App"
+import type { Book } from "../types/book"
 
-export default function BookInShelf({ id, title, imageURL }) {
-  const { handleAddToBagFromShelf, handleBookDeleteFromShelf } = useContext(
-    bookBagContext
-  )
+type BookInShelfProps = Pick<Book, "id" | "title" | "imageURL">
+
+export default function BookInShelf({ id, title, imageURL }: BookInShelfProps) {
+  const { handleAddToBagFromShelf, handleBookDeleteFromShelf } = useContext(bookBagContext)
+
   return (
     <div className="book-in-shelf__container">
       <div className="book-in-shelf__buttons-container">
         <img
           className="book-image-in-shelf"
-          src={`${imageURL}`}
+          src={imageURL}
           alt="book in shelf"
         />
         <div className="btn--hide">
@@ -28,7 +30,6 @@ export default function BookInShelf({ id, title, imageURL }) {
           </button>
         </div>
       </div>
-
       <p className="book-in-shelf__title">{title}</p>
     </div>
   )

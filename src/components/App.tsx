@@ -1,20 +1,40 @@
 import React, { useRef } from "react"
 import { BrowserRouter as Router } from "react-router-dom"
-import Header from "./Header.jsx"
-import SearchPage from "./SearchPage.jsx"
-import ShelfBagWrapper from "./ShelfBagWrapper.jsx"
-import WelcomeMessage from "./WelcomeMessage.jsx"
+import Header from "./Header"
+import SearchPage from "./SearchPage"
+import ShelfBagWrapper from "./ShelfBagWrapper"
+import WelcomeMessage from "./WelcomeMessage"
 import "../css/App.css"
-import MobileSearchBox from "./MobileSearchBox.jsx"
-import useSearch from "../hooks/useSearch.js"
-import useBookBag from "../hooks/useBookBag.js"
+import MobileSearchBox from "./MobileSearchBox"
+import useSearch from "../hooks/useSearch"
+import useBookBag from "../hooks/useBookBag"
 
-export const bookBagContext = React.createContext()
-export const toggleClassContext = React.createContext()
-export const searchBookContext = React.createContext()
+export interface SearchBookContextValue {
+  handleGetSearchInputValue: (value: string) => void
+  handleClearSearchInputValue: () => void
+  handleNextPageInSearchBook: () => void
+  handlePrevPageInSearchBook: () => void
+  handleMoveToShelfFromSearch: (id: string) => void
+}
+
+export interface BookBagContextValue {
+  handleAddToBagFromShelf: (id: string) => void
+  handleBookSelect: (id: string) => void
+  handleBookDeleteFromShelf: (id: string) => void
+  handleMoveToShelfFromBag: (id: string) => void
+  handleBagBookProgressChange: (id: string, currentPage: number) => void
+}
+
+export interface ToggleClassContextValue {
+  handleActiveShelfHighLight: () => void
+}
+
+export const bookBagContext = React.createContext<BookBagContextValue>({} as BookBagContextValue)
+export const toggleClassContext = React.createContext<ToggleClassContextValue>({} as ToggleClassContextValue)
+export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 
 function App() {
-  const inputRef = useRef([])
+  const inputRef = useRef<(HTMLInputElement | null)[]>([])
 
   const {
     searchInputValue,
@@ -44,7 +64,7 @@ function App() {
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
 
-  const searchBookContextValue = {
+  const searchBookContextValue: SearchBookContextValue = {
     handleGetSearchInputValue,
     handleClearSearchInputValue,
     handleNextPageInSearchBook,
@@ -52,7 +72,7 @@ function App() {
     handleMoveToShelfFromSearch,
   }
 
-  const bookBagContextValue = {
+  const bookBagContextValue: BookBagContextValue = {
     handleAddToBagFromShelf,
     handleBookSelect,
     handleBookDeleteFromShelf,
@@ -60,7 +80,7 @@ function App() {
     handleBagBookProgressChange,
   }
 
-  const toggleClassContextValue = {
+  const toggleClassContextValue: ToggleClassContextValue = {
     handleActiveShelfHighLight,
   }
 

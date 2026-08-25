@@ -1,18 +1,21 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import { searchBookContext } from "./App"
+import type { Book } from "../types/book"
 
-export default function SearchBook(props) {
-  const {
-    id,
-    title,
-    author,
-    description,
-    allPages,
-    imageURL,
-    shelfBooks,
-  } = props
+interface SearchBookProps extends Book {
+  shelfBooks: Book[]
+}
+
+export default function SearchBook({
+  id,
+  title,
+  author,
+  description,
+  allPages,
+  imageURL,
+  shelfBooks,
+}: SearchBookProps) {
   const { handleMoveToShelfFromSearch } = useContext(searchBookContext)
-
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
@@ -44,14 +47,11 @@ export default function SearchBook(props) {
             {!isAlreadyAdded && (
               <button
                 className="btn btn--primary btn--in-search-book mr-1"
-                onClick={() => {
-                  handleMoveToShelfFromSearch(id)
-                }}
+                onClick={() => handleMoveToShelfFromSearch(id)}
               >
                 Add to Shelf
               </button>
             )}
-
             {isAlreadyAdded && (
               <a href="#in-my-shelf">
                 <button className="btn btn--normal btn--in-search-book">

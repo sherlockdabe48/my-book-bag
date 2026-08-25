@@ -1,10 +1,8 @@
-import React from "react"
 
 export default function WelcomeMessage() {
   return (
     <div className="welcome-message__container">
       <h1 className="welcome-message__topic">What you will read today?</h1>
-
       <div className="welcome-message__tip-wrapper">
         <div className="welcome-message__tip-list">
           <h4>Get Start :</h4>

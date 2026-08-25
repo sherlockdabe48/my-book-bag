@@ -1,21 +1,25 @@
 import React, { useContext, useState } from "react"
 import { searchBookContext } from "./App"
 
-export default function Header({ inputRef }) {
+interface HeaderProps {
+  inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
+}
+
+export default function Header({ inputRef }: HeaderProps) {
   const { handleGetSearchInputValue } = useContext(searchBookContext)
   const [inputValue, setInputValue] = useState("")
 
-  function handleChange(e) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(e.target.value)
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     handleGetSearchInputValue(inputValue)
     e.preventDefault()
   }
 
   function focus() {
-    inputRef.current[0].focus()
+    inputRef.current[0]?.focus()
   }
 
   return (
@@ -27,7 +31,7 @@ export default function Header({ inputRef }) {
             className="header__input-search-box mr-1"
             type="text"
             placeholder="Find other book..."
-            ref={(el) => (inputRef.current[0] = el)}
+            ref={(el) => { inputRef.current[0] = el }}
             value={inputValue}
             onChange={handleChange}
           />

@@ -1,17 +1,20 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import BookInBag from "./BookInBag"
 import { toggleClassContext } from "./App"
+import type { Book } from "../types/book"
 
-export default function BagBookList({ bagBooks }) {
+interface BagBookListProps {
+  bagBooks: Book[]
+}
+
+export default function BagBookList({ bagBooks }: BagBookListProps) {
   const { handleActiveShelfHighLight } = useContext(toggleClassContext)
+
   return (
     <>
-      {bagBooks.map((bagBook) => {
-        return (
-          <BookInBag key={bagBook.id} {...bagBook} />
-        )
-      })}
-
+      {bagBooks.map((bagBook) => (
+        <BookInBag key={bagBook.id} {...bagBook} />
+      ))}
       <div className="btn--container">
         <a href="#in-my-shelf">
           <button

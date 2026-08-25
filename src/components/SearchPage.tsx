@@ -1,6 +1,17 @@
-import React, { useContext } from "react"
+import { useContext } from "react"
 import SearchBookList from "./SearchBookList"
 import { searchBookContext } from "./App"
+import type { Book } from "../types/book"
+
+interface SearchPageProps {
+  searchInputValue: string
+  searchBooks: Book[]
+  loading: boolean
+  startIndex: number
+  totalSearchItems: number
+  shelfBooks: Book[]
+  searchError: string | null
+}
 
 export default function SearchPage({
   searchInputValue,
@@ -10,7 +21,7 @@ export default function SearchPage({
   totalSearchItems,
   shelfBooks,
   searchError,
-}) {
+}: SearchPageProps) {
   const { handleClearSearchInputValue } = useContext(searchBookContext)
 
   return (
@@ -31,13 +42,13 @@ export default function SearchPage({
           {searchError ? (
             <p className="search-page__error">{searchError}</p>
           ) : (
-          <SearchBookList
-            loading={loading}
-            searchBooks={searchBooks}
-            startIndex={startIndex}
-            totalSearchItems={totalSearchItems}
-            shelfBooks={shelfBooks}
-          />
+            <SearchBookList
+              loading={loading}
+              searchBooks={searchBooks}
+              startIndex={startIndex}
+              totalSearchItems={totalSearchItems}
+              shelfBooks={shelfBooks}
+            />
           )}
 
           {totalSearchItems > 20 && (

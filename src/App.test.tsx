@@ -1,4 +1,3 @@
-import React from "react"
 import { fireEvent, render, screen } from "@testing-library/react"
 import Header from "./components/Header"
 import BookInBag from "./components/BookInBag"
@@ -7,10 +6,10 @@ import { bookBagContext, searchBookContext } from "./components/App"
 describe("Header", () => {
   test("submits the typed search value", () => {
     const handleGetSearchInputValue = jest.fn()
-    const inputRef = { current: [] }
+    const inputRef = { current: [] as (HTMLInputElement | null)[] }
 
     render(
-      <searchBookContext.Provider value={{ handleGetSearchInputValue }}>
+      <searchBookContext.Provider value={{ handleGetSearchInputValue, handleClearSearchInputValue: jest.fn(), handleNextPageInSearchBook: jest.fn(), handlePrevPageInSearchBook: jest.fn(), handleMoveToShelfFromSearch: jest.fn() }}>
         <Header inputRef={inputRef} />
       </searchBookContext.Provider>
     )
@@ -32,6 +31,8 @@ describe("BookInBag", () => {
     currentPage: 10,
     allPages: 300,
     imageURL: "cover.jpg",
+    description: false as const,
+    status: "onRead" as const,
   }
 
   beforeEach(() => {
@@ -39,7 +40,7 @@ describe("BookInBag", () => {
   })
 
   afterEach(() => {
-    window.alert.mockRestore()
+    jest.restoreAllMocks()
   })
 
   test("saves edited progress through context", () => {
@@ -47,7 +48,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange }}
+        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn() }}
       >
         <BookInBag {...baseProps} />
       </bookBagContext.Provider>
@@ -67,7 +68,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange }}
+        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn() }}
       >
         <BookInBag {...baseProps} currentPage={300} />
       </bookBagContext.Provider>

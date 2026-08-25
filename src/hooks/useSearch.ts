@@ -1,24 +1,33 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import type { Book } from "../types/book"
 
 const SEARCH_URI = "https://www.googleapis.com/books/v1/volumes"
 const GOOGLE_BOOKS_API_KEY = import.meta.env.REACT_APP_GOOGLE_BOOKS_API_KEY
 
-function mapVolume(volume) {
+interface GoogleVolume {
+  id: string
+  volumeInfo: {
+    title: string
+    authors?: string[]
+    pageCount?: number
+    imageLinks?: { thumbnail: string }
+    description?: string
+  }
+}
+
+function mapVolume(volume: GoogleVolume): Book {
   return {
     id: volume.id,
     title: volume.volumeInfo.title,
     author: volume.volumeInfo.authors
       ? volume.volumeInfo.authors.join(", ")
       : "N/A",
-    allPages: volume.volumeInfo.pageCount ? volume.volumeInfo.pageCount : "N/A",
+    allPages: volume.volumeInfo.pageCount ?? "N/A",
     currentPage: 1,
-    imageURL: volume.volumeInfo.imageLinks
-      ? volume.volumeInfo.imageLinks.thumbnail
-      : "../images/mybookbag-image-cover-sample-01.jpg",
-    description: volume.volumeInfo.description
-      ? volume.volumeInfo.description
-      : false,
+    imageURL: volume.volumeInfo.imageLinks?.thumbnail
+      ?? "../images/mybookbag-image-cover-sample-01.jpg",
+    description: volume.volumeInfo.description ?? false,
     status: "onRead",
   }
 }
@@ -26,12 +35,12 @@ function mapVolume(volume) {
 export default function useSearch() {
   const [searchInputValue, setSearchInputValue] = useState("")
   const [startIndex, setStartIndex] = useState(0)
-  const [searchBooks, setSearchBooks] = useState([])
+  const [searchBooks, setSearchBooks] = useState<Book[]>([])
   const [totalSearchItems, setTotalSearchItems] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [searchError, setSearchError] = useState(null)
+  const [searchError, setSearchError] = useState<string | null>(null)
 
-  function handleGetSearchInputValue(inputValue) {
+  function handleGetSearchInputValue(inputValue: string) {
     setSearchInputValue(inputValue)
     setStartIndex(0)
   }
@@ -60,7 +69,7 @@ export default function useSearch() {
     setLoading(true)
     setSearchError(null)
     const controller = new AbortController()
-    const params = {
+    const params: Record<string, string | number> = {
       q: searchInputValue,
       printType: "books",
       startIndex,
@@ -77,13 +86,14 @@ export default function useSearch() {
         setLoading(false)
         if (!res.data.items) return
         setTotalSearchItems(res.data.totalItems)
-        setSearchBooks(res.data.items.map(mapVolume))
+        setSearchBooks((res.data.items as GoogleVolume[]).map(mapVolume))
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (axios.isCancel(err)) return
         setLoading(false)
+        const status = axios.isAxiosError(err) ? err.response?.status : null
         setSearchError(
-          err.response?.status === 429
+          status === 429
             ? "Too many requests — please add a Google Books API key or wait a moment."
             : "Something went wrong. Please try again."
         )
