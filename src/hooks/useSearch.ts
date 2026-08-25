@@ -88,7 +88,9 @@ export default function useSearch() {
         const status = axios.isAxiosError(err) ? err.response?.status : null
         setSearchError(
           status === 429
-            ? "Too many requests — please add a Google Books API key or wait a moment."
+            ? "Too many requests — please wait a moment and try again."
+            : status === 503
+            ? "Search is temporarily unavailable. Please try again in a few seconds."
             : "Something went wrong. Please try again."
         )
       })

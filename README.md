@@ -68,7 +68,7 @@ Search for any book by title or author. Results come from the Google Books API. 
 
 Click a book on your shelf to move it into your reading bag. From the bag you can move it back to the shelf at any time.
 
-![My Book In Bag](./public/images/my-book-in-bag.jpg)
+![My Book Bag Add](./public/images/my-book-bag-add.jpg)
 
 ### Track reading progress
 

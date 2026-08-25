@@ -144,7 +144,7 @@ describe("useSearch", () => {
     })
     await waitFor(() => {
       expect(result.current.searchError).toBe(
-        "Too many requests — please add a Google Books API key or wait a moment."
+        "Too many requests — please wait a moment and try again."
       )
     })
   })
