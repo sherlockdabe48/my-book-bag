@@ -62,7 +62,7 @@ Search for any book by title or author. Results come from the Google Books API. 
 
 Click a book on your shelf to move it into your reading bag. From the bag you can move it back to the shelf at any time.
 
-![My Book Bag Add](./public/images/my-book-bag-add.jpg)
+![My Book Bag Add](./public/images/my-book-in-bag.jpg)
 
 ### Track reading progress
 
@@ -122,4 +122,4 @@ npm test
 
 ---
 
-*v2.0 redesign (2026) — built with [IBM Bob](https://www.ibm.com/) · [Adélier Classics](https://github.com/sherlockdabe48)*
+*v2.0 redesign (2026) — built with [IBM Bob](https://www.ibm.com/) · [Adélier Classics](https://www.adelierclassics.com)*
