@@ -74,3 +74,10 @@
 
 
 
+
+.search-page__error {
+    text-align: center;
+    padding: 40px 20px;
+    color: #c0392b;
+    font-size: 15px;
+}

@@ -8,8 +8,8 @@ export default function SearchPage({
   loading,
   startIndex,
   totalSearchItems,
-  shelfBooks
-
+  shelfBooks,
+  searchError,
 }) {
   const { handleClearSearchInputValue } = useContext(searchBookContext)
 
@@ -28,14 +28,17 @@ export default function SearchPage({
               &times;
             </button>
           </div>
+          {searchError ? (
+            <p className="search-page__error">{searchError}</p>
+          ) : (
           <SearchBookList
             loading={loading}
             searchBooks={searchBooks}
             startIndex={startIndex}
             totalSearchItems={totalSearchItems}
             shelfBooks={shelfBooks}
-
           />
+          )}
 
           {totalSearchItems > 20 && (
             <div className="search-page__close-btn-container ">
