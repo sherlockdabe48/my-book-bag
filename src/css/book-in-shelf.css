@@ -211,27 +211,45 @@
 
     .book-in-shelf__cover-wrapper {
         width: 100%;
-        height: 280px; /* tall enough for the edit overlay */
+        height: 0;
+        padding-bottom: 150%;  /* 2:3 aspect ratio */
     }
 
     .book-image-in-shelf {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
-        position: static;
     }
 
-    /* Slightly smaller text in overlay so buttons fit on narrow cards */
-    .book-in-shelf__edit-btn {
+    /* Compact overlay to fit within narrow 2-column cards */
+    .book-in-shelf__overlay {
+        gap: 4px;
+        padding: 8px 6px;
+    }
+
+    .book-in-shelf__overlay-btn {
         font-size: 0.7rem;
         padding: 5px 0;
     }
 
-    .book-in-shelf__edit-overlay-label {
-        font-size: 0.65rem;
+    .book-in-shelf__edit-overlay {
+        gap: 4px;
+        padding: 8px 6px;
     }
 
-    .book-in-shelf__overlay-btn {
-        font-size: 0.72rem;
-        padding: 6px 0;
+    .book-in-shelf__edit-overlay-label {
+        font-size: 0.62rem;
+        margin-bottom: 1px;
+    }
+
+    .book-in-shelf__edit-btn {
+        font-size: 0.68rem;
+        padding: 5px 0;
+    }
+
+    .book-in-shelf__edit-input {
+        font-size: 0.7rem;
+        padding: 4px 5px;
     }
 }
