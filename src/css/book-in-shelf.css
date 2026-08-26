@@ -29,7 +29,7 @@
 /* ── Overlay panel ────────────────────────────────── */
 .book-in-shelf__overlay {
     position: absolute;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -95,7 +95,7 @@
 /* ── Edit overlay (inside cover-wrapper) ─────────── */
 .book-in-shelf__edit-overlay {
     position: absolute;
-    inset: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -217,7 +217,7 @@
 
     .book-image-in-shelf {
         position: absolute;
-        inset: 0;
+        top: 0; right: 0; bottom: 0; left: 0;
         width: 100%;
         height: 100%;
     }

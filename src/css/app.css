@@ -11,8 +11,9 @@
 @import 'mobile-search-box.css';
 @import 'search-book.css';
 
-*,*::before, *::after{
+*, *::before, *::after {
     font-family: Rubik, sans-serif;
+    box-sizing: border-box;
 }
 
 body {
@@ -23,11 +24,15 @@ body {
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
+    /* Safari: clamp body to viewport width */
+    max-width: 100%;
 }
 
 html {
     font-size: 18px;
     overflow-x: hidden;
+    /* Safari: prevent html itself from expanding beyond viewport */
+    max-width: 100%;
 }
 
 .mr-1 {
