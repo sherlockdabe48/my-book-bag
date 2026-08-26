@@ -211,14 +211,27 @@
 
     .book-in-shelf__cover-wrapper {
         width: 100%;
-        height: 0;
-        padding-bottom: 150%;  /* 2:3 aspect ratio */
+        height: 280px; /* tall enough for the edit overlay */
     }
 
     .book-image-in-shelf {
-        position: absolute;
-        inset: 0;
         width: 100%;
         height: 100%;
+        position: static;
+    }
+
+    /* Slightly smaller text in overlay so buttons fit on narrow cards */
+    .book-in-shelf__edit-btn {
+        font-size: 0.7rem;
+        padding: 5px 0;
+    }
+
+    .book-in-shelf__edit-overlay-label {
+        font-size: 0.65rem;
+    }
+
+    .book-in-shelf__overlay-btn {
+        font-size: 0.72rem;
+        padding: 6px 0;
     }
 }
