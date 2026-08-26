@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react"
 import { searchBookContext } from "./App"
+import "../css/header.css"
 
 interface HeaderProps {
   inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
@@ -44,7 +45,6 @@ export default function Header({ inputRef }: HeaderProps) {
           />
         </form>
       </div>
-
     </div>
   )
 }

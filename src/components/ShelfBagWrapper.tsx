@@ -18,14 +18,12 @@ export default function ShelfBagWrapper({
 }: ShelfBagWrapperProps) {
   return (
     <div className="shelf-bag-wrapper">
-      {bagBooks.length > 0 && <Bag bagBooks={bagBooks} />}
-      {shelfBooks.length > 0 && (
-        <Shelf
-          shelfBooks={shelfBooks}
-          shelfHighLight={shelfHighLight}
-          inputRef={inputRef}
-        />
-      )}
+      <Bag bagBooks={bagBooks} />
+      <Shelf
+        shelfBooks={shelfBooks}
+        shelfHighLight={shelfHighLight}
+        inputRef={inputRef}
+      />
     </div>
   )
 }

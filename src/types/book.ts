@@ -7,5 +7,8 @@ export interface Book {
   imageURL: string
   description: string | false
   isbn: string | false
-  status: "onRead" | "finish"
+  status: "onRead" | "reading" | "finish"
+  note: string
+  recommendedBy: string
+  lastReadAt: string   // ISO date string, e.g. "2026-01-15", or "" if never
 }

@@ -30,7 +30,14 @@ export default function SearchPage({
   return (
     <div>
       <div className="search-page__header">
-        <h2 className="search-page__header-title">looking for: {searchInputValue}</h2>
+        <div className="search-page__header-meta">
+          <h2 className="search-page__header-title">looking for: {searchInputValue}</h2>
+          {!loading && !searchError && (
+            <span className="search-page__header-count">
+              {searchBooks.length} result{searchBooks.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
         <button
           className="search-page__close-btn"
           onClick={handleClearSearchInputValue}

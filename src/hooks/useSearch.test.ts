@@ -206,6 +206,9 @@ function makeBook(overrides: Partial<SearchBook> = {}): SearchBook {
     description: false,
     isbn: false,
     status: "onRead",
+    note: "",
+    recommendedBy: "",
+    lastReadAt: "",
     ...overrides,
   }
 }

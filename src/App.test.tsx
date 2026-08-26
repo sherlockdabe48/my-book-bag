@@ -34,6 +34,9 @@ describe("BookInBag", () => {
     description: false as const,
     isbn: false as const,
     status: "onRead" as const,
+    note: "",
+    recommendedBy: "",
+    lastReadAt: "",
   }
 
   beforeEach(() => {
@@ -49,9 +52,9 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn() }}
+        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
       >
-        <BookInBag {...baseProps} />
+        <BookInBag {...baseProps} isActive={false} />
       </bookBagContext.Provider>
     )
 
@@ -69,13 +72,15 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn() }}
+        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
       >
-        <BookInBag {...baseProps} currentPage={300} />
+        <BookInBag {...baseProps} currentPage={300} isActive={true} />
       </bookBagContext.Provider>
     )
 
     fireEvent.click(screen.getByText("Read Again"))
+    // confirm prompt appears — click the confirm button
+    fireEvent.click(screen.getByText("Yes, reset"))
 
     expect(handleBagBookProgressChange).toHaveBeenCalledWith("book-1", 1)
     expect(window.alert).not.toHaveBeenCalled()

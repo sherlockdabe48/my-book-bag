@@ -2,6 +2,7 @@
     text-align: center;
     padding-top: 10px;
     width: 150px;
+    /* height is now just the cover — no text below */
 }
 
 /* ── Cover + overlay wrapper ──────────────────────── */
@@ -33,9 +34,9 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    gap: 6px;
-    padding: 10px 8px;
-    background: linear-gradient(to top, rgba(0,0,0,0.72) 60%, transparent 100%);
+    gap: 4px;
+    padding: 8px 8px 10px;
+    background: rgba(0,0,0,0.52);
     opacity: 0;
     transition: opacity 0.2s ease;
 }
@@ -190,17 +191,93 @@
 
 .book-in-shelf__edit-dont-show input { cursor: pointer; accent-color: #f5f0e8; }
 
-/* ── Title ────────────────────────────────────────── */
-.book-in-shelf__title {
-    margin-top: 6px;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 0.8rem;
-    line-height: 1.3;
-    color: #1f2328;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+/* ── Status badges (top-left corner of overlay) ──── */
+.book-in-shelf__read-badge,
+.book-in-shelf__reading-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 10px;
+    padding: 2px 7px;
+}
+
+.book-in-shelf__read-badge {
+    color: #d1fae5;
+    background-color: rgba(16, 100, 50, 0.75);
+    border: 1px solid rgba(167, 243, 192, 0.5);
+}
+
+.book-in-shelf__reading-badge {
+    color: #fef3c7;
+    background-color: rgba(120, 80, 0, 0.75);
+    border: 1px solid rgba(253, 230, 138, 0.5);
+}
+
+/* ── Note textarea (shelf edit overlay) ───────────── */
+.book-in-shelf__edit-overlay--note {
+    justify-content: flex-start;
+    padding-top: 14px;
+    gap: 6px;
+}
+
+.book-in-shelf__edit-textarea {
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+.book-in-shelf__edit-textarea::placeholder { color: rgba(255,255,255,0.4); }
+.book-in-shelf__edit-textarea:focus { border-color: rgba(255,255,255,0.7); }
+
+/* ── Title + author block inside overlay ─────────── */
+.book-in-shelf__overlay-title,
+.book-in-shelf__overlay-author {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: 0 10px;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    pointer-events: none;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.book-in-shelf__overlay-title {
+    top: 33%;
+    transform: translateY(-100%);
+    margin: 0 0 3px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #ffffff;
+    -webkit-line-clamp: 3;
+}
+
+.book-in-shelf__overlay-author {
+    top: 33%;
+    transform: translateY(0%);
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: rgba(255,255,255,0.75);
+    -webkit-line-clamp: 1;
 }
 
 /* ── Mobile ───────────────────────────────────────── */
@@ -224,8 +301,8 @@
 
     /* Compact overlay to fit within narrow 2-column cards */
     .book-in-shelf__overlay {
-        gap: 4px;
-        padding: 8px 6px;
+        gap: 3px;
+        padding: 6px 6px 8px;
     }
 
     .book-in-shelf__overlay-btn {

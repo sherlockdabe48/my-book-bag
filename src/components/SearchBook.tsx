@@ -52,11 +52,12 @@ export default function SearchBook({
               + Add to Shelf
             </button>
           ) : (
-            <a href="#in-my-shelf">
-              <button className="btn btn--normal search-book__btn">
-                ✓ In Shelf
-              </button>
-            </a>
+            <button
+              className="btn btn--normal search-book__btn"
+              onClick={() => document.getElementById("in-my-shelf")?.scrollIntoView({ behavior: "smooth" })}
+            >
+              ✓ In Shelf
+            </button>
           )}
         </div>
       </div>

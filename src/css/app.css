@@ -21,8 +21,6 @@ body {
     margin: 0;
     background-color: #f6f6f6;
     color: #515151;
-    justify-content: center;
-    align-items: center;
     overflow-x: hidden;
     /* Safari: clamp body to viewport width */
     max-width: 100%;
@@ -68,6 +66,8 @@ html {
 }
 
 .app-footer {
+    position: sticky;
+    bottom: 0;
     margin-top: 60px;
     padding: 16px 40px;
     border-top: 1px solid #e5e7eb;
@@ -80,7 +80,6 @@ html {
 @media (max-width: 600px) {
     .app-footer {
         padding: 16px;
-        margin-top: 40px;
     }
 }
 

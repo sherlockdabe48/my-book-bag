@@ -12,6 +12,9 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   description: false,
   isbn: false,
   status: "onRead",
+  note: "",
+  recommendedBy: "",
+  lastReadAt: "",
   ...overrides,
 })
 

@@ -82,6 +82,9 @@ function mapDoc(doc: OpenLibraryDoc): SearchBook {
     description,
     isbn:        extractIsbn(doc),
     status:      "onRead",
+    note:        "",
+    recommendedBy: "",
+    lastReadAt:  "",
   }
 }
 
@@ -110,13 +113,13 @@ export default function useSearch() {
   const queryRef      = useRef(searchInputValue)
   queryRef.current    = searchInputValue
 
-  function handleGetSearchInputValue(inputValue: string) {
+  const handleGetSearchInputValue = useCallback((inputValue: string) => {
     setSearchInputValue(inputValue)
-  }
+  }, [])
 
-  function handleClearSearchInputValue() {
+  const handleClearSearchInputValue = useCallback(() => {
     setSearchInputValue("")
-  }
+  }, [])
 
   // Initial fetch — fires when the query changes
   useEffect(() => {

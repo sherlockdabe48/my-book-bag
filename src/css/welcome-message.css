@@ -14,7 +14,6 @@
     font-family: 'Lora', Georgia, serif;
     font-size: 1.5rem;
     font-weight: 600;
-    margin-top: -100px;
 }
 
 @media (max-width: 600px) {
@@ -36,19 +35,49 @@
 
 .welcome-message__tip-wrapper {
     display: flex;
-    flex-direction: column;
-
     justify-content: center;
-    text-align: center;
-    align-items: center;
-    padding: 0;
+    margin-top: 24px;
 }
 
-.welcome-message__tip-list{
- 
-    max-width: 400px;
-    text-align: start;
+.welcome-message__steps {
+    list-style: none;
+    padding: 0;
     margin: 0;
-    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    counter-reset: steps;
+}
+
+.welcome-message__steps li {
+    counter-increment: steps;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: #515151;
+    line-height: 1.5;
+}
+
+.welcome-message__steps li strong {
+    white-space: nowrap;
+    margin: 0;
+}
+
+.welcome-message__steps li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-top: 2px; /* optical alignment with first line of text */
+    border-radius: 50%;
+    background-color: #f5f0e8;
+    border: 1px solid #d9d2c5;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #2f2f2f;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 

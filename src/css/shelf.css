@@ -1,8 +1,47 @@
+.shelf-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 24px;
+    text-align: center;
+}
+
+.shelf-empty__icon {
+    width: 48px;
+    height: 48px;
+    color: #d1d5db;
+    margin-bottom: 4px;
+}
+
+.shelf-empty__heading {
+    margin: 0;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f2328;
+}
+
+.shelf-empty__sub {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #57606a;
+}
+
+.shelf-container .btn--container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
 .shelf-container {
     background-color: white;
     padding: 40px;
     transition: all 0.2s;
     border-radius: 10px;
+    overflow: hidden;
+    min-width: 0;
 }
 
 .shelf-container:hover{
@@ -18,21 +57,15 @@
 
 .shelf-book-list__grid {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, 150px);
     row-gap: 10px;
     column-gap: 10px;
     justify-content: center;
 }
 
-@media (max-width: 1080px) {
-    .shelf-book-list__grid {
-        grid-template-columns: repeat(3, auto);
-    }
-}
-
 @media (max-width: 780px) {
     .shelf-book-list__grid {
-        grid-template-columns: repeat(2, auto);
+        grid-template-columns: repeat(2, 150px);
     }
 }
 

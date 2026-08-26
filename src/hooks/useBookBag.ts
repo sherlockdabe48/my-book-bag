@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { Book } from "../types/book"
 
 const BAG_BOOKS_KEY   = "myBookBag.bagBooks"
@@ -72,8 +72,9 @@ function attachCovers(books: Book[], covers: Record<string, string>): Book[] {
 export default function useBookBag(searchBooks: Book[]) {
   const [bagBooks, setBagBooks]     = useState<Book[]>([])
   const [shelfBooks, setShelfBooks] = useState<Book[]>([])
-  const [selectedBookId, setSelectedBookId] = useState<string | undefined>()
   const [shelfHighLight, setShelfHighLight] = useState(false)
+  // Tracks whether the initial localStorage load has completed
+  const loadedRef = useRef(false)
 
   // ── Load from localStorage on mount ─────────────────────
   useEffect(() => {
@@ -82,10 +83,15 @@ export default function useBookBag(searchBooks: Book[]) {
     const shelfJson = localStorage.getItem(SHELF_BOOKS_KEY)
     if (bagJson)   setBagBooks(attachCovers(JSON.parse(bagJson) as Book[], covers))
     if (shelfJson) setShelfBooks(attachCovers(JSON.parse(shelfJson) as Book[], covers))
+    loadedRef.current = true
   }, [])
 
   // ── Persist to localStorage on every change ─────────────
+  // Skip the first render — state is still the empty initial value at that
+  // point and would overwrite the data we just read from localStorage.
   useEffect(() => {
+    if (!loadedRef.current) return
+
     // Save books without imageURL (covers saved separately)
     safeSet(BAG_BOOKS_KEY,   JSON.stringify(bagBooks.map(stripCover)))
     safeSet(SHELF_BOOKS_KEY, JSON.stringify(shelfBooks.map(stripCover)))
@@ -99,60 +105,110 @@ export default function useBookBag(searchBooks: Book[]) {
   }, [bagBooks, shelfBooks])
 
   // ── Actions ─────────────────────────────────────────────
-  function handleActiveShelfHighLight() {
+  const handleActiveShelfHighLight = useCallback(() => {
     setShelfHighLight(true)
     setTimeout(() => setShelfHighLight(false), 1500)
-  }
+  }, [])
 
-  function handleAddToBagFromShelf(id: string) {
-    const book = shelfBooks.find((b) => b.id === id)
-    if (!book) return
-    setSelectedBookId(id)
-    setBagBooks([...bagBooks, book])
-    setShelfBooks(shelfBooks.filter((b) => b.id !== id))
-  }
+  const handleAddToBagFromShelf = useCallback((id: string) => {
+    setShelfBooks((shelf) => {
+      const book = shelf.find((b) => b.id === id)
+      if (!book) return shelf
+      setBagBooks((bag) => [...bag, book])
+      return shelf.filter((b) => b.id !== id)
+    })
+  }, [])
 
-  function handleBookSelect(id: string) { setSelectedBookId(id) }
+  const handleBookSelect = useCallback((_id: string) => {
+    // selection tracking removed — kept for API compatibility
+  }, [])
 
-  function handleMoveToShelfFromSearch(id: string) {
+  const handleMoveToShelfFromSearch = useCallback((id: string) => {
     const book = searchBooks.find((b) => b.id === id)
-    if (!book || shelfBooks.some((b) => b.id === id)) return
-    setSelectedBookId(id)
-    setShelfBooks([...shelfBooks, book])
-  }
-
-  function handleMoveToShelfFromBag(id: string) {
-    const book = bagBooks.find((b) => b.id === id)
     if (!book) return
-    setSelectedBookId(id)
-    setShelfBooks([...shelfBooks, book])
-    setBagBooks(bagBooks.filter((b) => b.id !== id))
-  }
+    setShelfBooks((shelf) => {
+      if (shelf.some((b) => b.id === id)) return shelf
+      return [...shelf, book]
+    })
+  }, [searchBooks])
 
-  function handleBagBookProgressChange(id: string, currentPage: number) {
-    setBagBooks(bagBooks.map((b) => (b.id !== id ? b : { ...b, currentPage })))
-  }
+  const handleMoveToShelfFromBag = useCallback((id: string, note?: string) => {
+    setBagBooks((bag) => {
+      const book = bag.find((b) => b.id === id)
+      if (!book) return bag
+      const isFinished = Number(book.currentPage) === Number(book.allPages)
+      const isStarted  = Number(book.currentPage) > 1
+      const updated: Book = {
+        ...book,
+        status: isFinished ? "finish" : isStarted ? "reading" : book.status,
+        note: note ?? book.note,
+      }
+      setShelfBooks((shelf) => [...shelf, updated])
+      return bag.filter((b) => b.id !== id)
+    })
+  }, [])
 
-  function handleBookDeleteFromShelf(id: string) {
-    if (selectedBookId === id) setSelectedBookId(undefined)
-    setShelfBooks(shelfBooks.filter((b) => b.id !== id))
-  }
+  const handleBagBookProgressChange = useCallback((id: string, currentPage: number) => {
+    const today = new Date().toISOString().slice(0, 10)
+    setBagBooks((bag) => {
+      const updated = bag.map((b) => (b.id !== id ? b : { ...b, currentPage, lastReadAt: today }))
+      // Float the just-read book to the top
+      const idx = updated.findIndex((b) => b.id === id)
+      if (idx > 0) {
+        const [book] = updated.splice(idx, 1)
+        updated.unshift(book)
+      }
+      return updated
+    })
+  }, [])
 
-  function handleBookChangeCover(id: string, imageURL: string) {
-    setShelfBooks(shelfBooks.map((b) => (b.id !== id ? b : { ...b, imageURL })))
-  }
+  const handleLogReadingSession = useCallback((id: string) => {
+    const today = new Date().toISOString().slice(0, 10)
+    setBagBooks((bag) => {
+      const updated = bag.map((b) => (b.id !== id ? b : { ...b, lastReadAt: today }))
+      const idx = updated.findIndex((b) => b.id === id)
+      if (idx > 0) {
+        const [book] = updated.splice(idx, 1)
+        updated.unshift(book)
+      }
+      return updated
+    })
+  }, [])
 
-  function handleBookChangePages(id: string, allPages: number) {
-    setShelfBooks(shelfBooks.map((b) => (b.id !== id ? b : { ...b, allPages })))
-  }
+  const handleBookDeleteFromShelf = useCallback((id: string) => {
+    setShelfBooks((shelf) => shelf.filter((b) => b.id !== id))
+  }, [])
 
-  function handleBookChangeTitle(id: string, title: string) {
-    setShelfBooks(shelfBooks.map((b) => (b.id !== id ? b : { ...b, title })))
-  }
+  const handleBookChangeCover = useCallback((id: string, imageURL: string) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, imageURL })))
+  }, [])
 
-  function handleBookChangeAuthor(id: string, author: string) {
-    setShelfBooks(shelfBooks.map((b) => (b.id !== id ? b : { ...b, author })))
-  }
+  const handleBookChangePages = useCallback((id: string, allPages: number) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, allPages })))
+  }, [])
+
+  const handleBookChangeTitle = useCallback((id: string, title: string) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, title })))
+  }, [])
+
+  const handleBookChangeAuthor = useCallback((id: string, author: string) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, author })))
+  }, [])
+
+  const handleBookChangeNote = useCallback((id: string, note: string) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, note })))
+  }, [])
+
+  const handleBookChangeRecommendedBy = useCallback((id: string, recommendedBy: string) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, recommendedBy })))
+  }, [])
+
+  const handleAddManualBook = useCallback((book: Book) => {
+    setShelfBooks((shelf) => {
+      if (shelf.some((b) => b.id === book.id)) return shelf
+      return [...shelf, book]
+    })
+  }, [])
 
   return {
     bagBooks,
@@ -169,5 +225,9 @@ export default function useBookBag(searchBooks: Book[]) {
     handleBookChangePages,
     handleBookChangeTitle,
     handleBookChangeAuthor,
+    handleBookChangeNote,
+    handleBookChangeRecommendedBy,
+    handleLogReadingSession,
+    handleAddManualBook,
   }
 }

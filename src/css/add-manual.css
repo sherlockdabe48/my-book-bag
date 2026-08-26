@@ -1,0 +1,94 @@
+/* ── overlay ────────────────────────────────────────────────────── */
+.add-manual__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* ── card ───────────────────────────────────────────────────────── */
+.add-manual__card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 32px 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+/* ── headings ───────────────────────────────────────────────────── */
+.add-manual__heading {
+  margin: 0 0 4px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1f2328;
+}
+
+.add-manual__sub {
+  margin: 0 0 20px;
+  font-size: 0.85rem;
+  color: #57606a;
+}
+
+/* ── form elements ──────────────────────────────────────────────── */
+.add-manual__form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.add-manual__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1f2328;
+  margin-top: 8px;
+}
+
+.add-manual__optional {
+  font-weight: 400;
+  color: #57606a;
+}
+
+.add-manual__input {
+  padding: 8px 10px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1f2328;
+  background: #f6f8fa;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.add-manual__input:focus {
+  outline: none;
+  border-color: #3b82d4;
+  background: #ffffff;
+}
+
+/* ── error ──────────────────────────────────────────────────────── */
+.add-manual__error {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: #cf222e;
+}
+
+/* ── actions ────────────────────────────────────────────────────── */
+.add-manual__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* ── mobile ─────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .add-manual__card {
+    padding: 24px 18px 20px;
+  }
+}

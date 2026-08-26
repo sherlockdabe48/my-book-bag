@@ -2,14 +2,13 @@
 export default function WelcomeMessage() {
   return (
     <div className="welcome-message__container">
-      <h1 className="welcome-message__topic">What you will read today?</h1>
+      <h1 className="welcome-message__topic">What will you read today?</h1>
       <div className="welcome-message__tip-wrapper">
-        <div className="welcome-message__tip-list">
-          <h4>Get Start :</h4>
-          <p>1. Search your first book.</p>
-          <p>2. Add the book to your "Shelf".</p>
-          <p>3. Add the book you wanna read to "Bag"</p>
-        </div>
+        <ol className="welcome-message__steps">
+          <li>Search for a book you love</li>
+          <li>Save it to your<strong> Shelf</strong></li>
+          <li>Move it to your<strong> Bag</strong> to start reading</li>
+        </ol>
       </div>
     </div>
   )
