@@ -29,8 +29,10 @@ describe("useBookBag", () => {
   test("loads persisted books from localStorage on mount", () => {
     const shelf = [makeBook("s1")]
     const bag = [makeBook("b1")]
-    localStorage.setItem("myBookBag.shelfBooks", JSON.stringify(shelf))
-    localStorage.setItem("myBookBag.bagBooks", JSON.stringify(bag))
+    const covers = { s1: "cover.jpg", b1: "cover.jpg" }
+    localStorage.setItem("myBookBag.shelfBooks", JSON.stringify(shelf.map((b) => ({ ...b, imageURL: "" }))))
+    localStorage.setItem("myBookBag.bagBooks", JSON.stringify(bag.map((b) => ({ ...b, imageURL: "" }))))
+    localStorage.setItem("myBookBag.covers", JSON.stringify(covers))
 
     const { result } = renderHook(() => useBookBag([]))
     expect(result.current.shelfBooks).toEqual(shelf)
@@ -43,7 +45,12 @@ describe("useBookBag", () => {
 
     act(() => result.current.handleMoveToShelfFromSearch("s1"))
 
-    expect(JSON.parse(localStorage.getItem("myBookBag.shelfBooks")!)).toEqual([book])
+    // Books are stored without imageURL (covers stored separately)
+    const storedShelf = JSON.parse(localStorage.getItem("myBookBag.shelfBooks")!)
+    expect(storedShelf).toEqual([{ ...book, imageURL: "" }])
+    // Cover is stored in the covers map
+    const storedCovers = JSON.parse(localStorage.getItem("myBookBag.covers")!)
+    expect(storedCovers["s1"]).toBe("cover.jpg")
   })
 
   test("handleMoveToShelfFromSearch adds book to shelf", () => {
