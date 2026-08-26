@@ -1,38 +1,36 @@
 import { useContext } from "react"
 import SearchBookList from "./SearchBookList"
 import { searchBookContext } from "./App"
+import type { SearchBook } from "../hooks/useSearch"
 import type { Book } from "../types/book"
 
 interface SearchPageProps {
   searchInputValue: string
-  searchBooks: Book[]
+  searchBooks: SearchBook[]
   loading: boolean
-  startIndex: number
-  totalSearchItems: number
+  loadingMore: boolean
+  hasMore: boolean
   shelfBooks: Book[]
   searchError: string | null
+  onLoadMore: () => void
 }
 
 export default function SearchPage({
   searchInputValue,
   searchBooks,
   loading,
-  startIndex,
-  totalSearchItems,
+  loadingMore,
+  hasMore,
   shelfBooks,
   searchError,
+  onLoadMore,
 }: SearchPageProps) {
   const { handleClearSearchInputValue } = useContext(searchBookContext)
 
   return (
     <div>
       <div className="search-page__header">
-        <div className="search-page__header-meta">
-          <h2 className="search-page__header-title">{searchInputValue}</h2>
-          {totalSearchItems > 0 && (
-            <span className="search-page__header-count">{totalSearchItems} results</span>
-          )}
-        </div>
+        <h2 className="search-page__header-title">looking for: {searchInputValue}</h2>
         <button
           className="search-page__close-btn"
           onClick={handleClearSearchInputValue}
@@ -52,10 +50,11 @@ export default function SearchPage({
         ) : (
           <SearchBookList
             loading={loading}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
             searchBooks={searchBooks}
-            startIndex={startIndex}
-            totalSearchItems={totalSearchItems}
             shelfBooks={shelfBooks}
+            onLoadMore={onLoadMore}
           />
         )}
       </div>

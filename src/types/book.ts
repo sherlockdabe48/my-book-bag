@@ -6,5 +6,6 @@ export interface Book {
   currentPage: number
   imageURL: string
   description: string | false
+  isbn: string | false
   status: "onRead" | "finish"
 }

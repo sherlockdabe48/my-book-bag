@@ -9,7 +9,7 @@ describe("Header", () => {
     const inputRef = { current: [] as (HTMLInputElement | null)[] }
 
     render(
-      <searchBookContext.Provider value={{ handleGetSearchInputValue, handleClearSearchInputValue: jest.fn(), handleNextPageInSearchBook: jest.fn(), handlePrevPageInSearchBook: jest.fn(), handleMoveToShelfFromSearch: jest.fn() }}>
+      <searchBookContext.Provider value={{ handleGetSearchInputValue, handleClearSearchInputValue: jest.fn(), handleMoveToShelfFromSearch: jest.fn() }}>
         <Header inputRef={inputRef} />
       </searchBookContext.Provider>
     )
@@ -32,6 +32,7 @@ describe("BookInBag", () => {
     allPages: 300,
     imageURL: "cover.jpg",
     description: false as const,
+    isbn: false as const,
     status: "onRead" as const,
   }
 

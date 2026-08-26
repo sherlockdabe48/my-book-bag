@@ -71,6 +71,16 @@
     background-color: #ede6d8;
 }
 
+.book-in-shelf__overlay-btn--cover {
+    background-color: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.book-in-shelf__overlay-btn--cover:hover {
+    background-color: rgba(255,255,255,0.28);
+}
+
 .book-in-shelf__overlay-btn--remove {
     background-color: rgba(255,255,255,0.15);
     color: white;
@@ -81,6 +91,104 @@
     background-color: rgba(220,38,38,0.75);
     border-color: transparent;
 }
+
+/* ── Edit overlay (inside cover-wrapper) ─────────── */
+.book-in-shelf__edit-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 8px;
+    background: rgba(0, 0, 0, 0.82);
+    overflow-y: auto;
+}
+
+.book-in-shelf__edit-overlay-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    margin: 0 0 2px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.book-in-shelf__edit-input {
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 5px 6px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.book-in-shelf__edit-input::placeholder { color: rgba(255,255,255,0.4); }
+.book-in-shelf__edit-input:focus { border-color: rgba(255,255,255,0.7); }
+
+.book-in-shelf__edit-btn {
+    width: 100%;
+    padding: 6px 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.book-in-shelf__edit-btn--save {
+    background-color: #f5f0e8;
+    color: #2f2f2f;
+}
+
+.book-in-shelf__edit-btn--save:hover { background-color: #ede6d8; }
+
+.book-in-shelf__edit-btn--light {
+    background-color: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+}
+
+.book-in-shelf__edit-btn--light:hover { background-color: rgba(255,255,255,0.28); }
+
+.book-in-shelf__edit-btn--cancel {
+    background-color: transparent;
+    color: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.book-in-shelf__edit-btn--cancel:hover { background-color: rgba(255,255,255,0.1); }
+
+.book-in-shelf__edit-btn--remove {
+    background-color: rgba(220, 38, 38, 0.85);
+    color: #fff;
+}
+
+.book-in-shelf__edit-btn--remove:hover { background-color: rgba(185, 28, 28, 0.95); }
+
+.book-in-shelf__edit-overlay-body {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.book-in-shelf__edit-dont-show {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    margin-top: 2px;
+    justify-content: center;
+}
+
+.book-in-shelf__edit-dont-show input { cursor: pointer; accent-color: #f5f0e8; }
 
 /* ── Title ────────────────────────────────────────── */
 .book-in-shelf__title {

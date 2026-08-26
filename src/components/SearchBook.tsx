@@ -1,18 +1,21 @@
 import { useContext } from "react"
 import { searchBookContext } from "./App"
+import type { SearchBook } from "../hooks/useSearch"
 import type { Book } from "../types/book"
 
-interface SearchBookProps extends Book {
+interface SearchBookProps extends SearchBook {
   shelfBooks: Book[]
 }
 
 export default function SearchBook({
   id,
   title,
+  subtitle,
   author,
   description,
   allPages,
   imageURL,
+  isbn,
   shelfBooks,
 }: SearchBookProps) {
   const { handleMoveToShelfFromSearch } = useContext(searchBookContext)
@@ -27,14 +30,20 @@ export default function SearchBook({
       />
       <div className="search-book__details">
         <div className="search-book__meta">
-          <h3 className="search-book__title">{title}</h3>
+          <h3 className="search-book__title">
+            {title}
+            {subtitle && <span className="search-book__subtitle">: {subtitle}</span>}
+          </h3>
           <p className="search-book__author">{author}</p>
+          {isbn && <p className="search-book__isbn">ISBN {isbn}</p>}
           {description && (
             <p className="search-book__description">{description}</p>
           )}
         </div>
         <div className="search-book__footer">
-          <span className="search-book__pages">{allPages === "N/A" ? "Pages unknown" : `${allPages} pages`}</span>
+          <span className="search-book__pages">
+            {allPages === "N/A" ? "Pages unknown" : `${allPages} pages`}
+          </span>
           {!isAlreadyAdded ? (
             <button
               className="btn btn--primary search-book__btn"

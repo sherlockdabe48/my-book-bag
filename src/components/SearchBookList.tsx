@@ -1,32 +1,40 @@
-import { useContext } from "react"
+import { useEffect, useState } from "react"
 import SearchBook from "./SearchBook"
-import { searchBookContext } from "./App"
+import type { SearchBook as SearchBookType } from "../hooks/useSearch"
 import type { Book } from "../types/book"
 
 interface SearchBookListProps {
-  searchBooks: Book[]
+  searchBooks: SearchBookType[]
   loading: boolean
-  startIndex: number
-  totalSearchItems: number
+  loadingMore: boolean
+  hasMore: boolean
   shelfBooks: Book[]
+  onLoadMore: () => void
 }
 
 export default function SearchBookList({
   searchBooks,
   loading,
-  startIndex,
-  totalSearchItems,
+  loadingMore,
+  hasMore,
   shelfBooks,
+  onLoadMore,
 }: SearchBookListProps) {
-  const { handleNextPageInSearchBook, handlePrevPageInSearchBook } = useContext(searchBookContext)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
+  useEffect(() => {
+    function onScroll() {
+      setShowBackToTop(window.scrollY > 400)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   if (loading) return <div className="search-book-list__spinner" aria-label="Loading" />
 
   if (!loading && searchBooks.length === 0) {
     return <p className="search-book-list__empty">No results found. Try a different search.</p>
   }
-
-  const hasNextPage = startIndex + 20 < totalSearchItems
 
   return (
     <>
@@ -35,24 +43,26 @@ export default function SearchBookList({
           <SearchBook key={searchBook.id} {...searchBook} shelfBooks={shelfBooks} />
         ))}
       </div>
-      <div className="btn--container">
-        {startIndex !== 0 && (
+      {hasMore && (
+        <div className="search-book-list__load-more">
           <button
-            className="btn btn--normal btn--see-more search-book-list__pagination-button"
-            onClick={handlePrevPageInSearchBook}
+            className="btn btn--normal btn--see-more search-book-list__load-more-btn"
+            onClick={onLoadMore}
+            disabled={loadingMore}
           >
-            &lt; Prev Page
+            {loadingMore ? "Loading..." : "Load more books"}
           </button>
-        )}
-        {hasNextPage && (
-          <button
-            className="btn btn--normal btn--see-more search-book-list__pagination-button"
-            onClick={handleNextPageInSearchBook}
-          >
-            Next Page &gt;
-          </button>
-        )}
-      </div>
+        </div>
+      )}
+      {showBackToTop && (
+        <button
+          className="search-book-list__back-to-top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+        >
+          ↑ Top
+        </button>
+      )}
     </>
   )
 }

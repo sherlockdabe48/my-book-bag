@@ -10,6 +10,7 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   currentPage: 1,
   imageURL: "cover.jpg",
   description: false,
+  isbn: false,
   status: "onRead",
   ...overrides,
 })

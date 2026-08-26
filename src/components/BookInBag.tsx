@@ -100,10 +100,10 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             {isFinished ? "Read Again" : "Finish"}
           </button>
           <button
-            className="btn btn--danger btn--in-bag"
+            className="btn btn--normal btn--in-bag"
             onClick={() => handleMoveToShelfFromBag(id)}
           >
-            Remove
+            Back to Shelf
           </button>
         </div>
       </div>

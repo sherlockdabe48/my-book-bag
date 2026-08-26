@@ -1,6 +1,6 @@
 # My Book Bag
 
-A personal book management web app built with React. Search for any book via the Google Books API, add it to your shelf, move it to your reading bag, and track your page progress.
+A personal book management web app built with React. Search for any book via the Open Library API, add it to your shelf, move it to your reading bag, and track your page progress.
 
 🌐 **Live demo:** https://mybookbag.netlify.app/
 
@@ -10,12 +10,13 @@ A personal book management web app built with React. Search for any book via the
 
 ## Features
 
-- **Search** — find any book using the Google Books API (20 results per page, with pagination)
+- **Search** — find any book using the Open Library API (20 results per page, with pagination)
 - **Shelf** — save books you want to read
 - **Bag** — move books from your shelf into your active reading bag
 - **Progress tracking** — record your current page for each book in your bag and mark it finished
 - **Persistent state** — your shelf and bag are saved to `localStorage` so they survive page refreshes
 - **Mobile support** — dedicated search box for smaller screens
+- **No sign-in required** — no API key, no account needed
 
 ---
 
@@ -35,18 +36,7 @@ npm start
 
 The app opens at [http://localhost:5173](http://localhost:5173).
 
-### Optional: Google Books API key
-
-Without an API key the app still works but is subject to Google's unauthenticated rate limits. To add a key:
-
-1. Get a key from the [Google Books API console](https://console.developers.google.com/)
-2. Add to the existing `.env` file in the project root:
-
-```
-VITE_GOOGLE_BOOKS_API_KEY=your_key_here
-```
-
-3. Restart the dev server.
+No API key or `.env` file is needed — the Open Library API is free and open.
 
 ---
 
@@ -54,7 +44,7 @@ VITE_GOOGLE_BOOKS_API_KEY=your_key_here
 
 ### Search and add to shelf
 
-Search for any book by title or author. Results come from the Google Books API. Click **Add to Shelf** to save a book.
+Search for any book by title or author. Results come from the [Open Library API](https://openlibrary.org/developers/api). Click **Add to Shelf** to save a book.
 
 ![My Book Bag Search](./public/images/my-book-bag-search.jpg)
 
@@ -77,7 +67,7 @@ Each book in your bag shows your current page and a progress bar. Click the ✏�
 | Framework | [React 18](https://react.dev/) |
 | Routing | [React Router v6](https://reactrouter.com/) |
 | HTTP | [Axios 1.x](https://axios-http.com/) |
-| Data source | [Google Books API](https://developers.google.com/books) |
+| Data source | [Open Library API](https://openlibrary.org/developers/api) |
 | Persistence | `localStorage` |
 | Build tool | [Vite 4](https://vitejs.dev/) |
 | Testing | [React Testing Library 14](https://testing-library.com/) |
@@ -104,7 +94,7 @@ src/
 │   ├── BookInBag.tsx        # Individual bag book card with progress
 │   └── WelcomeMessage.tsx   # Empty-state welcome screen
 ├── hooks/
-│   ├── useSearch.ts         # Google Books API fetch, pagination, error state
+│   ├── useSearch.ts         # Open Library API fetch, pagination, error state
 │   └── useBookBag.ts        # Shelf/bag state and localStorage persistence
 ├── types/
 │   └── book.ts              # Shared Book interface
