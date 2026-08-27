@@ -72,7 +72,12 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   function startEditing() {
     setDraftProgress(progress)
     setIsEditing(true)
-    setTimeout(() => inputRef.current?.select(), 0)
+    // Use requestAnimationFrame so the input is in the DOM before we focus,
+    // while still running within the same user-gesture tick on iOS Safari.
+    requestAnimationFrame(() => {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    })
   }
 
   function commitEdit() {
@@ -237,6 +242,8 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             <input
               ref={inputRef}
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={draftProgress}
               min={0}
               max={Number(allPages)}

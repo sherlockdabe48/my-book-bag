@@ -147,7 +147,6 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
         {editMode === "menu" && (
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Options</p>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--add-bag" onClick={() => { handleAddToBagFromShelf(id); closeAll() }}>Add to Bag</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("editBook")}>Edit Book</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setEditMode("note") }}>My Note</button>
             <button
@@ -272,7 +271,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <p className="book-in-shelf__edit-overlay-label">
               Pages{allPages !== "N/A" ? ` (now: ${allPages})` : ""}
             </p>
-            <input className="book-in-shelf__edit-input" type="number" min={1} placeholder="e.g. 320" value={pagesInput} onChange={(e) => setPagesInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handlePagesSubmit()} autoFocus />
+            <input className="book-in-shelf__edit-input" type="number" inputMode="numeric" pattern="[0-9]*" min={1} placeholder="e.g. 320" value={pagesInput} onChange={(e) => setPagesInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handlePagesSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handlePagesSubmit}>Save</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
           </div>
