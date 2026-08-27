@@ -37,7 +37,6 @@ export default function ShelfBagWrapper({
       <Shelf
         shelfBooks={shelfBooks}
         shelfHighLight={shelfHighLight}
-        inputRef={inputRef}
       />
     </div>
   )

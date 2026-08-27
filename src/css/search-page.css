@@ -1,70 +1,196 @@
-/* ── Sticky header bar ─────────────────────────────── */
-.search-page__header {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+/* ── Modal backdrop ─────────────────────────────────── */
+.search-modal__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 16px 32px;
+    box-sizing: border-box;
+    animation: modal-fadein 0.18s ease;
+}
+
+@keyframes modal-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Modal panel ────────────────────────────────────── */
+.search-modal__panel {
+    background: #ffffff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 680px;
+    max-height: calc(100vh - 92px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    animation: modal-slidein 0.2s ease;
+}
+
+@keyframes modal-slidein {
+    from { transform: translateY(-16px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Modal header row ───────────────────────────────── */
+.search-modal__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 32px;
-    background-color: #f3f4f6;
+    padding: 18px 24px 14px;
     border-bottom: 1px solid #e5e7eb;
-    box-sizing: border-box;
-    width: 100%;
+    flex-shrink: 0;
 }
 
-.search-page__header-meta {
+.search-modal__title {
+    margin: 0;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1f2328;
+}
+
+.search-modal__close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #57606a;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.search-modal__close-btn:hover {
+    background: #f3f4f6;
+    color: #1f2328;
+    border-color: #d1d5db;
+}
+
+/* ── Search bar ─────────────────────────────────────── */
+.search-modal__search-bar {
+    padding: 14px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+.search-modal__form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-modal__input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.search-modal__input-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.search-modal__input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.search-modal__input:focus {
+    border-color: #3b82d4;
+    box-shadow: 0 0 0 3px rgba(59, 130, 212, 0.12);
+}
+
+.search-modal__submit-btn {
+    flex-shrink: 0;
+    padding: 10px 20px !important;
+}
+
+/* ── Results meta bar ───────────────────────────────── */
+.search-modal__meta {
     display: flex;
     align-items: baseline;
-    gap: 12px;
+    gap: 10px;
+    padding: 8px 24px;
+    background: #f7f8fa;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
 }
 
-.search-page__header-title {
-    margin: 0;
+.search-modal__query {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #1f2328;
+}
+
+.search-modal__count {
+    font-size: 0.8125rem;
+    color: #57606a;
+}
+
+/* ── Scrollable results body ────────────────────────── */
+.search-modal__body {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ── Hint / empty prompt ────────────────────────────── */
+.search-modal__welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 52px 24px 48px;
+    text-align: center;
+}
+
+.search-modal__welcome-icon {
+    width: 52px;
+    height: 52px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+}
+
+.search-modal__welcome-heading {
+    margin: 0 0 8px;
     font-family: 'Lora', Georgia, serif;
     font-size: 1.1rem;
     font-weight: 600;
     color: #1f2328;
 }
 
-.search-page__header-count {
-    font-size: 0.8125rem;
-    color: #57606a;
-}
-
-.search-page__close-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    background-color: white;
-    border: 1px solid #d1d5db;
-    border-radius: 5px;
-    color: #1f2328;
+.search-modal__welcome-sub {
+    margin: 0;
     font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.15s, border-color 0.15s;
+    color: #57606a;
+    max-width: 280px;
+    line-height: 1.6;
 }
 
-.search-page__close-btn:hover {
-    background-color: #2f2f2f;
-    border-color: #2f2f2f;
-    color: white;
+/* ── Warning (soft, e.g. query too short) ───────────── */
+.search-modal__warning {
+    text-align: center;
+    padding: 40px 20px;
+    color: #57606a;
+    font-size: 0.9rem;
 }
 
-/* ── Results container ─────────────────────────────── */
-.search-page__container {
-    justify-self: center;
-    background-color: white;
-    max-width: 860px;
-    width: 100%;
-    margin: 0 auto;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
+/* ── Error ──────────────────────────────────────────── */
 .search-page__error {
     text-align: center;
     padding: 40px 20px;
@@ -105,7 +231,7 @@
 .search-book__container {
     display: flex;
     gap: 24px;
-    padding: 24px 32px;
+    padding: 20px 24px;
     border-bottom: 1px solid #e5e7eb;
     transition: background-color 0.15s;
     box-sizing: border-box;
@@ -126,8 +252,8 @@
 
 .search-book__book-image {
     flex-shrink: 0;
-    width: 90px;
-    height: 135px;
+    width: 80px;
+    height: 120px;
     border-radius: 4px;
     border: 1px solid #e5e7eb;
     object-fit: cover;
@@ -204,27 +330,60 @@
 .search-book-list__load-more {
     display: flex;
     justify-content: center;
-    padding: 24px 0 8px;
+    padding: 20px 0 16px;
 }
 
 .search-book-list__load-more-btn {
-    min-width: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    color: #1f2328;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.search-book-list__load-more-btn:hover:not(:disabled) {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+    transform: translateY(2px);
+}
+
+.search-book-list__load-more-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.search-book-list__load-more-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-top-color: #1f2328;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
 }
 
 /* ── Back to top ────────────────────────────────────── */
 .search-book-list__back-to-top {
-    position: fixed;
-    bottom: 32px;
-    right: 16px;
+    position: sticky;
+    bottom: 16px;
+    display: block;
+    margin: 0 auto 12px;
+    width: fit-content;
     background-color: #2f2f2f;
     color: #fff;
     border: none;
     border-radius: 20px;
-    padding: 10px 18px;
-    font-size: 0.85rem;
+    padding: 8px 16px;
+    font-size: 0.82rem;
     font-weight: 500;
     cursor: pointer;
-    z-index: 100;
+    transition: background-color 0.15s;
 }
 
 .search-book-list__back-to-top:hover {
@@ -233,23 +392,31 @@
 
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 600px) {
-    .search-page__header {
-        padding: 10px 16px;
-        flex-wrap: wrap;
-        gap: 8px;
+    .search-modal__backdrop {
+        padding: 0;
+        align-items: flex-end;
     }
 
-    .search-page__header-title {
-        font-size: 0.95rem;
+    .search-modal__panel {
+        max-height: 92vh;
+        border-radius: 14px 14px 0 0;
+        max-width: 100%;
     }
 
-    .search-page__close-btn {
-        padding: 6px 10px;
-        font-size: 0.8rem;
+    .search-modal__header {
+        padding: 14px 16px 12px;
+    }
+
+    .search-modal__search-bar {
+        padding: 12px 16px;
+    }
+
+    .search-modal__meta {
+        padding: 8px 16px;
     }
 
     .search-book__container {
-        padding: 16px;
+        padding: 14px 16px;
         gap: 14px;
     }
 

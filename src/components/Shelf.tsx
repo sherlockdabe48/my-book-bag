@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from "react"
+import React, { useContext, useMemo, useState } from "react"
 import ShelfBookList from "./ShelfBookList"
 import AddManualBookForm from "./AddManualBookForm"
 import type { Book } from "../types/book"
+import { searchBookContext } from "./App"
 
 interface ShelfProps {
   shelfBooks: Book[]
   shelfHighLight: boolean
-  inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
 }
 
 type SortKey = "added" | "title" | "author" | "status"
@@ -21,7 +21,8 @@ const STATUS_LABEL: Record<FilterStatus, string> = {
 
 const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
 
-export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfProps) {
+export default function Shelf({ shelfBooks, shelfHighLight }: ShelfProps) {
+  const { handleOpenSearch } = useContext(searchBookContext)
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
   const [filter, setFilter] = useState<FilterStatus>("all")
@@ -35,11 +36,6 @@ export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfPro
     // "added" keeps insertion order (no sort)
     return books
   }, [shelfBooks, sort, filter])
-
-  function focus() {
-    inputRef.current[0]?.focus()
-    inputRef.current[1]?.focus()
-  }
 
   return (
     <div>
@@ -101,7 +97,7 @@ export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfPro
           )}
 
           <div className="btn--container mt-2">
-            <button className="btn btn--optional btn--see-more" onClick={focus}>
+            <button className="btn btn--optional btn--see-more" onClick={handleOpenSearch}>
               Find a book{" "}
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginLeft: "4px" }}>
                 <circle cx="11" cy="11" r="8" />

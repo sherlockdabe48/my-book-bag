@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import type { Book } from "../types/book"
 import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
@@ -13,6 +13,7 @@ export interface SearchBookContextValue {
   handleGetSearchInputValue: (value: string) => void
   handleClearSearchInputValue: () => void
   handleMoveToShelfFromSearch: (id: string) => void
+  handleOpenSearch: () => void
 }
 
 export interface BookBagContextValue {
@@ -45,6 +46,7 @@ export const toggleClassContext = React.createContext<ToggleClassContextValue>({
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 function App() {
   const inputRef = useRef<(HTMLInputElement | null)[]>([])
+  const [modalOpen, setModalOpen] = useState(false)
 
   const {
     searchInputValue,
@@ -53,6 +55,7 @@ function App() {
     loading,
     loadingMore,
     searchError,
+    searchErrorType,
     handleGetSearchInputValue,
     handleClearSearchInputValue,
     loadMore,
@@ -88,11 +91,22 @@ function App() {
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
 
+  function handleOpenSearch() {
+    setModalOpen(true)
+  }
+
+  const originalClear = handleClearSearchInputValue
+  function handleCloseModal() {
+    originalClear()
+    setModalOpen(false)
+  }
+
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
     handleGetSearchInputValue,
-    handleClearSearchInputValue,
+    handleClearSearchInputValue: handleCloseModal,
     handleMoveToShelfFromSearch,
-  }), [handleGetSearchInputValue, handleClearSearchInputValue, handleMoveToShelfFromSearch])
+    handleOpenSearch,
+  }), [handleGetSearchInputValue, handleCloseModal, handleMoveToShelfFromSearch, handleOpenSearch])
 
   const bookBagContextValue = useMemo<BookBagContextValue>(() => ({
     bagCapacity,
@@ -143,9 +157,9 @@ function App() {
       <bookBagContext.Provider value={bookBagContextValue}>
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
-            <Header inputRef={inputRef} />
+            <Header inputRef={inputRef} onOpenSearch={handleOpenSearch} />
             <MobileSearchBox inputRef={inputRef} />
-            {searchInputValue && (
+            {modalOpen && (
               <SearchPage
                 loading={loading}
                 loadingMore={loadingMore}
@@ -154,23 +168,24 @@ function App() {
                 searchInputValue={searchInputValue}
                 shelfBooks={shelfBooks}
                 searchError={searchError}
+                searchErrorType={searchErrorType}
                 onLoadMore={loadMore}
               />
             )}
+            {!haveSomeBook && <WelcomeMessage />}
+            {haveSomeBook && (
+              <ShelfBagWrapper
+                bagBooks={bagBooks}
+                shelfBooks={shelfBooks}
+                shelfHighLight={shelfHighLight}
+                inputRef={inputRef}
+                bagCapacity={bagCapacity}
+                bagUpgraded={bagUpgraded}
+                bagTier={bagTier}
+                totalFinished={totalFinished}
+              />
+            )}
           </searchBookContext.Provider>
-          {!haveSomeBook && <WelcomeMessage />}
-          {haveSomeBook && (
-            <ShelfBagWrapper
-              bagBooks={bagBooks}
-              shelfBooks={shelfBooks}
-              shelfHighLight={shelfHighLight}
-              inputRef={inputRef}
-              bagCapacity={bagCapacity}
-              bagUpgraded={bagUpgraded}
-              bagTier={bagTier}
-              totalFinished={totalFinished}
-            />
-          )}
         </toggleClassContext.Provider>
       </bookBagContext.Provider>
       <footer className="app-footer">

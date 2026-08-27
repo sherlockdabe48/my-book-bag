@@ -108,6 +108,7 @@ export default function useSearch() {
   const [loading, setLoading]                   = useState(false)
   const [loadingMore, setLoadingMore]           = useState(false)
   const [searchError, setSearchError]           = useState<string | null>(null)
+  const [searchErrorType, setSearchErrorType]   = useState<"warning" | "error">("error")
 
   // Tracks the next offset to use for "load more" — stored as a ref so
   // updating it never causes re-renders or effect cleanup side-effects
@@ -159,14 +160,21 @@ export default function useSearch() {
       .catch((err: unknown) => {
         if (axios.isCancel(err)) return
         setLoading(false)
-        const status = axios.isAxiosError(err) ? err.response?.status : null
-        setSearchError(
-          status === 429
-            ? "Too many requests — please wait a moment and try again."
-            : status === 503
-            ? "Search is temporarily unavailable. Please try again in a few seconds."
-            : "Something went wrong. Please try again."
-        )
+        if (!axios.isAxiosError(err)) { setSearchError("Something went wrong. Please try again."); return }
+        const status = err.response?.status
+        if (status === 422) {
+          setSearchErrorType("warning")
+          setSearchError("That's a bit too short — try typing at least 3 characters.")
+        } else {
+          setSearchErrorType("error")
+          setSearchError(
+            status === 429
+              ? "Too many requests — please wait a moment and try again."
+              : status === 503
+              ? "Search is temporarily unavailable. Please try again in a few seconds."
+              : "Something went wrong. Please try again."
+          )
+        }
       })
 
     return () => controller.abort()
@@ -210,6 +218,7 @@ export default function useSearch() {
     loading,
     loadingMore,
     searchError,
+    searchErrorType,
     handleGetSearchInputValue,
     handleClearSearchInputValue,
     loadMore,

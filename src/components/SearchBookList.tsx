@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import SearchBook from "./SearchBook"
 import AddManualBookForm from "./AddManualBookForm"
 import type { SearchBook as SearchBookType } from "../hooks/useSearch"
@@ -11,6 +11,7 @@ interface SearchBookListProps {
   hasMore: boolean
   shelfBooks: Book[]
   onLoadMore: () => void
+  scrollContainerRef?: React.RefObject<HTMLDivElement>
 }
 
 export default function SearchBookList({
@@ -20,17 +21,21 @@ export default function SearchBookList({
   hasMore,
   shelfBooks,
   onLoadMore,
+  scrollContainerRef,
 }: SearchBookListProps) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
 
   useEffect(() => {
+    const el = scrollContainerRef?.current
+    const target = el ?? window
     function onScroll() {
-      setShowBackToTop(window.scrollY > 400)
+      const scrolled = el ? el.scrollTop : window.scrollY
+      setShowBackToTop(scrolled > 300)
     }
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
+    target.addEventListener("scroll", onScroll, { passive: true })
+    return () => target.removeEventListener("scroll", onScroll)
+  }, [scrollContainerRef])
 
   if (loading) return <div className="search-book-list__spinner" aria-label="Loading" />
 
@@ -62,18 +67,30 @@ export default function SearchBookList({
       {hasMore && (
         <div className="search-book-list__load-more">
           <button
-            className="btn btn--normal btn--see-more search-book-list__load-more-btn"
+            className="search-book-list__load-more-btn"
             onClick={onLoadMore}
             disabled={loadingMore}
+            aria-label="Load more books"
           >
-            {loadingMore ? "Loading..." : "Load more books"}
+            {loadingMore ? (
+              <span className="search-book-list__load-more-spinner" />
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <polyline points="19 12 12 19 5 12" />
+              </svg>
+            )}
           </button>
         </div>
       )}
       {showBackToTop && (
         <button
           className="search-book-list__back-to-top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => {
+            const el = scrollContainerRef?.current
+            if (el) el.scrollTo({ top: 0, behavior: "smooth" })
+            else window.scrollTo({ top: 0, behavior: "smooth" })
+          }}
           aria-label="Back to top"
         >
           ↑ Top

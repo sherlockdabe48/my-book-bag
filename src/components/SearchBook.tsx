@@ -18,7 +18,7 @@ export default function SearchBook({
   isbn,
   shelfBooks,
 }: SearchBookProps) {
-  const { handleMoveToShelfFromSearch } = useContext(searchBookContext)
+  const { handleMoveToShelfFromSearch, handleClearSearchInputValue } = useContext(searchBookContext)
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
@@ -54,7 +54,10 @@ export default function SearchBook({
           ) : (
             <button
               className="btn btn--normal search-book__btn"
-              onClick={() => document.getElementById("in-my-shelf")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => {
+                handleClearSearchInputValue()
+                document.getElementById("in-my-shelf")?.scrollIntoView({ behavior: "smooth" })
+              }}
             >
               ✓ In Shelf
             </button>

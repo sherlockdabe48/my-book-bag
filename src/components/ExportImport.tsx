@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import "../css/export-import.css"
 
@@ -6,6 +6,8 @@ export default function ExportImport() {
   const { handleExportData, handleImportData } = useContext(bookBagContext)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle")
+  const [open, setOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   function showStatus(result: "ok" | "error") {
     setStatus(result)
@@ -13,7 +15,13 @@ export default function ExportImport() {
   }
 
   function handleImportClick() {
+    setOpen(false)
     fileInputRef.current?.click()
+  }
+
+  function handleExportClick() {
+    setOpen(false)
+    handleExportData()
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -32,27 +40,50 @@ export default function ExportImport() {
     e.target.value = ""
   }
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleOutsideClick)
+    return () => document.removeEventListener("mousedown", handleOutsideClick)
+  }, [open])
+
   return (
-    <div className="export-import">
+    <div className="export-import" ref={menuRef}>
       <button
-        className="export-import__btn"
-        onClick={handleExportData}
-        title="Export your shelf & bag as a JSON file"
+        className="export-import__hamburger"
+        onClick={() => setOpen((prev) => !prev)}
+        title="Menu"
         type="button"
+        aria-label="Open menu"
+        aria-expanded={open}
       >
-        <ExportIcon />
-        <span className="export-import__label">Export</span>
+        <HamburgerIcon />
       </button>
 
-      <button
-        className="export-import__btn"
-        onClick={handleImportClick}
-        title="Import a previously exported JSON file"
-        type="button"
-      >
-        <ImportIcon />
-        <span className="export-import__label">Import</span>
-      </button>
+      {open && (
+        <div className="export-import__dropdown">
+          <button
+            className="export-import__dropdown-item"
+            onClick={handleExportClick}
+            type="button"
+          >
+            <ExportIcon />
+            <span>Export</span>
+          </button>
+          <button
+            className="export-import__dropdown-item"
+            onClick={handleImportClick}
+            type="button"
+          >
+            <ImportIcon />
+            <span>Import</span>
+          </button>
+        </div>
+      )}
 
       <input
         ref={fileInputRef}
@@ -68,6 +99,16 @@ export default function ExportImport() {
         </span>
       )}
     </div>
+  )
+}
+
+function HamburgerIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
   )
 }
 
