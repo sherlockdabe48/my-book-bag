@@ -68,9 +68,10 @@ function makeGeneratedCover(title: string, author: string): string {
 
 export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
   const { handleAddManualBook } = useContext(bookBagContext)
-  const [title, setTitle]   = useState("")
-  const [author, setAuthor] = useState("")
-  const [pages, setPages]   = useState("")
+  const [title, setTitle]         = useState("")
+  const [author, setAuthor]       = useState("")
+  const [publisher, setPublisher] = useState("")
+  const [pages, setPages]         = useState("")
   const [coverUrl, setCoverUrl] = useState("")
   const [coverFile, setCoverFile] = useState<string>("")   // base64 data URI from upload
   const [error, setError]   = useState("")
@@ -111,6 +112,7 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
       id:            `local-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title:         title.trim(),
       author:        author.trim(),
+      publisher:     publisher.trim(),
       allPages,
       currentPage:   1,
       imageURL:      coverFile || coverUrl.trim() || makeGeneratedCover(title.trim(), author.trim()),
@@ -131,6 +133,12 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
   return (
     <div className="add-manual__overlay" role="dialog" aria-modal="true" aria-label="Add your own book">
       <div className="add-manual__card">
+        <button type="button" className="add-manual__close" aria-label="Close" onClick={onClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
         <h3 className="add-manual__heading">Add your own book</h3>
         <p className="add-manual__sub">For books you own or can't find in search.</p>
 
@@ -141,10 +149,20 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
           <label className="add-manual__label" htmlFor="am-author">Author <span aria-hidden="true">*</span></label>
           <input id="am-author" className="add-manual__input" type="text" placeholder="e.g. Matt Haig" value={author} onChange={(e) => { setAuthor(e.target.value); setError("") }} />
 
-          <label className="add-manual__label" htmlFor="am-pages">Pages <span className="add-manual__optional">(optional)</span></label>
-          <input id="am-pages" className="add-manual__input" type="number" min={1} placeholder="e.g. 304" value={pages} onChange={(e) => { setPages(e.target.value); setError("") }} />
+          <label className="add-manual__label" htmlFor="am-publisher">Publisher <span className="add-manual__optional">(optional)</span></label>
+          <input id="am-publisher" className="add-manual__input" type="text" placeholder="e.g. Canongate Books" value={publisher} onChange={(e) => setPublisher(e.target.value)} />
 
-          <label className="add-manual__label" htmlFor="am-cover">Cover image <span className="add-manual__optional">(optional)</span></label>
+          <label className="add-manual__label" htmlFor="am-cover">
+            Cover image <span className="add-manual__optional">(optional)</span>
+            {title.trim() && (
+              <a
+                className="add-manual__search-images-link"
+                href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent([title, author, publisher].filter(Boolean).join(" ") + " book cover")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >Search on Google Images ↗</a>
+            )}
+          </label>
           <div className="add-manual__cover-row">
             <input id="am-cover" className="add-manual__input add-manual__cover-url-input" type="url" placeholder="Paste image URL…" value={coverUrl} onChange={(e) => { setCoverUrl(e.target.value); setCoverFile(""); setError("") }} disabled={!!coverFile} />
             <button type="button" className="add-manual__upload-btn" onClick={() => fileInputRef.current?.click()}>
@@ -159,11 +177,13 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
             </div>
           )}
 
+          <label className="add-manual__label" htmlFor="am-pages">Pages <span className="add-manual__optional">(optional)</span></label>
+          <input id="am-pages" className="add-manual__input" type="number" min={1} placeholder="e.g. 304" value={pages} onChange={(e) => { setPages(e.target.value); setError("") }} />
+
           {error && <p className="add-manual__error" role="alert">{error}</p>}
 
           <div className="add-manual__actions">
             <button type="submit" className="btn btn--primary">Add to Shelf</button>
-            <button type="button" className="btn btn--normal" onClick={onClose}>Cancel</button>
           </div>
         </form>
       </div>
