@@ -2,7 +2,33 @@
     text-align: center;
     padding-top: 10px;
     width: 150px;
-    /* height is now just the cover — no text below */
+}
+
+/* ── Below-cover meta row ─────────────────────────── */
+.book-in-shelf__meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.book-in-shelf__meta-date {
+    font-size: 0.68rem;
+    color: #57606a;
+    line-height: 1.2;
+}
+
+.book-in-shelf__meta-pct {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #9b6200;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 1px 5px;
+    line-height: 1.4;
 }
 
 /* ── Cover + overlay wrapper ──────────────────────── */
@@ -70,27 +96,6 @@
 
 .book-in-shelf__overlay-btn--add:hover {
     background-color: #ede6d8;
-}
-
-.book-in-shelf__overlay-btn--cover {
-    background-color: rgba(255,255,255,0.15);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.4);
-}
-
-.book-in-shelf__overlay-btn--cover:hover {
-    background-color: rgba(255,255,255,0.28);
-}
-
-.book-in-shelf__overlay-btn--remove {
-    background-color: rgba(255,255,255,0.15);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.4);
-}
-
-.book-in-shelf__overlay-btn--remove:hover {
-    background-color: rgba(220,38,38,0.75);
-    border-color: transparent;
 }
 
 /* ── Edit overlay (inside cover-wrapper) ─────────── */
@@ -191,18 +196,54 @@
 
 .book-in-shelf__edit-dont-show input { cursor: pointer; accent-color: #f5f0e8; }
 
-/* ── Status badges (top-left corner of overlay) ──── */
+/* ── Status badges — always visible, top-left ────── */
 .book-in-shelf__read-badge,
 .book-in-shelf__reading-badge {
     position: absolute;
     top: 8px;
     left: 8px;
+    z-index: 2;
     font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     border-radius: 10px;
     padding: 2px 7px;
+    pointer-events: none;
+}
+
+/* ── ⋯ dots button — always visible, top-right ───── */
+.book-in-shelf__dots-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -1px;
+    padding: 0 0 2px;
+    transition: background-color 0.15s;
+    opacity: 0.7;
+}
+
+.book-in-shelf__dots-btn:hover {
+    background: rgba(0,0,0,0.75);
+    opacity: 1;
+}
+
+/* Keep dots visible during hover of the whole card */
+.book-in-shelf__cover-wrapper:hover .book-in-shelf__dots-btn {
+    opacity: 1;
 }
 
 .book-in-shelf__read-badge {
@@ -241,44 +282,6 @@
 
 .book-in-shelf__edit-textarea::placeholder { color: rgba(255,255,255,0.4); }
 .book-in-shelf__edit-textarea:focus { border-color: rgba(255,255,255,0.7); }
-
-/* ── Title + author block inside overlay ─────────── */
-.book-in-shelf__overlay-title,
-.book-in-shelf__overlay-author {
-    position: absolute;
-    left: 0;
-    right: 0;
-    padding: 0 10px;
-    text-align: center;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-    pointer-events: none;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-}
-
-.book-in-shelf__overlay-title {
-    top: 33%;
-    transform: translateY(-100%);
-    margin: 0 0 3px;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    line-height: 1.35;
-    color: #ffffff;
-    -webkit-line-clamp: 3;
-}
-
-.book-in-shelf__overlay-author {
-    top: 33%;
-    transform: translateY(0%);
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 400;
-    line-height: 1.3;
-    color: rgba(255,255,255,0.75);
-    -webkit-line-clamp: 1;
-}
 
 /* ── Mobile ───────────────────────────────────────── */
 @media (max-width: 600px) {

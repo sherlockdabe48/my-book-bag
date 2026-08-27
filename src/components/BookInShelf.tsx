@@ -2,9 +2,9 @@ import { useContext, useRef, useState, useEffect } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 
-type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "status" | "note" | "recommendedBy" | "lastReadAt">
+type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt">
 
-export default function BookInShelf({ id, title, author, imageURL, allPages, status, note: initialNote, recommendedBy, lastReadAt }: BookInShelfProps) {
+export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt }: BookInShelfProps) {
   const {
     handleAddToBagFromShelf,
     handleBookDeleteFromShelf,
@@ -16,7 +16,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
     handleBookChangeRecommendedBy,
   } = useContext(bookBagContext)
 
-  type EditMode = "menu" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover"
+  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
   const [skipRemoveConfirm, setSkipRemoveConfirm] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useState(false)
@@ -99,38 +99,45 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
     <div className="book-in-shelf__container">
       <div className="book-in-shelf__cover-wrapper">
         <img className="book-image-in-shelf" src={imageURL} alt={title} loading="lazy" />
+
+        {/* ── Status badges — always visible ─────────────── */}
+        {status === "finish" && (
+          <span className="book-in-shelf__read-badge" aria-label="Already read">✓ Read</span>
+        )}
+        {status === "reading" && (
+          <span className="book-in-shelf__reading-badge" aria-label="In progress">Reading</span>
+        )}
+
+        {/* ── ⋯ menu button — always visible ─────────────── */}
+        {editMode === null && (
+          <button
+            className="book-in-shelf__dots-btn"
+            aria-label="Book options"
+            onClick={(e) => { e.stopPropagation(); setEditMode("menu") }}
+          >
+            ···
+          </button>
+        )}
+
+        {/* ── Hover overlay — Add to Bag only ────────────── */}
         {editMode === null && (
           <div className="book-in-shelf__overlay">
-            {status === "finish" && (
-              <span className="book-in-shelf__read-badge" aria-label="Already read">✓ Read</span>
-            )}
-            {status === "reading" && (
-              <span className="book-in-shelf__reading-badge" aria-label="In progress">Reading</span>
-            )}
-            <p className="book-in-shelf__overlay-title">{title}</p>
-            <p className="book-in-shelf__overlay-author">{author}</p>
-            {recommendedBy && (
-              <p className="book-in-shelf__overlay-meta">Rec. by {recommendedBy}</p>
-            )}
-            {lastReadAt && (status === "reading" || status === "finish") && (
-              <p className="book-in-shelf__overlay-meta">
-                {new Date(lastReadAt + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
-              </p>
-            )}
             <button
               className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--add"
               onClick={() => handleAddToBagFromShelf(id)}
             >
               Add to Bag
             </button>
+          </div>
+        )}
+        {/* ── ⋯ top-level menu: Edit Book / My Note / Remove ── */}
+        {editMode === "menu" && (
+          <div className="book-in-shelf__edit-overlay">
+            <p className="book-in-shelf__edit-overlay-label">Options</p>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("editBook")}>Edit Book</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setEditMode("note") }}>My Note</button>
             <button
-              className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--cover"
-              onClick={() => setEditMode("menu")}
-            >
-              Edit Book
-            </button>
-            <button
-              className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--remove"
+              className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
               onClick={() => {
                 if (skipRemoveConfirm) {
                   handleBookDeleteFromShelf(id)
@@ -142,19 +149,20 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             >
               Remove
             </button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={closeAll}>Cancel</button>
           </div>
         )}
-        {/* ── Edit Book sub-menu ─────────────────────────── */}
-        {editMode === "menu" && (
+
+        {/* ── Edit Book sub-menu: Title / Author / Cover / Pages / Rec. by ── */}
+        {editMode === "editBook" && (
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Edit book</p>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setTitleInput(title); setEditMode("title") }}>Title</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setAuthorInput(author); setEditMode("author") }}>Author</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("confirmCover")}>Cover</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setPagesInput(allPages === "N/A" ? "" : String(allPages)); setEditMode("pages") }}>Pages</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setEditMode("note") }}>My Note</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setRecommendedByInput(recommendedBy); setEditMode("recommendedBy") }}>Rec. by</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={closeAll}>Cancel</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}
 
@@ -164,7 +172,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             <p className="book-in-shelf__edit-overlay-label">Edit title</p>
             <input className="book-in-shelf__edit-input" type="text" value={titleInput} onChange={(e) => setTitleInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleTitleSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleTitleSubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
           </div>
         )}
 
@@ -174,7 +182,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             <p className="book-in-shelf__edit-overlay-label">Edit author</p>
             <input className="book-in-shelf__edit-input" type="text" value={authorInput} onChange={(e) => setAuthorInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAuthorSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleAuthorSubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
           </div>
         )}
 
@@ -185,7 +193,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             <input className="book-in-shelf__edit-input" type="url" placeholder="https://..." value={urlInput} onChange={(e) => setUrlInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleUrlSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleUrlSubmit}>Apply URL</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => fileInputRef.current?.click()}>Upload file</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
             <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
           </div>
         )}
@@ -203,7 +211,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             </button>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel"
-              onClick={() => setEditMode("menu")}
+              onClick={() => setEditMode("editBook")}
             >
               Cancel
             </button>
@@ -252,7 +260,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
             </p>
             <input className="book-in-shelf__edit-input" type="number" min={1} placeholder="e.g. 320" value={pagesInput} onChange={(e) => setPagesInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handlePagesSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handlePagesSubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
           </div>
         )}
 
@@ -287,11 +295,24 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, sta
               autoFocus
             />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleRecommendedBySubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
           </div>
         )}
       </div>
 
+      {/* ── Below-cover meta: last read + progress ─────── */}
+      {lastReadAt && (status === "reading" || status === "finish") && (
+        <div className="book-in-shelf__meta">
+          <span className="book-in-shelf__meta-date">
+            {new Date(lastReadAt + "T00:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+          </span>
+          {status === "reading" && typeof currentPage === "number" && typeof allPages === "number" && allPages > 0 && (
+            <span className="book-in-shelf__meta-pct">
+              {Math.round((currentPage / allPages) * 100)}%
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }
