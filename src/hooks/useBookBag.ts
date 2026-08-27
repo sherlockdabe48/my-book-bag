@@ -1,6 +1,48 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Book } from "../types/book"
 
+// ── Export / Import helpers ────────────────────────────────────────────────
+
+export interface ExportPayload {
+  version: 1
+  exportedAt: string
+  shelfBooks: Book[]
+  bagBooks: Book[]
+}
+
+export function buildExportPayload(shelfBooks: Book[], bagBooks: Book[]): ExportPayload {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    shelfBooks,
+    bagBooks,
+  }
+}
+
+/** Download a JSON file to the user's device. */
+export function triggerJsonDownload(payload: ExportPayload) {
+  const json = JSON.stringify(payload, null, 2)
+  const blob = new Blob([json], { type: "application/json" })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement("a")
+  a.href     = url
+  a.download = `my-book-bag-${new Date().toISOString().slice(0, 10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+/** Parse and basic-validate an imported JSON file. Returns null on failure. */
+export function parseImportFile(raw: string): ExportPayload | null {
+  try {
+    const data = JSON.parse(raw) as ExportPayload
+    if (data.version !== 1) return null
+    if (!Array.isArray(data.shelfBooks) || !Array.isArray(data.bagBooks)) return null
+    return data
+  } catch {
+    return null
+  }
+}
+
 // ── Bag capacity tiers ─────────────────────────────────────────────────────
 export const BAG_TIERS: { booksFinished: number; capacity: number; label: string }[] = [
   { booksFinished: 0,  capacity: 3,  label: "Starter Bag"  },
@@ -259,6 +301,20 @@ export default function useBookBag(searchBooks: Book[]) {
     })
   }, [])
 
+  // ── Export / Import ──────────────────────────────────────────────────────
+
+  const handleExportData = useCallback(() => {
+    triggerJsonDownload(buildExportPayload(shelfBooks, bagBooks))
+  }, [shelfBooks, bagBooks])
+
+  const handleImportData = useCallback((raw: string): boolean => {
+    const payload = parseImportFile(raw)
+    if (!payload) return false
+    setShelfBooks(payload.shelfBooks)
+    setBagBooks(payload.bagBooks)
+    return true
+  }, [])
+
   return {
     bagBooks,
     shelfBooks,
@@ -283,5 +339,7 @@ export default function useBookBag(searchBooks: Book[]) {
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
+    handleExportData,
+    handleImportData,
   }
 }

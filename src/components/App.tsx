@@ -32,6 +32,8 @@ export interface BookBagContextValue {
   handleIncrementTimesRead: (id: string) => void
   handleLogReadingSession: (id: string) => void
   handleAddManualBook: (book: Book) => void
+  handleExportData: () => void
+  handleImportData: (raw: string) => boolean
 }
 
 export interface ToggleClassContextValue {
@@ -80,6 +82,8 @@ function App() {
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
+    handleExportData,
+    handleImportData,
   } = useBookBag(searchBooks)
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
@@ -107,6 +111,8 @@ function App() {
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
+    handleExportData,
+    handleImportData,
   }), [
     bagCapacity,
     bagBooks.length,
@@ -124,6 +130,8 @@ function App() {
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
+    handleExportData,
+    handleImportData,
   ])
 
   const toggleClassContextValue = useMemo<ToggleClassContextValue>(() => ({

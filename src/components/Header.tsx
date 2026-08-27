@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react"
 import { searchBookContext } from "./App"
+import ExportImport from "./ExportImport"
 import "../css/header.css"
 
 interface HeaderProps {
@@ -45,6 +46,7 @@ export default function Header({ inputRef }: HeaderProps) {
           />
         </form>
       </div>
+      <ExportImport />
     </div>
   )
 }
