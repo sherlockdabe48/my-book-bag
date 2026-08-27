@@ -220,7 +220,7 @@
     pointer-events: none;
 }
 
-/* ── ⋯ dots button — always visible, top-right ───── */
+/* ── ⋯ dots button — hidden until hover/tap ──────── */
 .book-in-shelf__dots-btn {
     position: absolute;
     top: 6px;
@@ -240,18 +240,25 @@
     justify-content: center;
     letter-spacing: -1px;
     padding: 0 0 2px;
-    transition: background-color 0.15s;
-    opacity: 0.7;
+    transition: opacity 0.2s ease, background-color 0.15s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Show on desktop hover */
+.book-in-shelf__cover-wrapper:hover .book-in-shelf__dots-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Show when tapped on mobile (toggled via JS class) */
+.book-in-shelf__cover-wrapper--touched .book-in-shelf__dots-btn {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .book-in-shelf__dots-btn:hover {
     background: rgba(0,0,0,0.75);
-    opacity: 1;
-}
-
-/* Keep dots visible during hover of the whole card */
-.book-in-shelf__cover-wrapper:hover .book-in-shelf__dots-btn {
-    opacity: 1;
 }
 
 .book-in-shelf__read-badge {

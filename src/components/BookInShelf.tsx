@@ -20,6 +20,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
   const [skipRemoveConfirm, setSkipRemoveConfirm] = useState(false)
   const [dontShowAgain, setDontShowAgain] = useState(false)
+  const [touched, setTouched] = useState(false)
 
   // Load "don't show again" preference from localStorage on mount
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
 
   const closeAll = useCallback(() => {
     setEditMode(null)
+    setTouched(false)
     setUrlInput("")
     setPagesInput("")
     setTitleInput("")
@@ -110,7 +112,11 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
 
   return (
     <div className="book-in-shelf__container" ref={containerRef}>
-      <div className="book-in-shelf__cover-wrapper">
+      <div
+        className={`book-in-shelf__cover-wrapper${touched ? " book-in-shelf__cover-wrapper--touched" : ""}`}
+        onTouchStart={() => setTouched(true)}
+        onTouchEnd={(e) => { e.preventDefault() }}
+      >
         <img className="book-image-in-shelf" src={imageURL} alt={title} loading="lazy" />
 
         {/* ── Status badges — always visible ─────────────── */}
@@ -121,12 +127,12 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           <span className="book-in-shelf__reading-badge" aria-label="In progress">Reading</span>
         )}
 
-        {/* ── ⋯ menu button — always visible ─────────────── */}
+        {/* ── ⋯ menu button — visible on hover / tap ──────── */}
         {editMode === null && (
           <button
             className="book-in-shelf__dots-btn"
             aria-label="Book options"
-            onClick={(e) => { e.stopPropagation(); setEditMode("menu") }}
+            onClick={(e) => { e.stopPropagation(); setTouched(false); setEditMode("menu") }}
           >
             ···
           </button>
