@@ -192,18 +192,6 @@
     color: #57606a;
 }
 
-/* ── Overlay meta line (rec. by / last read) ─────── */
-.book-in-shelf__overlay-meta {
-    margin: 0;
-    font-size: 0.68rem;
-    color: rgba(255,255,255,0.65);
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    pointer-events: none;
-}
-
 /* ── Read today button ───────────────────────────── */
 .book-in-bag__read-today-btn {
     background: none;

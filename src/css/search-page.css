@@ -200,26 +200,6 @@
     border-radius: 6px;
 }
 
-/* ── Pagination ────────────────────────────────────── */
-.search-book-list__pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding-bottom: 20px;
-}
-
-.search-book-list__pagination-button {
-    margin: 0;
-}
-
-.search-book-list__page-indicator {
-    font-size: 0.9rem;
-    color: #555;
-    min-width: 90px;
-    text-align: center;
-}
-
 /* ── Load more ──────────────────────────────────────── */
 .search-book-list__load-more {
     display: flex;

@@ -181,26 +181,32 @@ export default function useBookBag(searchBooks: Book[]) {
 
   const handleBookChangeCover = useCallback((id: string, imageURL: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, imageURL })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, imageURL })))
   }, [])
 
   const handleBookChangePages = useCallback((id: string, allPages: number) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, allPages })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, allPages })))
   }, [])
 
   const handleBookChangeTitle = useCallback((id: string, title: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, title })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, title })))
   }, [])
 
   const handleBookChangeAuthor = useCallback((id: string, author: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, author })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, author })))
   }, [])
 
   const handleBookChangeNote = useCallback((id: string, note: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, note })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, note })))
   }, [])
 
   const handleBookChangeRecommendedBy = useCallback((id: string, recommendedBy: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, recommendedBy })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, recommendedBy })))
   }, [])
 
   const handleAddManualBook = useCallback((book: Book) => {

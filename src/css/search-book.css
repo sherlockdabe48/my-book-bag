@@ -1,64 +1,11 @@
-.search-book__desciption {
-    font-size: 0.8rem;
-}
-
-.search-book__label{
-    font-size: 0.75rem;
-    margin-right: 5px;
-}
-
-.search-book__title{
-    font-size: 24px;
-    color: #2f2f2f;
-}
-
-.search-book__author{
-    font-size: 18px;
-    color: #515151;
-}
-
-.search-book__pages {
-    font-size: 0.8rem;
-}
-
 .search-book__subtitle {
-    font-size: 24px;
-    color: #555;
     font-style: italic;
     font-weight: normal;
+    color: #555;
 }
 
 .search-book__isbn {
     font-size: 0.75rem;
     color: #888;
     margin: 2px 0 0;
-}
-
-.search-book__btn-wrapper {
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-@media (max-width:900px ) {
-    .search-book__desciption {
-        margin-top: 10px;
-    }
-
-    .search-book__title{
-        font-size: 20px;
-    }
-
-    .search-book__subtitle {
-        font-size: 20px;
-    }
-
-    .search-book__author{
-        font-size: 16px;
-    }
-
-    .search-book__btn-wrapper {
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
 }

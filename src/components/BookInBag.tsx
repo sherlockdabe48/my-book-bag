@@ -30,6 +30,12 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     setProgress(currentPage)
     setDraftProgress(currentPage)
   }, [currentPage])
+
+  // Keep local note in sync when the parent updates it
+  // (e.g. after editing on the shelf and moving back to the bag)
+  useEffect(() => {
+    setNote(initialNote)
+  }, [initialNote])
   const inputRef = useRef<HTMLInputElement>(null)
   const isFinished = Number(progress) === Number(allPages)
 
