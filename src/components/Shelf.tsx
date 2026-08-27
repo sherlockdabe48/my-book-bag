@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import ShelfBookList from "./ShelfBookList"
 import AddManualBookForm from "./AddManualBookForm"
 import type { Book } from "../types/book"
@@ -9,8 +9,32 @@ interface ShelfProps {
   inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
 }
 
+type SortKey = "added" | "title" | "author" | "status"
+type FilterStatus = "all" | "onRead" | "reading" | "finish"
+
+const STATUS_LABEL: Record<FilterStatus, string> = {
+  all: "All",
+  onRead: "Unread",
+  reading: "Reading",
+  finish: "Finished",
+}
+
+const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
+
 export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfProps) {
   const [showAddForm, setShowAddForm] = useState(false)
+  const [sort, setSort] = useState<SortKey>("added")
+  const [filter, setFilter] = useState<FilterStatus>("all")
+
+  const filteredSorted = useMemo(() => {
+    let books = filter === "all" ? shelfBooks : shelfBooks.filter((b) => b.status === filter)
+    books = [...books]
+    if (sort === "title")  books.sort((a, b) => a.title.localeCompare(b.title))
+    if (sort === "author") books.sort((a, b) => a.author.localeCompare(b.author))
+    if (sort === "status") books.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status])
+    // "added" keeps insertion order (no sort)
+    return books
+  }, [shelfBooks, sort, filter])
 
   function focus() {
     inputRef.current[0]?.focus()
@@ -24,7 +48,44 @@ export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfPro
       </h2>
       <div className={shelfHighLight ? "shelf-container__highlight" : ""}>
         <div className="shelf-container">
-          {shelfBooks.length === 0 ? (
+          {shelfBooks.length > 0 && (
+            <div className="shelf-controls">
+              {/* Filter chips */}
+              <div className="shelf-controls__group">
+                {(["all", "onRead", "reading", "finish"] as FilterStatus[]).map((f) => (
+                  <button
+                    key={f}
+                    className={`shelf-controls__chip ${filter === f ? "shelf-controls__chip--active" : ""}`}
+                    onClick={() => setFilter(f)}
+                  >
+                    {STATUS_LABEL[f]}
+                    {f !== "all" && (
+                      <span className="shelf-controls__chip-count">
+                        {shelfBooks.filter((b) => b.status === f).length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {/* Sort select */}
+              <div className="shelf-controls__sort">
+                <label className="shelf-controls__sort-label" htmlFor="shelf-sort">Sort</label>
+                <select
+                  id="shelf-sort"
+                  className="shelf-controls__sort-select"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as SortKey)}
+                >
+                  <option value="added">Date added</option>
+                  <option value="title">Title A–Z</option>
+                  <option value="author">Author A–Z</option>
+                  <option value="status">Status</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {filteredSorted.length === 0 && shelfBooks.length === 0 ? (
             <div className="shelf-empty">
               <svg className="shelf-empty__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -33,9 +94,12 @@ export default function Shelf({ shelfBooks, shelfHighLight, inputRef }: ShelfPro
               <p className="shelf-empty__heading">Your shelf is empty</p>
               <p className="shelf-empty__sub">Search for a book and add it here.</p>
             </div>
+          ) : filteredSorted.length === 0 ? (
+            <p className="shelf-controls__no-results">No books match this filter.</p>
           ) : (
-            <ShelfBookList shelfBooks={shelfBooks} />
+            <ShelfBookList shelfBooks={filteredSorted} />
           )}
+
           <div className="btn--container mt-2">
             <button className="btn btn--optional btn--see-more" onClick={focus}>
               Find a book{" "}

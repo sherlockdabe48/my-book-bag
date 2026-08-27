@@ -1,8 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 
-type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt"> & { isActive: boolean }
+type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt" | "timesRead"> & { isActive: boolean }
+
+function finishedBanner(times: number): string {
+  if (times === 1) return "🎉 You finished this book!"
+  if (times === 2) return "🎉 You've read this book twice!"
+  return `🎉 You've read this book ${times} times!`
+}
 
 function formatLastRead(dateStr: string): string {
   if (!dateStr) return ""
@@ -16,13 +22,24 @@ function formatLastRead(dateStr: string): string {
   return `Last read ${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
 }
 
-export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, isActive }: BookInBagProps) {
-  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession } = useContext(bookBagContext)
+const READER_NAME_KEY = "myBookBag.readerName"
+
+export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive }: BookInBagProps) {
+  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleIncrementTimesRead } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
   const [draftProgress, setDraftProgress] = useState(currentPage)
   const [confirmReadAgain, setConfirmReadAgain] = useState(false)
+  const [justFinished, setJustFinished] = useState(false)
   const [note, setNote] = useState(initialNote)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const coverRef = useRef<HTMLDivElement>(null)
+
+  // ── Note flow state ──────────────────────────────
+  type NoteStep = "idle" | "writing" | "saved"
+  const [noteStep, setNoteStep] = useState<NoteStep>("idle")
+  const [noteDraft, setNoteDraft] = useState("")
+  const [readerName, setReaderName] = useState(() => localStorage.getItem(READER_NAME_KEY) ?? "")
 
   // Keep local progress in sync when the parent updates currentPage
   // (e.g. after rehydrating from localStorage)
@@ -35,7 +52,20 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   // (e.g. after editing on the shelf and moving back to the bag)
   useEffect(() => {
     setNote(initialNote)
+    // If we were in "saved" step and note changed externally, stay idle
+    setNoteStep("idle")
   }, [initialNote])
+  // Close action menu when clicking outside the cover
+  const closeMenu = useCallback(() => setMenuOpen(false), [])
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleOutside(e: MouseEvent) {
+      if (coverRef.current && !coverRef.current.contains(e.target as Node)) closeMenu()
+    }
+    document.addEventListener("mousedown", handleOutside)
+    return () => document.removeEventListener("mousedown", handleOutside)
+  }, [menuOpen, closeMenu])
+
   const inputRef = useRef<HTMLInputElement>(null)
   const isFinished = Number(progress) === Number(allPages)
 
@@ -53,6 +83,11 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     setProgress(next)
     handleBagBookProgressChange(id, next)
     setIsEditing(false)
+    // Auto-finish when the entered page reaches or exceeds allPages
+    if (next >= max && !isFinished) {
+      handleIncrementTimesRead(id)
+      setJustFinished(true)
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -71,59 +106,132 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     }
     setProgress(Number(allPages))
     handleBagBookProgressChange(id, Number(allPages))
+    handleIncrementTimesRead(id)
+    setJustFinished(true)
   }
 
   function confirmReset() {
     setProgress(1)
     handleBagBookProgressChange(id, 1)
     setConfirmReadAgain(false)
+    setJustFinished(false)
+  }
+
+  function openNoteWriter() {
+    // Strip any existing signature line so the user only edits their prose
+    const existing = note.replace(/\n\n—[^\n]+$/, "")
+    setNoteDraft(existing)
+    setNoteStep("writing")
+  }
+
+  function saveNote() {
+    const name = readerName.trim() || "Reader"
+    if (readerName.trim()) localStorage.setItem(READER_NAME_KEY, readerName.trim())
+    const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })
+    const signed = `${noteDraft.trimEnd()}\n\n— ${name}, ${date}`
+    setNote(signed)
+    handleBookChangeNote(id, signed)
+    setNoteStep("saved")
   }
 
   return (
     <div className="book-in-bag__container">
-      <div className="book-in-bag__cover-wrapper">
+      <div className="book-in-bag__cover-wrapper" ref={coverRef}>
         <img className="book-image-in-bag" src={imageURL} alt={title} loading="lazy" />
         <div className={`book-in-bag__bookmark ${isActive ? "book-in-bag__bookmark--active" : ""}`} aria-label={isActive ? "Currently reading" : "In your bag"}>
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 3a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2H5z"/>
           </svg>
         </div>
-      </div>
-      <div className="book-in-bag__detail-grid">
-        <div>
-          <label>Title: </label>
-          <span className="book-in-bag__title">{title}</span>
-          <br />
-          <label>By: </label>
-          <span>{author}</span>
-          {recommendedBy && (
-            <>
-              <br />
-              <label>Recommended by: </label>
-              <span>{recommendedBy}</span>
-            </>
-          )}
-        </div>
-        <br />
-        {isFinished && (
-          <p className="book-in-bag__finished-banner">🎉 You finished this book!</p>
+
+        {/* ── ⋯ button ───────────────────────────────── */}
+        {!menuOpen && (
+          <button
+            className="book-in-bag__dots-btn"
+            aria-label="Book actions"
+            onClick={() => setMenuOpen(true)}
+          >
+            ···
+          </button>
         )}
-        {isFinished && (
-          <div className="book-in-bag__note-wrapper">
-            <label className="book-in-bag__note-label" htmlFor={`note-${id}`}>
-              Your thoughts
-            </label>
-            <textarea
-              id={`note-${id}`}
-              className="book-in-bag__note-textarea"
-              placeholder="What did you think about this book?"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              rows={4}
-            />
+
+        {/* ── Action menu over cover ──────────────────── */}
+        {menuOpen && (
+          <div className="book-in-bag__action-menu">
+            {confirmReadAgain ? (
+              <>
+                <p className="book-in-bag__menu-label">Read again?</p>
+                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--danger" onClick={() => { confirmReset(); setMenuOpen(false) }}>Yes, reset</button>
+                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={() => setConfirmReadAgain(false)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <p className="book-in-bag__menu-label">Actions</p>
+                <button className="book-in-bag__menu-btn" onClick={() => { handleLogReadingSession(id); setMenuOpen(false) }}>📖 I read today</button>
+                <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
+                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished) setMenuOpen(false) }}>
+                  {isFinished ? "Read Again" : "Finish"}
+                </button>
+                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf" onClick={() => { handleMoveToShelfFromBag(id, note); setMenuOpen(false) }}>Back to Shelf</button>
+                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={closeMenu}>Cancel</button>
+              </>
+            )}
           </div>
         )}
-        <label>Page:</label>
+      </div>
+      <div className="book-in-bag__detail-grid">
+
+        {/* ── Book meta ──────────────────────────────── */}
+        <div className="book-in-bag__meta-block">
+          <p className="book-in-bag__title">{title}</p>
+          <dl className="book-in-bag__dl">
+            <div className="book-in-bag__dl-row">
+              <dt>By</dt>
+              <dd>{author}</dd>
+            </div>
+            {recommendedBy && (
+              <div className="book-in-bag__dl-row">
+                <dt>Rec. by</dt>
+                <dd>{recommendedBy}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        {isFinished && justFinished && (
+          <p className="book-in-bag__finished-banner">{finishedBanner(timesRead + 1)}</p>
+        )}
+        {noteStep === "writing" && (
+          <div className="book-in-bag__note-editor">
+            <textarea
+              className="book-in-bag__note-textarea"
+              placeholder="Your thoughts on this book…"
+              value={noteDraft}
+              onChange={(e) => setNoteDraft(e.target.value)}
+              rows={4}
+              autoFocus
+            />
+            <input
+              className="book-in-bag__note-name-input"
+              type="text"
+              placeholder="Your name (for the signature)"
+              value={readerName}
+              onChange={(e) => setReaderName(e.target.value)}
+            />
+            <div className="book-in-bag__note-actions">
+              <button className="book-in-bag__note-save-btn" onClick={saveNote}>Save</button>
+              <button className="book-in-bag__note-cancel-btn" onClick={() => setNoteStep("idle")}>Cancel</button>
+            </div>
+          </div>
+        )}
+        {noteStep === "saved" && (
+          <div className="book-in-bag__note-saved">
+            <span className="book-in-bag__note-saved-text">✓ Note saved</span>
+            <button className="book-in-bag__note-invite" onClick={openNoteWriter}>Edit →</button>
+          </div>
+        )}
+        {/* ── Progress section ───────────────────────── */}
+        <div className="book-in-bag__progress-section">
         <div className="book-in-bag__progress-row">
           {isEditing ? (
             <input
@@ -147,18 +255,11 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               {progress}
             </button>
           )}
-          <span className="book-in-bag__progress-text">/ {allPages} Pages</span>
-          <button
-            className="book-in-bag__read-today-btn"
-            onClick={() => handleLogReadingSession(id)}
-            title="Mark that you read today"
-          >
-            📖 I read today
-          </button>
+          <span className="book-in-bag__progress-text">/ {allPages} pages</span>
+          {lastReadAt && (
+            <span className="book-in-bag__last-read">{formatLastRead(lastReadAt)}</span>
+          )}
         </div>
-        {lastReadAt && (
-          <span className="book-in-bag__last-read">{formatLastRead(lastReadAt)}</span>
-        )}
         <div
           className="book-in-bag__progress-bar-wrapper"
           role="progressbar"
@@ -172,30 +273,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             style={{ width: `${Math.min(100, (Number(progress) / Number(allPages)) * 100)}%` }}
           />
         </div>
-        {confirmReadAgain ? (
-          <div className="book-in-bag__confirm-reset">
-            <span className="book-in-bag__confirm-reset-text">Reset progress to page 1?</span>
-            <div className="book-in-bag__action-row">
-              <button className="btn btn--danger btn--in-bag" onClick={confirmReset}>Yes, reset</button>
-              <button className="btn btn--normal btn--in-bag" onClick={() => setConfirmReadAgain(false)}>Cancel</button>
-            </div>
-          </div>
-        ) : (
-          <div className="book-in-bag__action-row">
-            <button
-              className={`btn btn--in-bag ${isFinished ? "btn--add" : "btn--primary"}`}
-              onClick={handleFinishBook}
-            >
-              {isFinished ? "Read Again" : "Finish"}
-            </button>
-            <button
-              className="btn btn--normal btn--in-bag"
-              onClick={() => handleMoveToShelfFromBag(id, note)}
-            >
-              Back to Shelf
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

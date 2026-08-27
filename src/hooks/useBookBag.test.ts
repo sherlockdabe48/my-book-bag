@@ -15,6 +15,8 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   note: "",
   recommendedBy: "",
   lastReadAt: "",
+  startedAt: "",
+  timesRead: 0,
   ...overrides,
 })
 

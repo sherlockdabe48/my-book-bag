@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect } from "react"
+import { useContext, useRef, useState, useEffect, useCallback } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 
@@ -32,8 +32,9 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   const [noteInput, setNoteInput]         = useState("")
   const [recommendedByInput, setRecommendedByInput] = useState("")
   const fileInputRef                      = useRef<HTMLInputElement>(null)
+  const containerRef                      = useRef<HTMLDivElement>(null)
 
-  function closeAll() {
+  const closeAll = useCallback(() => {
     setEditMode(null)
     setUrlInput("")
     setPagesInput("")
@@ -41,7 +42,19 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     setAuthorInput("")
     setNoteInput("")
     setRecommendedByInput("")
-  }
+  }, [])
+
+  // Close edit menu when clicking outside this book card
+  useEffect(() => {
+    if (editMode === null) return
+    function handleOutsideClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        closeAll()
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick)
+    return () => document.removeEventListener("mousedown", handleOutsideClick)
+  }, [editMode, closeAll])
 
   function handleUrlSubmit() {
     const trimmed = urlInput.trim()
@@ -96,7 +109,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   }
 
   return (
-    <div className="book-in-shelf__container">
+    <div className="book-in-shelf__container" ref={containerRef}>
       <div className="book-in-shelf__cover-wrapper">
         <img className="book-image-in-shelf" src={imageURL} alt={title} loading="lazy" />
 
@@ -134,6 +147,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
         {editMode === "menu" && (
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Options</p>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--add-bag" onClick={() => { handleAddToBagFromShelf(id); closeAll() }}>Add to Bag</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("editBook")}>Edit Book</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setEditMode("note") }}>My Note</button>
             <button

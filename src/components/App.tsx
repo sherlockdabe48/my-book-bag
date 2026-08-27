@@ -27,6 +27,7 @@ export interface BookBagContextValue {
   handleBookChangeAuthor: (id: string, author: string) => void
   handleBookChangeNote: (id: string, note: string) => void
   handleBookChangeRecommendedBy: (id: string, recommendedBy: string) => void
+  handleIncrementTimesRead: (id: string) => void
   handleLogReadingSession: (id: string) => void
   handleAddManualBook: (book: Book) => void
 }
@@ -70,6 +71,7 @@ function App() {
     handleBookChangeAuthor,
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
+    handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
   } = useBookBag(searchBooks)
@@ -94,6 +96,7 @@ function App() {
     handleBookChangeAuthor,
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
+    handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
   }), [
@@ -108,6 +111,7 @@ function App() {
     handleBookChangeAuthor,
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
+    handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
   ])

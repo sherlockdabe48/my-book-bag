@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import "../css/add-manual.css"
@@ -72,7 +72,26 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
   const [author, setAuthor] = useState("")
   const [pages, setPages]   = useState("")
   const [coverUrl, setCoverUrl] = useState("")
+  const [coverFile, setCoverFile] = useState<string>("")   // base64 data URI from upload
   const [error, setError]   = useState("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  /** The resolved cover to use: uploaded file wins over URL. */
+  const coverPreview = coverFile || coverUrl.trim()
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const result = ev.target?.result
+      if (typeof result === "string") {
+        setCoverFile(result)
+        setError("")
+      }
+    }
+    reader.readAsDataURL(file)
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -94,13 +113,15 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
       author:        author.trim(),
       allPages,
       currentPage:   1,
-      imageURL:      coverUrl.trim() || makeGeneratedCover(title.trim(), author.trim()),
+      imageURL:      coverFile || coverUrl.trim() || makeGeneratedCover(title.trim(), author.trim()),
       description:   false,
       isbn:          false,
       status:        "onRead",
       note:          "",
       recommendedBy: "",
       lastReadAt:    "",
+      startedAt:     "",
+      timesRead:     0,
     }
 
     handleAddManualBook(book)
@@ -123,8 +144,20 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
           <label className="add-manual__label" htmlFor="am-pages">Pages <span className="add-manual__optional">(optional)</span></label>
           <input id="am-pages" className="add-manual__input" type="number" min={1} placeholder="e.g. 304" value={pages} onChange={(e) => { setPages(e.target.value); setError("") }} />
 
-          <label className="add-manual__label" htmlFor="am-cover">Cover image URL <span className="add-manual__optional">(optional)</span></label>
-          <input id="am-cover" className="add-manual__input" type="url" placeholder="https://..." value={coverUrl} onChange={(e) => { setCoverUrl(e.target.value); setError("") }} />
+          <label className="add-manual__label" htmlFor="am-cover">Cover image <span className="add-manual__optional">(optional)</span></label>
+          <div className="add-manual__cover-row">
+            <input id="am-cover" className="add-manual__input add-manual__cover-url-input" type="url" placeholder="Paste image URL…" value={coverUrl} onChange={(e) => { setCoverUrl(e.target.value); setCoverFile(""); setError("") }} disabled={!!coverFile} />
+            <button type="button" className="add-manual__upload-btn" onClick={() => fileInputRef.current?.click()}>
+              {coverFile ? "Change file" : "Upload"}
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFileChange} />
+          </div>
+          {coverPreview && (
+            <div className="add-manual__cover-preview-row">
+              <img className="add-manual__cover-preview" src={coverPreview} alt="Cover preview" />
+              <button type="button" className="add-manual__cover-clear" aria-label="Remove cover" onClick={() => { setCoverFile(""); setCoverUrl(""); if (fileInputRef.current) fileInputRef.current.value = "" }}>✕</button>
+            </div>
+          )}
 
           {error && <p className="add-manual__error" role="alert">{error}</p>}
 
