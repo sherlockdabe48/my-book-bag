@@ -46,17 +46,21 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     setRecommendedByInput("")
   }, [])
 
-  // Close edit menu when clicking outside this book card
+  // Close edit menu / hide dots when clicking or tapping outside this book card
   useEffect(() => {
-    if (editMode === null) return
-    function handleOutsideClick(e: MouseEvent) {
+    if (editMode === null && !touched) return
+    function handleOutside(e: MouseEvent | TouchEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         closeAll()
       }
     }
-    document.addEventListener("mousedown", handleOutsideClick)
-    return () => document.removeEventListener("mousedown", handleOutsideClick)
-  }, [editMode, closeAll])
+    document.addEventListener("mousedown", handleOutside)
+    document.addEventListener("touchstart", handleOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleOutside)
+      document.removeEventListener("touchstart", handleOutside)
+    }
+  }, [editMode, touched, closeAll])
 
   function handleUrlSubmit() {
     const trimmed = urlInput.trim()
