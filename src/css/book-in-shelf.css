@@ -98,6 +98,16 @@
     background-color: #ede6d8;
 }
 
+.book-in-shelf__overlay-btn--disabled {
+    background-color: rgba(200, 200, 200, 0.5);
+    color: rgba(255,255,255,0.8);
+    cursor: not-allowed;
+}
+
+.book-in-shelf__overlay-btn--disabled:hover {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
 /* ── Edit overlay (inside cover-wrapper) ─────────── */
 .book-in-shelf__edit-overlay {
     position: absolute;
@@ -253,6 +263,11 @@
 
 /* Show when tapped on mobile (toggled via JS class) */
 .book-in-shelf__cover-wrapper--touched .book-in-shelf__dots-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.book-in-shelf__cover-wrapper--touched .book-in-shelf__overlay {
     opacity: 1;
     pointer-events: auto;
 }

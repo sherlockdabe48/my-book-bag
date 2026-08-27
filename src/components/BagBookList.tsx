@@ -2,13 +2,18 @@ import { useContext } from "react"
 import BookInBag from "./BookInBag"
 import { toggleClassContext } from "./App"
 import type { Book } from "../types/book"
+import { getNextTier } from "../hooks/useBookBag"
 
 interface BagBookListProps {
   bagBooks: Book[]
+  bagCapacity: number
+  totalFinished: number
 }
 
-export default function BagBookList({ bagBooks }: BagBookListProps) {
+export default function BagBookList({ bagBooks, bagCapacity, totalFinished }: BagBookListProps) {
   const { handleActiveShelfHighLight } = useContext(toggleClassContext)
+  const nextTier = getNextTier(totalFinished)
+  const isFull = bagBooks.length >= bagCapacity
 
   function goToShelf() {
     handleActiveShelfHighLight()
@@ -43,12 +48,24 @@ export default function BagBookList({ bagBooks }: BagBookListProps) {
         <BookInBag key={bagBook.id} {...bagBook} isActive={index === 0} />
       ))}
       <div className="btn--container">
-        <button
-          className="btn btn--add btn--see-more"
-          onClick={goToShelf}
-        >
-          Pick from shelf
-        </button>
+        {isFull ? (
+          <div className="bag-full-notice">
+            <p className="bag-full-notice__title">🎒 Your bag is full ({bagCapacity}/{bagCapacity})</p>
+            <p className="bag-full-notice__sub">
+              {nextTier
+                ? <>Finish <strong>{nextTier.booksFinished - totalFinished}</strong> more book{nextTier.booksFinished - totalFinished !== 1 ? "s" : ""} to unlock a <strong>{nextTier.label}</strong> ({nextTier.capacity} slots).</>
+                : <>You've reached the maximum bag size. You're a Scholar! 🏆</>
+              }
+            </p>
+          </div>
+        ) : (
+          <button
+            className="btn btn--add btn--see-more"
+            onClick={goToShelf}
+          >
+            Pick from shelf
+          </button>
+        )}
       </div>
     </div>
   )

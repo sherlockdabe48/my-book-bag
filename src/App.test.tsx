@@ -51,13 +51,12 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
       >
         <BookInBag {...baseProps} isActive={false} />
       </bookBagContext.Provider>
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "10" }))
     fireEvent.change(screen.getByRole("spinbutton", { name: "Current page" }), {
       target: { value: "25" },
     })
@@ -71,7 +70,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
       >
         <BookInBag {...baseProps} currentPage={300} isActive={true} />
       </bookBagContext.Provider>

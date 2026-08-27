@@ -2,12 +2,17 @@ import React from "react"
 import Shelf from "./Shelf"
 import Bag from "./Bag"
 import type { Book } from "../types/book"
+import type { BAG_TIERS } from "../hooks/useBookBag"
 
 interface ShelfBagWrapperProps {
   bagBooks: Book[]
   shelfBooks: Book[]
   shelfHighLight: boolean
   inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
+  bagCapacity: number
+  bagUpgraded: boolean
+  bagTier: typeof BAG_TIERS[number]
+  totalFinished: number
 }
 
 export default function ShelfBagWrapper({
@@ -15,10 +20,20 @@ export default function ShelfBagWrapper({
   shelfBooks,
   shelfHighLight,
   inputRef,
+  bagCapacity,
+  bagUpgraded,
+  bagTier,
+  totalFinished,
 }: ShelfBagWrapperProps) {
   return (
     <div className="shelf-bag-wrapper">
-      <Bag bagBooks={bagBooks} />
+      <Bag
+        bagBooks={bagBooks}
+        bagCapacity={bagCapacity}
+        bagUpgraded={bagUpgraded}
+        bagTier={bagTier}
+        totalFinished={totalFinished}
+      />
       <Shelf
         shelfBooks={shelfBooks}
         shelfHighLight={shelfHighLight}

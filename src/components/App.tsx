@@ -16,6 +16,8 @@ export interface SearchBookContextValue {
 }
 
 export interface BookBagContextValue {
+  bagCapacity: number
+  bagCount: number
   handleAddToBagFromShelf: (id: string) => void
   handleBookSelect: (id: string) => void
   handleBookDeleteFromShelf: (id: string) => void
@@ -58,6 +60,10 @@ function App() {
     bagBooks,
     shelfBooks,
     shelfHighLight,
+    bagCapacity,
+    bagUpgraded,
+    bagTier,
+    totalFinished,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
     handleBookSelect,
@@ -85,6 +91,8 @@ function App() {
   }), [handleGetSearchInputValue, handleClearSearchInputValue, handleMoveToShelfFromSearch])
 
   const bookBagContextValue = useMemo<BookBagContextValue>(() => ({
+    bagCapacity,
+    bagCount: bagBooks.length,
     handleAddToBagFromShelf,
     handleBookSelect,
     handleBookDeleteFromShelf,
@@ -100,6 +108,8 @@ function App() {
     handleLogReadingSession,
     handleAddManualBook,
   }), [
+    bagCapacity,
+    bagBooks.length,
     handleAddToBagFromShelf,
     handleBookSelect,
     handleBookDeleteFromShelf,
@@ -147,6 +157,10 @@ function App() {
               shelfBooks={shelfBooks}
               shelfHighLight={shelfHighLight}
               inputRef={inputRef}
+              bagCapacity={bagCapacity}
+              bagUpgraded={bagUpgraded}
+              bagTier={bagTier}
+              totalFinished={totalFinished}
             />
           )}
         </toggleClassContext.Provider>

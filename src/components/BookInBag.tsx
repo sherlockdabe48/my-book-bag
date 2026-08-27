@@ -69,30 +69,22 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   const inputRef = useRef<HTMLInputElement>(null)
   const isFinished = Number(progress) === Number(allPages)
 
-  function startEditing() {
-    setDraftProgress(progress)
-    setIsEditing(true)
-    // Use requestAnimationFrame so the input is in the DOM before we focus,
-    // while still running within the same user-gesture tick on iOS Safari.
-    requestAnimationFrame(() => {
-      inputRef.current?.focus()
-      inputRef.current?.select()
-    })
-  }
-
-  function commitEdit() {
+  function applyProgress(next: number) {
     const max = Number(allPages)
-    let next = Number(draftProgress)
     if (Number.isNaN(next) || next < 0) next = 0
     if (next > max) next = max
     setProgress(next)
+    setDraftProgress(next)
     handleBagBookProgressChange(id, next)
-    setIsEditing(false)
-    // Auto-finish when the entered page reaches or exceeds allPages
     if (next >= max && !isFinished) {
       handleIncrementTimesRead(id)
       setJustFinished(true)
     }
+  }
+
+  function commitEdit() {
+    applyProgress(Number(draftProgress))
+    setIsEditing(false)
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -102,6 +94,15 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
 
   function handleDraftChange(e: React.ChangeEvent<HTMLInputElement>) {
     setDraftProgress(Number(e.target.value))
+  }
+
+  function startEditing() {
+    setDraftProgress(progress)
+    setIsEditing(true)
+    requestAnimationFrame(() => {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    })
   }
 
   function handleFinishBook() {
@@ -172,7 +173,6 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             ) : (
               <>
                 <p className="book-in-bag__menu-label">Actions</p>
-                <button className="book-in-bag__menu-btn" onClick={() => { handleLogReadingSession(id); setMenuOpen(false) }}>📖 I read today</button>
                 <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
                 <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished) setMenuOpen(false) }}>
                   {isFinished ? "Read Again" : "Finish"}
@@ -237,49 +237,60 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
         )}
         {/* ── Progress section ───────────────────────── */}
         <div className="book-in-bag__progress-section">
-        <div className="book-in-bag__progress-row">
-          {isEditing ? (
-            <input
-              ref={inputRef}
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={draftProgress}
-              min={0}
-              max={Number(allPages)}
-              className="book-in-bag__inline-input"
-              onChange={handleDraftChange}
-              onBlur={commitEdit}
-              onKeyDown={handleKeyDown}
-              aria-label="Current page"
-            />
-          ) : (
-            <button
-              className="book-in-bag__progress-btn"
-              onClick={startEditing}
-              title="Click to edit page"
-            >
-              {progress}
-            </button>
-          )}
-          <span className="book-in-bag__progress-text">/ {allPages} pages</span>
-          {lastReadAt && (
-            <span className="book-in-bag__last-read">{formatLastRead(lastReadAt)}</span>
-          )}
-        </div>
-        <div
-          className="book-in-bag__progress-bar-wrapper"
-          role="progressbar"
-          aria-valuenow={Number(progress)}
-          aria-valuemin={0}
-          aria-valuemax={Number(allPages)}
-          aria-label={`Page ${progress} of ${allPages}`}
-        >
+          <div className="book-in-bag__progress-row">
+            <div className="book-in-bag__scroller-wrap">
+              <button
+                className="book-in-bag__scroller-btn"
+                onClick={() => applyProgress(Number(progress) - 1)}
+                disabled={Number(progress) <= 0}
+                aria-label="Previous page"
+              >−</button>
+              <input
+                ref={inputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={isEditing ? draftProgress : progress}
+                min={0}
+                max={Number(allPages)}
+                className="book-in-bag__scroller-input"
+                onChange={handleDraftChange}
+                onFocus={startEditing}
+                onBlur={commitEdit}
+                onKeyDown={handleKeyDown}
+                aria-label="Current page"
+              />
+              <button
+                className="book-in-bag__scroller-btn"
+                onClick={() => applyProgress(Number(progress) + 1)}
+                disabled={Number(progress) >= Number(allPages)}
+                aria-label="Next page"
+              >+</button>
+            </div>
+            <span className="book-in-bag__progress-text">/ {allPages} pages</span>
+            {lastReadAt && (
+              <span className="book-in-bag__last-read">{formatLastRead(lastReadAt)}</span>
+            )}
+          </div>
           <div
-            className="book-in-bag__progress-bar"
-            style={{ width: `${Math.min(100, (Number(progress) / Number(allPages)) * 100)}%` }}
-          />
-        </div>
+            className="book-in-bag__progress-bar-wrapper"
+            role="progressbar"
+            aria-valuenow={Number(progress)}
+            aria-valuemin={0}
+            aria-valuemax={Number(allPages)}
+            aria-label={`Page ${progress} of ${allPages}`}
+          >
+            <div
+              className="book-in-bag__progress-bar"
+              style={{ width: `${Math.min(100, (Number(progress) / Number(allPages)) * 100)}%` }}
+            />
+          </div>
+          <button
+            className="book-in-bag__read-today-btn"
+            onClick={() => handleLogReadingSession(id)}
+          >
+            📖 I read today
+          </button>
         </div>
       </div>
     </div>

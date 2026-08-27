@@ -6,6 +6,8 @@ type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "all
 
 export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt }: BookInShelfProps) {
   const {
+    bagCapacity,
+    bagCount,
     handleAddToBagFromShelf,
     handleBookDeleteFromShelf,
     handleBookChangeCover,
@@ -15,6 +17,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
   } = useContext(bookBagContext)
+  const bagFull = bagCount >= bagCapacity
 
   type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
@@ -119,7 +122,6 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
       <div
         className={`book-in-shelf__cover-wrapper${touched ? " book-in-shelf__cover-wrapper--touched" : ""}`}
         onTouchStart={() => setTouched(true)}
-        onTouchEnd={(e) => { e.preventDefault() }}
       >
         <img className="book-image-in-shelf" src={imageURL} alt={title} loading="lazy" />
 
@@ -146,10 +148,11 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
         {editMode === null && (
           <div className="book-in-shelf__overlay">
             <button
-              className="book-in-shelf__overlay-btn book-in-shelf__overlay-btn--add"
-              onClick={() => handleAddToBagFromShelf(id)}
+              className={`book-in-shelf__overlay-btn book-in-shelf__overlay-btn--add${bagFull ? " book-in-shelf__overlay-btn--disabled" : ""}`}
+              onClick={() => !bagFull && handleAddToBagFromShelf(id)}
+              title={bagFull ? `Bag is full (${bagCount}/${bagCapacity}) — finish a book to unlock more space` : undefined}
             >
-              Add to Bag
+              {bagFull ? "🎒 Bag full" : "Add to Bag"}
             </button>
           </div>
         )}

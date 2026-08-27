@@ -1,5 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Book } from "../types/book"
+
+// ── Bag capacity tiers ─────────────────────────────────────────────────────
+export const BAG_TIERS: { booksFinished: number; capacity: number; label: string }[] = [
+  { booksFinished: 0,  capacity: 3,  label: "Starter Bag"  },
+  { booksFinished: 1,  capacity: 5,  label: "Reader's Bag" },
+  { booksFinished: 5,  capacity: 7,  label: "Bookworm Bag" },
+  { booksFinished: 10, capacity: 10, label: "Scholar's Bag" },
+]
+
+export function getBagTier(totalFinished: number) {
+  let tier = BAG_TIERS[0]
+  for (const t of BAG_TIERS) {
+    if (totalFinished >= t.booksFinished) tier = t
+  }
+  return tier
+}
+
+export function getNextTier(totalFinished: number) {
+  return BAG_TIERS.find((t) => t.booksFinished > totalFinished) ?? null
+}
 
 const BAG_BOOKS_KEY   = "myBookBag.bagBooks"
 const SHELF_BOOKS_KEY = "myBookBag.shelfBooks"
@@ -73,8 +93,26 @@ export default function useBookBag(searchBooks: Book[]) {
   const [bagBooks, setBagBooks]     = useState<Book[]>([])
   const [shelfBooks, setShelfBooks] = useState<Book[]>([])
   const [shelfHighLight, setShelfHighLight] = useState(false)
+  const [prevCapacity, setPrevCapacity] = useState<number | null>(null)
   // Tracks whether the initial localStorage load has completed
   const loadedRef = useRef(false)
+
+  // ── Derived bag capacity ─────────────────────────────
+  const totalFinished = useMemo(() => {
+    const all = [...bagBooks, ...shelfBooks]
+    return all.reduce((sum, b) => sum + (b.timesRead ?? 0), 0)
+  }, [bagBooks, shelfBooks])
+
+  const bagTier     = useMemo(() => getBagTier(totalFinished), [totalFinished])
+  const bagCapacity = bagTier.capacity
+
+  // Detect capacity upgrade (after initial load)
+  const bagUpgraded = loadedRef.current && prevCapacity !== null && bagCapacity > prevCapacity
+  useEffect(() => {
+    if (!loadedRef.current) return
+    if (prevCapacity === null) { setPrevCapacity(bagCapacity); return }
+    if (bagCapacity > prevCapacity) setPrevCapacity(bagCapacity)
+  }, [bagCapacity, prevCapacity])
 
   // ── Load from localStorage on mount ─────────────────────
   useEffect(() => {
@@ -111,13 +149,14 @@ export default function useBookBag(searchBooks: Book[]) {
   }, [])
 
   const handleAddToBagFromShelf = useCallback((id: string) => {
-    setShelfBooks((shelf) => {
-      const book = shelf.find((b) => b.id === id)
-      if (!book) return shelf
-      setBagBooks((bag) => [...bag, book])
-      return shelf.filter((b) => b.id !== id)
+    setBagBooks((bag) => {
+      if (bag.length >= bagCapacity) return bag   // strict block — bag full
+      setShelfBooks((shelf) => shelf.filter((b) => b.id !== id))
+      const book = shelfBooks.find((b) => b.id === id)
+      if (!book) return bag
+      return [...bag, book]
     })
-  }, [])
+  }, [bagCapacity, shelfBooks])
 
   const handleBookSelect = useCallback((_id: string) => {
     // selection tracking removed — kept for API compatibility
@@ -224,6 +263,10 @@ export default function useBookBag(searchBooks: Book[]) {
     bagBooks,
     shelfBooks,
     shelfHighLight,
+    bagCapacity,
+    bagUpgraded,
+    bagTier,
+    totalFinished,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
     handleBookSelect,
