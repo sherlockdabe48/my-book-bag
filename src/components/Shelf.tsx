@@ -40,7 +40,7 @@ export default function Shelf({ shelfBooks, shelfHighLight }: ShelfProps) {
   return (
     <div>
       <h2 className="topic" id="in-my-shelf">
-        In my Shelf
+        My Shelf
       </h2>
       <div className={shelfHighLight ? "shelf-container__highlight" : ""}>
         <div className="shelf-container">

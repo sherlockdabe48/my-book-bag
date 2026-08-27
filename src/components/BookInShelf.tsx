@@ -161,7 +161,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Options</p>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("editBook")}>Edit Book</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setEditMode("note") }}>My Note</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setRecommendedByInput(recommendedBy); setEditMode("note") }}>My Note</button>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
               onClick={() => {
@@ -179,7 +179,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           </div>
         )}
 
-        {/* ── Edit Book sub-menu: Title / Author / Cover / Pages / Rec. by ── */}
+        {/* ── Edit Book sub-menu: Title / Author / Cover / Pages ── */}
         {editMode === "editBook" && (
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Edit book</p>
@@ -187,7 +187,6 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setAuthorInput(author); setEditMode("author") }}>Author</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("confirmCover")}>Cover</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setPagesInput(allPages === "N/A" ? "" : String(allPages)); setEditMode("pages") }}>Pages</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setRecommendedByInput(recommendedBy); setEditMode("recommendedBy") }}>Rec. by</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}
@@ -299,29 +298,19 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
               placeholder="Your thoughts on this book…"
               value={noteInput}
               onChange={(e) => setNoteInput(e.target.value)}
-              rows={5}
+              rows={4}
               autoFocus
             />
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleNoteSubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
-          </div>
-        )}
-
-        {/* ── Recommended by editor ──────────────────────── */}
-        {editMode === "recommendedBy" && (
-          <div className="book-in-shelf__edit-overlay">
-            <p className="book-in-shelf__edit-overlay-label">Recommended by</p>
             <input
               className="book-in-shelf__edit-input"
               type="text"
-              placeholder="A friend, a blog, …"
+              placeholder="Recommended by (a friend, a blog, …)"
               value={recommendedByInput}
               onChange={(e) => setRecommendedByInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleRecommendedBySubmit()}
-              autoFocus
+              onKeyDown={(e) => { if (e.key === "Enter") { handleNoteSubmit(); handleRecommendedBySubmit() } }}
             />
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleRecommendedBySubmit}>Save</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={() => { handleNoteSubmit(); handleRecommendedBySubmit() }}>Save</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}
       </div>

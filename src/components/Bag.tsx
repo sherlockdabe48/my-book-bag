@@ -42,7 +42,7 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
 
   return (
     <div>
-      <h2 className="topic">In my Bag</h2>
+      <h2 className="topic">My Bag</h2>
       {showUpgrade && (
         <div className="bag-upgrade-banner">
           🎉 Bag upgraded! You can now carry <strong>{bagCapacity} books</strong>. Keep reading!

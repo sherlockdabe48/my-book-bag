@@ -10,7 +10,7 @@ interface HeaderProps {
 export default function Header({ onOpenSearch }: HeaderProps) {
   return (
     <div className="header-container">
-      <h1 className="header__logo">MY BOOK BAG</h1>
+      <h1 className="header__logo">PagesBag</h1>
       <div className="header__right">
         <button
           className="header__search-icon-btn"

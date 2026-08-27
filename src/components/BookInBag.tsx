@@ -25,7 +25,7 @@ function formatLastRead(dateStr: string): string {
 const READER_NAME_KEY = "myBookBag.readerName"
 
 export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive }: BookInBagProps) {
-  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleIncrementTimesRead } = useContext(bookBagContext)
+  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
   const [draftProgress, setDraftProgress] = useState(currentPage)
@@ -40,6 +40,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   const [noteStep, setNoteStep] = useState<NoteStep>("idle")
   const [noteDraft, setNoteDraft] = useState("")
   const [readerName, setReaderName] = useState(() => localStorage.getItem(READER_NAME_KEY) ?? "")
+  const [recByDraft, setRecByDraft] = useState(recommendedBy)
 
   // Keep local progress in sync when the parent updates currentPage
   // (e.g. after rehydrating from localStorage)
@@ -127,6 +128,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     // Strip any existing signature line so the user only edits their prose
     const existing = note.replace(/\n\n—[^\n]+$/, "")
     setNoteDraft(existing)
+    setRecByDraft(recommendedBy)
     setNoteStep("writing")
   }
 
@@ -137,6 +139,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     const signed = `${noteDraft.trimEnd()}\n\n— ${name}, ${date}`
     setNote(signed)
     handleBookChangeNote(id, signed)
+    handleBookChangeRecommendedBy(id, recByDraft.trim())
     setNoteStep("saved")
   }
 
@@ -215,6 +218,13 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               onChange={(e) => setNoteDraft(e.target.value)}
               rows={4}
               autoFocus
+            />
+            <input
+              className="book-in-bag__note-name-input"
+              type="text"
+              placeholder="Recommended by (a friend, a blog, …)"
+              value={recByDraft}
+              onChange={(e) => setRecByDraft(e.target.value)}
             />
             <input
               className="book-in-bag__note-name-input"
