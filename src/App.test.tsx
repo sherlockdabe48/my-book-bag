@@ -99,6 +99,7 @@ describe("BookInBag", () => {
         id: "book-1",
         title: "The Hobbit",
         author: "J.R.R. Tolkien",
+        publisher: "",
         currentPage: 10,
         allPages: 300,
         imageURL: "cover.jpg",
@@ -134,10 +135,17 @@ describe("BookInBag", () => {
             title="The Hobbit"
             subtitle=""
             author="J.R.R. Tolkien"
+            publisher=""
             description=""
             allPages={300}
+            currentPage={0}
             imageURL="cover.jpg"
             isbn=""
+            status="onRead"
+            note=""
+            recommendedBy=""
+            lastReadAt=""
+            timesRead={0}
             shelfBooks={shelfBooks}
           />
         </searchBookContext.Provider>

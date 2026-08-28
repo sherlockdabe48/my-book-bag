@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect, useRef } from "react"
 import BookInBag from "./BookInBag"
 import { toggleClassContext } from "./App"
 import type { Book } from "../types/book"
@@ -15,6 +15,18 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
   const { handleActiveShelfHighLight, handleOpenShelf } = useContext(toggleClassContext)
   const nextTier = getNextTier(totalFinished)
   const isFull = bagBooks.length >= bagCapacity
+
+  // Smooth-scroll to the top of the bag list when the first book changes
+  // (i.e. a book has been floated to the top after progress/read-today)
+  const firstBookIdRef = useRef<string | undefined>(undefined)
+  const listRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const newFirstId = bagBooks[0]?.id
+    if (firstBookIdRef.current !== undefined && firstBookIdRef.current !== newFirstId) {
+      listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+    firstBookIdRef.current = newFirstId
+  }, [bagBooks[0]?.id])
 
   function goToShelf() {
     handleOpenShelf?.()
@@ -45,7 +57,7 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
   }
 
   return (
-    <div className="bag-book-list">
+    <div className="bag-book-list" ref={listRef}>
       {bagBooks.map((bagBook, index) => (
         <BookInBag
           key={bagBook.id}
