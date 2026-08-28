@@ -9,7 +9,7 @@ interface ShelfBookListProps {
 export default function ShelfBookList({ shelfBooks, recentlyAddedShelfBookId }: ShelfBookListProps) {
   return (
     <>
-      <div className="shelf-book-list__grid ">
+      <div className="shelf-book-list__grid">
         {shelfBooks.map((shelfBook) => (
           <BookInShelf
             key={shelfBook.id}

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
+import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../utils/sound"
@@ -97,12 +97,12 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     setIsEditing(false)
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") { e.preventDefault(); commitEdit() }
     if (e.key === "Escape") { setIsEditing(false); setDraftProgress(progress) }
   }
 
-  function handleDraftChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleDraftChange(e: ChangeEvent<HTMLInputElement>) {
     setDraftProgress(Number(e.target.value))
   }
 

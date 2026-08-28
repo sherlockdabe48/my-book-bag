@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import type { Book } from "../types/book"
 import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
@@ -93,15 +93,14 @@ function App() {
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
 
-  function handleOpenSearch() {
+  const handleOpenSearch = useCallback(() => {
     setModalOpen(true)
-  }
+  }, [])
 
-  const originalClear = handleClearSearchInputValue
-  function handleCloseModal() {
-    originalClear()
+  const handleCloseModal = useCallback(() => {
+    handleClearSearchInputValue()
     setModalOpen(false)
-  }
+  }, [handleClearSearchInputValue])
 
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
     handleGetSearchInputValue,
@@ -148,7 +147,7 @@ function App() {
     handleImportData,
   ])
 
-  const handleOpenShelf = React.useCallback(() => {
+  const handleOpenShelf = useCallback(() => {
     setShelfCollapsed(false)
   }, [])
 

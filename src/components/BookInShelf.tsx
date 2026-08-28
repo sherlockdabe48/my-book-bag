@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect, useCallback } from "react"
+import { type ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import { playBirdFlapSound } from "../utils/sound"
@@ -68,7 +68,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     closeAll()
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()

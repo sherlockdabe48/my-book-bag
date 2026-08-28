@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import { type ChangeEvent, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import "../css/export-import.css"
 
@@ -24,7 +24,7 @@ export default function ExportImport() {
     handleExportData()
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
 

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react"
+import { type ChangeEvent, type FormEvent, useContext, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import "../css/add-manual.css"
@@ -80,7 +80,7 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
   /** The resolved cover to use: uploaded file wins over URL. */
   const coverPreview = coverFile || coverUrl.trim()
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
@@ -94,7 +94,7 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
     reader.readAsDataURL(file)
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!title.trim()) { setError("Title is required."); return }
     if (!author.trim()) { setError("Author is required."); return }
