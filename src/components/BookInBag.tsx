@@ -29,7 +29,7 @@ function formatLastRead(dateStr: string): string {
 const READER_NAME_KEY = "myBookBag.readerName"
 
 export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
-  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead } = useContext(bookBagContext)
+  const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead, shelfFull } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
   const [draftProgress, setDraftProgress] = useState(currentPage)
@@ -190,7 +190,12 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
                 <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished) setMenuOpen(false) }}>
                   {isFinished ? "Read Again" : "Finish"}
                 </button>
-                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf" onClick={() => { handleMoveToShelfFromBag(id, note); setMenuOpen(false) }}>Back to Shelf</button>
+                <button
+                  className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf"
+                  onClick={() => { handleMoveToShelfFromBag(id, note); setMenuOpen(false) }}
+                  disabled={shelfFull}
+                  title={shelfFull ? "Your shelf is full — upgrade it by finishing more books and adding notes" : undefined}
+                >Back to Shelf{shelfFull ? " (shelf full)" : ""}</button>
                 <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={closeMenu}>Cancel</button>
               </>
             )}

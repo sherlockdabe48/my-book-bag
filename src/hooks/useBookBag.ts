@@ -87,6 +87,34 @@ export function getNextTier(totalFinished: number) {
   return BAG_TIERS.find((t) => t.booksFinished > totalFinished) ?? null
 }
 
+// ── Shelf capacity tiers ───────────────────────────────────────────────────
+export const SHELF_TIERS: {
+  booksFinished: number
+  booksWithNote: number
+  capacity: number | null   // null = unlimited
+  label: string
+}[] = [
+  { booksFinished: 0,  booksWithNote: 0,  capacity: 5,    label: "Small Shelf"    },
+  { booksFinished: 3,  booksWithNote: 1,  capacity: 10,   label: "Reader's Shelf" },
+  { booksFinished: 5,  booksWithNote: 3,  capacity: 20,   label: "Bookworm Shelf" },
+  { booksFinished: 12, booksWithNote: 6,  capacity: 40,   label: "Scholar's Shelf" },
+  { booksFinished: 25, booksWithNote: 12, capacity: null, label: "Master's Shelf"  },
+]
+
+export function getShelfTier(totalFinished: number, totalWithNote: number) {
+  let tier = SHELF_TIERS[0]
+  for (const t of SHELF_TIERS) {
+    if (totalFinished >= t.booksFinished && totalWithNote >= t.booksWithNote) tier = t
+  }
+  return tier
+}
+
+export function getNextShelfTier(totalFinished: number, totalWithNote: number) {
+  return SHELF_TIERS.find(
+    (t) => totalFinished < t.booksFinished || totalWithNote < t.booksWithNote
+  ) ?? null
+}
+
 const BAG_BOOKS_KEY   = "myBookBag.bagBooks"
 const SHELF_BOOKS_KEY = "myBookBag.shelfBooks"
 const COVERS_KEY      = "myBookBag.covers"
@@ -165,12 +193,18 @@ export default function useBookBag(searchBooks: Book[]) {
   // Tracks whether the initial localStorage load has completed
   const loadedRef = useRef(false)
 
-  // ── Derived bag capacity ─────────────────────────────
+  // ── Derived capacity inputs ──────────────────────────
   const totalFinished = useMemo(() => {
     const all = [...bagBooks, ...shelfBooks]
     return all.reduce((sum, b) => sum + (b.timesRead ?? 0), 0)
   }, [bagBooks, shelfBooks])
 
+  const totalWithNote = useMemo(() => {
+    const all = [...bagBooks, ...shelfBooks]
+    return all.filter((b) => b.note && b.note.trim().length > 0).length
+  }, [bagBooks, shelfBooks])
+
+  // ── Bag tier ─────────────────────────────────────────
   const bagTier     = useMemo(() => getBagTier(totalFinished), [totalFinished])
   const bagCapacity = bagTier.capacity
 
@@ -181,6 +215,10 @@ export default function useBookBag(searchBooks: Book[]) {
     if (prevCapacity === null) { setPrevCapacity(bagCapacity); return }
     if (bagCapacity > prevCapacity) setPrevCapacity(bagCapacity)
   }, [bagCapacity, prevCapacity])
+
+  // ── Shelf tier ────────────────────────────────────────
+  const shelfTier     = useMemo(() => getShelfTier(totalFinished, totalWithNote), [totalFinished, totalWithNote])
+  const shelfCapacity = shelfTier.capacity   // null = unlimited
 
   // ── Load from localStorage on mount ─────────────────────
   useEffect(() => {
@@ -248,15 +286,18 @@ export default function useBookBag(searchBooks: Book[]) {
     if (!book) return
     setShelfBooks((shelf) => {
       if (shelf.some((b) => b.id === id)) return shelf
+      if (shelfCapacity !== null && shelf.length >= shelfCapacity) return shelf  // shelf full
       triggerShelfBookLanding(id)
       return [...shelf, book]
     })
-  }, [searchBooks, triggerShelfBookLanding])
+  }, [searchBooks, shelfCapacity, triggerShelfBookLanding])
 
   const handleMoveToShelfFromBag = useCallback((id: string, note?: string) => {
     setBagBooks((bag) => {
       const book = bag.find((b) => b.id === id)
       if (!book) return bag
+      // Check shelf capacity before moving
+      if (shelfCapacity !== null && shelfBooks.length >= shelfCapacity) return bag
       const isFinished = Number(book.currentPage) === Number(book.allPages)
       const isStarted  = Number(book.currentPage) > 1
       const updated: Book = {
@@ -268,7 +309,7 @@ export default function useBookBag(searchBooks: Book[]) {
       setShelfBooks((shelf) => [...shelf, updated])
       return bag.filter((b) => b.id !== id)
     })
-  }, [triggerShelfBookLanding])
+  }, [shelfCapacity, shelfBooks.length, triggerShelfBookLanding])
 
   const handleBagBookProgressChange = useCallback((id: string, currentPage: number) => {
     const today = new Date().toISOString().slice(0, 10)
@@ -338,10 +379,11 @@ export default function useBookBag(searchBooks: Book[]) {
   const handleAddManualBook = useCallback((book: Book) => {
     setShelfBooks((shelf) => {
       if (shelf.some((b) => b.id === book.id)) return shelf
+      if (shelfCapacity !== null && shelf.length >= shelfCapacity) return shelf  // shelf full
       triggerShelfBookLanding(book.id)
       return [...shelf, book]
     })
-  }, [triggerShelfBookLanding])
+  }, [shelfCapacity, triggerShelfBookLanding])
 
   // ── Export / Import ──────────────────────────────────────────────────────
 
@@ -366,7 +408,10 @@ export default function useBookBag(searchBooks: Book[]) {
     bagCapacity,
     bagUpgraded,
     bagTier,
+    shelfCapacity,
+    shelfTier,
     totalFinished,
+    totalWithNote,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
     handleMoveToShelfFromSearch,

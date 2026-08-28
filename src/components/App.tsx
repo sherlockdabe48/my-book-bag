@@ -18,6 +18,7 @@ export interface SearchBookContextValue {
 export interface BookBagContextValue {
   bagCapacity: number
   bagCount: number
+  shelfFull: boolean
   handleAddToBagFromShelf: (id: string) => void
   handleBookDeleteFromShelf: (id: string) => void
   handleMoveToShelfFromBag: (id: string, note?: string) => void
@@ -71,7 +72,10 @@ function App() {
     bagCapacity,
     bagUpgraded,
     bagTier,
+    shelfCapacity,
+    shelfTier,
     totalFinished,
+    totalWithNote,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
     handleMoveToShelfFromSearch,
@@ -112,6 +116,7 @@ function App() {
   const bookBagContextValue = useMemo<BookBagContextValue>(() => ({
     bagCapacity,
     bagCount: bagBooks.length,
+    shelfFull: shelfCapacity !== null && shelfBooks.length >= shelfCapacity,
     handleAddToBagFromShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
@@ -130,6 +135,8 @@ function App() {
   }), [
     bagCapacity,
     bagBooks.length,
+    shelfCapacity,
+    shelfBooks.length,
     handleAddToBagFromShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
@@ -186,7 +193,10 @@ function App() {
                 bagCapacity={bagCapacity}
                 bagUpgraded={bagUpgraded}
                 bagTier={bagTier}
+                shelfCapacity={shelfCapacity}
+                shelfTier={shelfTier}
                 totalFinished={totalFinished}
+                totalWithNote={totalWithNote}
                 shelfCollapsed={shelfCollapsed}
                 setShelfCollapsed={setShelfCollapsed}
                 recentlyAddedShelfBookId={recentlyAddedShelfBookId}

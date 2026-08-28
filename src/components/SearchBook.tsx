@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { searchBookContext, toggleClassContext } from "./App"
+import { searchBookContext, toggleClassContext, bookBagContext } from "./App"
 import type { SearchBook } from "../hooks/useSearch"
 import type { Book } from "../types/book"
 
@@ -20,6 +20,7 @@ export default function SearchBook({
 }: SearchBookProps) {
   const { handleMoveToShelfFromSearch, handleClearSearchInputValue } = useContext(searchBookContext)
   const { handleActiveShelfHighLight, handleOpenShelf } = useContext(toggleClassContext)
+  const { shelfFull } = useContext(bookBagContext)
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
@@ -49,8 +50,10 @@ export default function SearchBook({
             <button
               className="btn btn--primary search-book__btn"
               onClick={() => handleMoveToShelfFromSearch(id)}
+              disabled={shelfFull}
+              title={shelfFull ? "Your shelf is full — upgrade it by finishing more books and adding notes" : undefined}
             >
-              + Add to Shelf
+              {shelfFull ? "Shelf full" : "+ Add to Shelf"}
             </button>
           ) : (
             <button

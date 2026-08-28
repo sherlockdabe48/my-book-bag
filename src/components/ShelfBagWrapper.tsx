@@ -2,7 +2,7 @@ import type React from "react"
 import Shelf from "./Shelf"
 import Bag from "./Bag"
 import type { Book } from "../types/book"
-import { BAG_TIERS } from "../hooks/useBookBag"
+import { BAG_TIERS, SHELF_TIERS } from "../hooks/useBookBag"
 import { Capacitor } from "@capacitor/core"
 
 interface ShelfBagWrapperProps {
@@ -12,7 +12,10 @@ interface ShelfBagWrapperProps {
   bagCapacity: number
   bagUpgraded: boolean
   bagTier: typeof BAG_TIERS[number]
+  shelfCapacity: number | null
+  shelfTier: typeof SHELF_TIERS[number]
   totalFinished: number
+  totalWithNote: number
   shelfCollapsed: boolean
   setShelfCollapsed: React.Dispatch<React.SetStateAction<boolean>>
   recentlyAddedShelfBookId?: string | null
@@ -32,7 +35,10 @@ export default function ShelfBagWrapper({
   bagCapacity,
   bagUpgraded,
   bagTier,
+  shelfCapacity,
+  shelfTier,
   totalFinished,
+  totalWithNote,
   shelfCollapsed,
   setShelfCollapsed,
   recentlyAddedShelfBookId,
@@ -88,6 +94,10 @@ export default function ShelfBagWrapper({
             tierBookworm={TIER_BOOKWORM}
             tierScholar={TIER_SCHOLAR}
             tierMaster={TIER_MASTER}
+            shelfCapacity={shelfCapacity}
+            shelfTier={shelfTier}
+            totalFinished={totalFinished}
+            totalWithNote={totalWithNote}
           />
         )}
       </div>

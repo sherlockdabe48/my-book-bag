@@ -3,6 +3,8 @@ import ShelfBookList from "./ShelfBookList"
 import AddManualBookForm from "./AddManualBookForm"
 import type { Book } from "../types/book"
 import { searchBookContext } from "./App"
+import type { SHELF_TIERS } from "../hooks/useBookBag"
+import { getNextShelfTier } from "../hooks/useBookBag"
 
 interface ShelfProps {
   shelfBooks: Book[]
@@ -12,6 +14,10 @@ interface ShelfProps {
   tierBookworm: number
   tierScholar: number
   tierMaster: number
+  shelfCapacity: number | null
+  shelfTier: typeof SHELF_TIERS[number]
+  totalFinished: number
+  totalWithNote: number
 }
 
 type SortKey = "added" | "title" | "author" | "status"
@@ -26,7 +32,7 @@ const STATUS_LABEL: Record<FilterStatus, string> = {
 
 const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
 
-export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId, tierIndex, tierBookworm, tierScholar, tierMaster }: ShelfProps) {
+export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId, tierIndex, tierBookworm, tierScholar, tierMaster, shelfCapacity, shelfTier, totalFinished, totalWithNote }: ShelfProps) {
   const { handleOpenSearch } = useContext(searchBookContext)
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
@@ -104,6 +110,26 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
           ) : (
             <ShelfBookList shelfBooks={filteredSorted} recentlyAddedShelfBookId={recentlyAddedShelfBookId} />
           )}
+
+          <div className="shelf-slot-line">
+            <span className={`shelf-slot-text${shelfCapacity !== null && shelfBooks.length >= shelfCapacity ? " shelf-slot-text--full" : ""}`}>
+              {shelfBooks.length}{shelfCapacity !== null ? ` / ${shelfCapacity}` : ""} books · {shelfTier.label}
+            </span>
+            {(() => {
+              const next = getNextShelfTier(totalFinished, totalWithNote)
+              if (!next) return null
+              const needFinished = next.booksFinished - totalFinished
+              const needNotes    = next.booksWithNote - totalWithNote
+              const parts: string[] = []
+              if (needFinished > 0) parts.push(`finish ${needFinished} more book${needFinished !== 1 ? "s" : ""}`)
+              if (needNotes    > 0) parts.push(`add ${needNotes} more note${needNotes !== 1 ? "s" : ""}`)
+              return (
+                <span className="shelf-slot-text">
+                  · {parts.join(" and ")} to unlock {next.label}
+                </span>
+              )
+            })()}
+          </div>
 
           <div className="btn--container mt-2">
             <button className="btn btn--optional btn--see-more" onClick={handleOpenSearch}>

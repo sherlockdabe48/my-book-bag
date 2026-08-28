@@ -31,7 +31,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         <BookInBag {...baseProps} isActive={false} />
       </bookBagContext.Provider>
@@ -50,7 +50,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         <BookInBag {...baseProps} currentPage={300} isActive={true} />
       </bookBagContext.Provider>
