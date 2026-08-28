@@ -73,7 +73,7 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
             <p className="bag-full-notice__sub">
               {nextTier
                 ? <>Finish <strong>{nextTier.booksFinished - totalFinished}</strong> more book{nextTier.booksFinished - totalFinished !== 1 ? "s" : ""} to unlock a <strong>{nextTier.label}</strong> ({nextTier.capacity} slots).</>
-                : <>You've reached the maximum bag size. You're a Scholar! 🏆</>
+                : <>You've reached the maximum bag size. You're a Master! 🏆</>
               }
             </p>
           </div>

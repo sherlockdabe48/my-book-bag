@@ -8,6 +8,10 @@ interface ShelfProps {
   shelfBooks: Book[]
   shelfHighLight: boolean
   recentlyAddedShelfBookId?: string | null
+  tierIndex: number
+  tierBookworm: number
+  tierScholar: number
+  tierMaster: number
 }
 
 type SortKey = "added" | "title" | "author" | "status"
@@ -22,7 +26,7 @@ const STATUS_LABEL: Record<FilterStatus, string> = {
 
 const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
 
-export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId }: ShelfProps) {
+export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId, tierIndex, tierBookworm, tierScholar, tierMaster }: ShelfProps) {
   const { handleOpenSearch } = useContext(searchBookContext)
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
@@ -45,40 +49,44 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
       </h2>
       <div className={shelfHighLight ? "shelf-container__highlight" : ""}>
         <div className="shelf-container">
-          {shelfBooks.length > 0 && (
+          {shelfBooks.length > 0 && (tierIndex >= tierBookworm || tierIndex >= tierScholar) && (
             <div className="shelf-controls">
-              {/* Filter chips */}
-              <div className="shelf-controls__group">
-                {(["all", "onRead", "reading", "finish"] as FilterStatus[]).map((f) => (
-                  <button
-                    key={f}
-                    className={`shelf-controls__chip ${filter === f ? "shelf-controls__chip--active" : ""}`}
-                    onClick={() => setFilter(f)}
+              {/* Filter chips — Bookworm Bag+ */}
+              {tierIndex >= tierBookworm && (
+                <div className="shelf-controls__group">
+                  {(["all", "onRead", "reading", "finish"] as FilterStatus[]).map((f) => (
+                    <button
+                      key={f}
+                      className={`shelf-controls__chip ${filter === f ? "shelf-controls__chip--active" : ""}`}
+                      onClick={() => setFilter(f)}
+                    >
+                      {STATUS_LABEL[f]}
+                      {f !== "all" && (
+                        <span className="shelf-controls__chip-count">
+                          {shelfBooks.filter((b) => b.status === f).length}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {/* Sort select — Scholar's Bag+ */}
+              {tierIndex >= tierScholar && (
+                <div className="shelf-controls__sort">
+                  <label className="shelf-controls__sort-label" htmlFor="shelf-sort">Sort</label>
+                  <select
+                    id="shelf-sort"
+                    className="shelf-controls__sort-select"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as SortKey)}
                   >
-                    {STATUS_LABEL[f]}
-                    {f !== "all" && (
-                      <span className="shelf-controls__chip-count">
-                        {shelfBooks.filter((b) => b.status === f).length}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-              {/* Sort select */}
-              <div className="shelf-controls__sort">
-                <label className="shelf-controls__sort-label" htmlFor="shelf-sort">Sort</label>
-                <select
-                  id="shelf-sort"
-                  className="shelf-controls__sort-select"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value as SortKey)}
-                >
-                  <option value="added">Date added</option>
-                  <option value="title">Title A–Z</option>
-                  <option value="author">Author A–Z</option>
-                  <option value="status">Status</option>
-                </select>
-              </div>
+                    <option value="added">Date added</option>
+                    <option value="title">Title A–Z</option>
+                    <option value="author">Author A–Z</option>
+                    <option value="status">Status</option>
+                  </select>
+                </div>
+              )}
             </div>
           )}
 
@@ -105,13 +113,15 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
             </button>
-            <button className="btn btn--optional btn--see-more" onClick={() => setShowAddForm(true)}>
-              Add your own book{" "}
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginLeft: "4px" }}>
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </button>
+            {tierIndex >= tierMaster && (
+              <button className="btn btn--optional btn--see-more" onClick={() => setShowAddForm(true)}>
+                Add your own book{" "}
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginLeft: "4px" }}>
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>

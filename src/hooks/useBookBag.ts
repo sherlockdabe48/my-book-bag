@@ -68,10 +68,11 @@ export function parseImportFile(raw: string): ExportPayload | null {
 
 // ── Bag capacity tiers ─────────────────────────────────────────────────────
 export const BAG_TIERS: { booksFinished: number; capacity: number; label: string }[] = [
-  { booksFinished: 0,  capacity: 3,  label: "Starter Bag"  },
-  { booksFinished: 1,  capacity: 5,  label: "Reader's Bag" },
-  { booksFinished: 5,  capacity: 7,  label: "Bookworm Bag" },
-  { booksFinished: 10, capacity: 10, label: "Scholar's Bag" },
+  { booksFinished: 0,  capacity: 1,  label: "Starter Bag"  },
+  { booksFinished: 1,  capacity: 2,  label: "Reader's Bag" },
+  { booksFinished: 2,  capacity: 3,  label: "Bookworm Bag" },
+  { booksFinished: 5,  capacity: 5,  label: "Scholar's Bag" },
+  { booksFinished: 12, capacity: 7,  label: "Master's Bag"  },
 ]
 
 export function getBagTier(totalFinished: number) {
