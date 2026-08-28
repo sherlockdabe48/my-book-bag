@@ -1,4 +1,4 @@
-import { useState } from "react"
+import type React from "react"
 import Shelf from "./Shelf"
 import Bag from "./Bag"
 import type { Book } from "../types/book"
@@ -12,6 +12,10 @@ interface ShelfBagWrapperProps {
   bagUpgraded: boolean
   bagTier: typeof BAG_TIERS[number]
   totalFinished: number
+  shelfCollapsed: boolean
+  setShelfCollapsed: React.Dispatch<React.SetStateAction<boolean>>
+  recentlyAddedShelfBookId?: string | null
+  recentlyAddedBagBookId?: string | null
 }
 
 export default function ShelfBagWrapper({
@@ -22,8 +26,11 @@ export default function ShelfBagWrapper({
   bagUpgraded,
   bagTier,
   totalFinished,
+  shelfCollapsed,
+  setShelfCollapsed,
+  recentlyAddedShelfBookId,
+  recentlyAddedBagBookId,
 }: ShelfBagWrapperProps) {
-  const [shelfCollapsed, setShelfCollapsed] = useState(false)
 
   return (
     <div className={`shelf-bag-wrapper${shelfCollapsed ? " shelf-bag-wrapper--shelf-hidden" : ""}`}>
@@ -33,6 +40,7 @@ export default function ShelfBagWrapper({
         bagUpgraded={bagUpgraded}
         bagTier={bagTier}
         totalFinished={totalFinished}
+        recentlyAddedBagBookId={recentlyAddedBagBookId}
       />
       <div className={`shelf-panel${shelfCollapsed ? " shelf-panel--collapsed" : ""}`}>
         <button
@@ -61,6 +69,7 @@ export default function ShelfBagWrapper({
           <Shelf
             shelfBooks={shelfBooks}
             shelfHighLight={shelfHighLight}
+            recentlyAddedShelfBookId={recentlyAddedShelfBookId}
           />
         )}
       </div>

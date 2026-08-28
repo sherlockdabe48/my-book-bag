@@ -8,14 +8,16 @@ interface BagBookListProps {
   bagBooks: Book[]
   bagCapacity: number
   totalFinished: number
+  recentlyAddedBagBookId?: string | null
 }
 
-export default function BagBookList({ bagBooks, bagCapacity, totalFinished }: BagBookListProps) {
-  const { handleActiveShelfHighLight } = useContext(toggleClassContext)
+export default function BagBookList({ bagBooks, bagCapacity, totalFinished, recentlyAddedBagBookId }: BagBookListProps) {
+  const { handleActiveShelfHighLight, handleOpenShelf } = useContext(toggleClassContext)
   const nextTier = getNextTier(totalFinished)
   const isFull = bagBooks.length >= bagCapacity
 
   function goToShelf() {
+    handleOpenShelf?.()
     handleActiveShelfHighLight()
     document.getElementById("in-my-shelf")?.scrollIntoView({ behavior: "smooth" })
   }
@@ -45,7 +47,12 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished }: Ba
   return (
     <div className="bag-book-list">
       {bagBooks.map((bagBook, index) => (
-        <BookInBag key={bagBook.id} {...bagBook} isActive={index === 0} />
+        <BookInBag
+          key={bagBook.id}
+          {...bagBook}
+          isActive={index === 0}
+          isLanding={bagBook.id === recentlyAddedBagBookId}
+        />
       ))}
       <div className="btn--container">
         {isFull ? (

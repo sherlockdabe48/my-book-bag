@@ -2,9 +2,11 @@ import { useContext, useRef, useState, useEffect, useCallback } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 
-type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt">
+type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt"> & {
+  isLanding?: boolean
+}
 
-export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt }: BookInShelfProps) {
+export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, isLanding }: BookInShelfProps) {
   const {
     bagCapacity,
     bagCount,
@@ -118,7 +120,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   }
 
   return (
-    <div className="book-in-shelf__container" ref={containerRef}>
+    <div className={`book-in-shelf__container${isLanding ? " book-in-shelf__container--landing" : ""}`} ref={containerRef}>
       <div
         className={`book-in-shelf__cover-wrapper${touched ? " book-in-shelf__cover-wrapper--touched" : ""}`}
         onTouchStart={() => setTouched(true)}

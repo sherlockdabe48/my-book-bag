@@ -10,9 +10,10 @@ interface BagProps {
   bagUpgraded: boolean
   bagTier: typeof BAG_TIERS[number]
   totalFinished: number
+  recentlyAddedBagBookId?: string | null
 }
 
-export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, totalFinished }: BagProps) {
+export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, totalFinished, recentlyAddedBagBookId }: BagProps) {
   const [showUpgrade, setShowUpgrade] = useState(false)
   const isFull = bagBooks.length >= bagCapacity
   const nextTier = getNextTier(totalFinished)
@@ -33,7 +34,7 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
         </div>
       )}
       <div className="bag-container">
-        <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} totalFinished={totalFinished} />
+        <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} totalFinished={totalFinished} recentlyAddedBagBookId={recentlyAddedBagBookId} />
         <div className="bag-slot-line">
           <span className={`bag-slot-text${isFull ? " bag-slot-text--full" : ""}`}>
             {bagBooks.length} / {bagCapacity} slots · {bagTier.label}

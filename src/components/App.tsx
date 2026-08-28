@@ -37,6 +37,9 @@ export interface BookBagContextValue {
 
 export interface ToggleClassContextValue {
   handleActiveShelfHighLight: () => void
+  shelfCollapsed: boolean
+  setShelfCollapsed: React.Dispatch<React.SetStateAction<boolean>>
+  handleOpenShelf: () => void
 }
 
 export const bookBagContext = React.createContext<BookBagContextValue>({} as BookBagContextValue)
@@ -44,6 +47,7 @@ export const toggleClassContext = React.createContext<ToggleClassContextValue>({
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 function App() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [shelfCollapsed, setShelfCollapsed] = useState(false)
 
   const {
     searchInputValue,
@@ -61,6 +65,8 @@ function App() {
   const {
     bagBooks,
     shelfBooks,
+    recentlyAddedBagBookId,
+    recentlyAddedShelfBookId,
     shelfHighLight,
     bagCapacity,
     bagUpgraded,
@@ -142,9 +148,16 @@ function App() {
     handleImportData,
   ])
 
+  const handleOpenShelf = React.useCallback(() => {
+    setShelfCollapsed(false)
+  }, [])
+
   const toggleClassContextValue = useMemo<ToggleClassContextValue>(() => ({
     handleActiveShelfHighLight,
-  }), [handleActiveShelfHighLight])
+    shelfCollapsed,
+    setShelfCollapsed,
+    handleOpenShelf,
+  }), [handleActiveShelfHighLight, shelfCollapsed, handleOpenShelf])
 
   return (
     <Router>
@@ -175,6 +188,10 @@ function App() {
                 bagUpgraded={bagUpgraded}
                 bagTier={bagTier}
                 totalFinished={totalFinished}
+                shelfCollapsed={shelfCollapsed}
+                setShelfCollapsed={setShelfCollapsed}
+                recentlyAddedShelfBookId={recentlyAddedShelfBookId}
+                recentlyAddedBagBookId={recentlyAddedBagBookId}
               />
             )}
           </searchBookContext.Provider>

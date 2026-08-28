@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import BookInBag from "./components/BookInBag"
-import { bookBagContext } from "./components/App"
+import BagBookList from "./components/BagBookList"
+import SearchBook from "./components/SearchBook"
+import { bookBagContext, toggleClassContext, searchBookContext } from "./components/App"
 
 describe("BookInBag", () => {
   const baseProps = {
@@ -62,5 +64,90 @@ describe("BookInBag", () => {
 
     expect(handleBagBookProgressChange).toHaveBeenCalledWith("book-1", 1)
     expect(window.alert).not.toHaveBeenCalled()
+  })
+
+  test("BagBookList 'Pick from shelf' triggers handleOpenShelf and handleActiveShelfHighLight", () => {
+    const handleOpenShelf = jest.fn()
+    const handleActiveShelfHighLight = jest.fn()
+
+    render(
+      <toggleClassContext.Provider
+        value={{
+          handleActiveShelfHighLight,
+          handleOpenShelf,
+          shelfCollapsed: true,
+          setShelfCollapsed: jest.fn(),
+        }}
+      >
+        <BagBookList bagBooks={[]} bagCapacity={3} totalFinished={0} />
+      </toggleClassContext.Provider>
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "Pick from shelf" }))
+
+    expect(handleOpenShelf).toHaveBeenCalledTimes(1)
+    expect(handleActiveShelfHighLight).toHaveBeenCalledTimes(1)
+  })
+
+  test("SearchBook '✓ In Shelf' triggers handleOpenShelf, handleActiveShelfHighLight, and closes search modal", () => {
+    const handleOpenShelf = jest.fn()
+    const handleActiveShelfHighLight = jest.fn()
+    const handleClearSearchInputValue = jest.fn()
+
+    const shelfBooks = [
+      {
+        id: "book-1",
+        title: "The Hobbit",
+        author: "J.R.R. Tolkien",
+        currentPage: 10,
+        allPages: 300,
+        imageURL: "cover.jpg",
+        status: "reading" as const,
+        description: false as const,
+        isbn: false as const,
+        note: "",
+        recommendedBy: "",
+        lastReadAt: "",
+        timesRead: 0,
+      },
+    ]
+
+    render(
+      <toggleClassContext.Provider
+        value={{
+          handleActiveShelfHighLight,
+          handleOpenShelf,
+          shelfCollapsed: true,
+          setShelfCollapsed: jest.fn(),
+        }}
+      >
+        <searchBookContext.Provider
+          value={{
+            handleGetSearchInputValue: jest.fn(),
+            handleClearSearchInputValue,
+            handleMoveToShelfFromSearch: jest.fn(),
+            handleOpenSearch: jest.fn(),
+          }}
+        >
+          <SearchBook
+            id="book-1"
+            title="The Hobbit"
+            subtitle=""
+            author="J.R.R. Tolkien"
+            description=""
+            allPages={300}
+            imageURL="cover.jpg"
+            isbn=""
+            shelfBooks={shelfBooks}
+          />
+        </searchBookContext.Provider>
+      </toggleClassContext.Provider>
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "✓ In Shelf" }))
+
+    expect(handleOpenShelf).toHaveBeenCalledTimes(1)
+    expect(handleActiveShelfHighLight).toHaveBeenCalledTimes(1)
+    expect(handleClearSearchInputValue).toHaveBeenCalledTimes(1)
   })
 })

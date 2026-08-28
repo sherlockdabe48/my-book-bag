@@ -6,6 +6,33 @@
     box-sizing: border-box;
 }
 
+/* ── Bag Placement Landing Animation (Cushioned drop into tote bag) ── */
+@keyframes book-bag-land {
+    0% {
+        opacity: 0.2;
+        transform: translateY(-20px) scale(1.04);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(2px) scale(0.99, 1.01);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.book-in-bag__container--landing {
+    animation: book-bag-land 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    transform-origin: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .book-in-bag__container--landing {
+        animation: none;
+    }
+}
+
 .book-in-bag__detail-grid {
     display: flex;
     flex-direction: column;

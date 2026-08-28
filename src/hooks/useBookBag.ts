@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Book } from "../types/book"
+import { playShelfPlaceSound, playBagPlaceSound } from "../utils/sound"
 
 // ── Export / Import helpers ────────────────────────────────────────────────
 
@@ -134,6 +135,8 @@ function attachCovers(books: Book[], covers: Record<string, string>): Book[] {
 export default function useBookBag(searchBooks: Book[]) {
   const [bagBooks, setBagBooks]     = useState<Book[]>([])
   const [shelfBooks, setShelfBooks] = useState<Book[]>([])
+  const [recentlyAddedBagBookId, setRecentlyAddedBagBookId] = useState<string | null>(null)
+  const [recentlyAddedShelfBookId, setRecentlyAddedShelfBookId] = useState<string | null>(null)
   const [shelfHighLight, setShelfHighLight] = useState(false)
   const [prevCapacity, setPrevCapacity] = useState<number | null>(null)
   // Tracks whether the initial localStorage load has completed
@@ -190,24 +193,42 @@ export default function useBookBag(searchBooks: Book[]) {
     setTimeout(() => setShelfHighLight(false), 1500)
   }, [])
 
+  const triggerBagBookLanding = useCallback((id: string) => {
+    setRecentlyAddedBagBookId(id)
+    playBagPlaceSound()
+    setTimeout(() => {
+      setRecentlyAddedBagBookId((curr) => (curr === id ? null : curr))
+    }, 1200)
+  }, [])
+
   const handleAddToBagFromShelf = useCallback((id: string) => {
     setBagBooks((bag) => {
       if (bag.length >= bagCapacity) return bag   // strict block — bag full
       setShelfBooks((shelf) => shelf.filter((b) => b.id !== id))
       const book = shelfBooks.find((b) => b.id === id)
       if (!book) return bag
+      triggerBagBookLanding(id)
       return [...bag, book]
     })
-  }, [bagCapacity, shelfBooks])
+  }, [bagCapacity, shelfBooks, triggerBagBookLanding])
+
+  const triggerShelfBookLanding = useCallback((id: string) => {
+    setRecentlyAddedShelfBookId(id)
+    playShelfPlaceSound()
+    setTimeout(() => {
+      setRecentlyAddedShelfBookId((curr) => (curr === id ? null : curr))
+    }, 1200)
+  }, [])
 
   const handleMoveToShelfFromSearch = useCallback((id: string) => {
     const book = searchBooks.find((b) => b.id === id)
     if (!book) return
     setShelfBooks((shelf) => {
       if (shelf.some((b) => b.id === id)) return shelf
+      triggerShelfBookLanding(id)
       return [...shelf, book]
     })
-  }, [searchBooks])
+  }, [searchBooks, triggerShelfBookLanding])
 
   const handleMoveToShelfFromBag = useCallback((id: string, note?: string) => {
     setBagBooks((bag) => {
@@ -220,10 +241,11 @@ export default function useBookBag(searchBooks: Book[]) {
         status: isFinished ? "finish" : isStarted ? "reading" : book.status,
         note: note ?? book.note,
       }
+      triggerShelfBookLanding(id)
       setShelfBooks((shelf) => [...shelf, updated])
       return bag.filter((b) => b.id !== id)
     })
-  }, [])
+  }, [triggerShelfBookLanding])
 
   const handleBagBookProgressChange = useCallback((id: string, currentPage: number) => {
     const today = new Date().toISOString().slice(0, 10)
@@ -293,9 +315,10 @@ export default function useBookBag(searchBooks: Book[]) {
   const handleAddManualBook = useCallback((book: Book) => {
     setShelfBooks((shelf) => {
       if (shelf.some((b) => b.id === book.id)) return shelf
+      triggerShelfBookLanding(book.id)
       return [...shelf, book]
     })
-  }, [])
+  }, [triggerShelfBookLanding])
 
   // ── Export / Import ──────────────────────────────────────────────────────
 
@@ -314,6 +337,8 @@ export default function useBookBag(searchBooks: Book[]) {
   return {
     bagBooks,
     shelfBooks,
+    recentlyAddedBagBookId,
+    recentlyAddedShelfBookId,
     shelfHighLight,
     bagCapacity,
     bagUpgraded,

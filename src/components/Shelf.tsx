@@ -7,6 +7,7 @@ import { searchBookContext } from "./App"
 interface ShelfProps {
   shelfBooks: Book[]
   shelfHighLight: boolean
+  recentlyAddedShelfBookId?: string | null
 }
 
 type SortKey = "added" | "title" | "author" | "status"
@@ -21,7 +22,7 @@ const STATUS_LABEL: Record<FilterStatus, string> = {
 
 const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
 
-export default function Shelf({ shelfBooks, shelfHighLight }: ShelfProps) {
+export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId }: ShelfProps) {
   const { handleOpenSearch } = useContext(searchBookContext)
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
@@ -93,7 +94,7 @@ export default function Shelf({ shelfBooks, shelfHighLight }: ShelfProps) {
           ) : filteredSorted.length === 0 ? (
             <p className="shelf-controls__no-results">No books match this filter.</p>
           ) : (
-            <ShelfBookList shelfBooks={filteredSorted} />
+            <ShelfBookList shelfBooks={filteredSorted} recentlyAddedShelfBookId={recentlyAddedShelfBookId} />
           )}
 
           <div className="btn--container mt-2">

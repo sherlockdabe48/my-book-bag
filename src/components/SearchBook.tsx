@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { searchBookContext } from "./App"
+import { searchBookContext, toggleClassContext } from "./App"
 import type { SearchBook } from "../hooks/useSearch"
 import type { Book } from "../types/book"
 
@@ -19,6 +19,7 @@ export default function SearchBook({
   shelfBooks,
 }: SearchBookProps) {
   const { handleMoveToShelfFromSearch, handleClearSearchInputValue } = useContext(searchBookContext)
+  const { handleActiveShelfHighLight, handleOpenShelf } = useContext(toggleClassContext)
   const isAlreadyAdded = shelfBooks.some((shelfBook) => shelfBook.id === id)
 
   return (
@@ -55,6 +56,8 @@ export default function SearchBook({
             <button
               className="btn btn--normal search-book__btn"
               onClick={() => {
+                handleOpenShelf?.()
+                handleActiveShelfHighLight?.()
                 handleClearSearchInputValue()
                 document.getElementById("in-my-shelf")?.scrollIntoView({ behavior: "smooth" })
               }}

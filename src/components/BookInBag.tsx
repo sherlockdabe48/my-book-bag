@@ -2,7 +2,10 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from "rea
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 
-type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt" | "timesRead"> & { isActive: boolean }
+type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt" | "timesRead"> & {
+  isActive: boolean
+  isLanding?: boolean
+}
 
 function finishedBanner(times: number): string {
   if (times === 1) return "🎉 You finished this book!"
@@ -24,7 +27,7 @@ function formatLastRead(dateStr: string): string {
 
 const READER_NAME_KEY = "myBookBag.readerName"
 
-export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive }: BookInBagProps) {
+export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
   const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
@@ -144,7 +147,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   }
 
   return (
-    <div className="book-in-bag__container">
+    <div className={`book-in-bag__container${isLanding ? " book-in-bag__container--landing" : ""}`}>
       <div className="book-in-bag__cover-wrapper" ref={coverRef}>
         <img className="book-image-in-bag" src={imageURL} alt={title} loading="lazy" />
         <div className={`book-in-bag__bookmark ${isActive ? "book-in-bag__bookmark--active" : ""}`} aria-label={isActive ? "Currently reading" : "In your bag"}>
