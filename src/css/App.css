@@ -1,0 +1,93 @@
+@import 'font.css';
+@import 'buttons.css';
+@import "header.css";
+@import 'export-import.css';
+@import 'welcome-message.css';
+@import 'shelf-bag-wrapper.css';
+@import 'shelf.css';
+@import 'bag.css';
+@import 'book-in-shelf.css';
+@import 'book-in-bag.css';
+@import 'search-page.css';
+@import 'search-book.css';
+
+*, *::before, *::after {
+    font-family: Rubik, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #f6f6f6;
+    color: #515151;
+    overflow-x: hidden;
+    /* Safari: clamp body to viewport width */
+    max-width: 100%;
+}
+
+html {
+    font-size: 18px;
+    overflow-x: hidden;
+    /* Safari: prevent html itself from expanding beyond viewport */
+    max-width: 100%;
+}
+
+.mr-1 {
+    margin-right: 5px;
+}
+
+.topic {
+    font-family: 'Lora', Georgia, serif;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.sub-topic {
+    font-weight: normal;
+    font-size: 1rem;
+    margin-left: 40px;
+}
+
+.ft-14 {
+    font-size: 14px;
+}
+
+.mt-2 {
+    margin-top: 30px;
+}
+
+.hide {
+    display: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.app-footer {
+    position: sticky;
+    bottom: 0;
+    margin-top: 60px;
+    padding: 16px 40px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: #57606a;
+}
+
+@media (max-width: 600px) {
+    .app-footer {
+        padding: 16px;
+    }
+}
+
+.app-footer a {
+    color: #57606a;
+    text-decoration: underline;
+}
+
+.app-footer a:hover {
+    color: #1f2328;
+}
