@@ -6,7 +6,6 @@ import SearchPage from "./SearchPage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
 import "../css/App.css"
-import MobileSearchBox from "./MobileSearchBox"
 import useSearch from "../hooks/useSearch"
 import useBookBag from "../hooks/useBookBag"
 export interface SearchBookContextValue {
@@ -158,7 +157,6 @@ function App() {
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
             <Header inputRef={inputRef} onOpenSearch={handleOpenSearch} />
-            <MobileSearchBox inputRef={inputRef} />
             {modalOpen && (
               <SearchPage
                 loading={loading}

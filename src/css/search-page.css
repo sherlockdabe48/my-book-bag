@@ -393,13 +393,13 @@
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 600px) {
     .search-modal__backdrop {
-        padding: 0;
-        align-items: flex-end;
+        padding: 16px;
+        align-items: center;
     }
 
     .search-modal__panel {
-        max-height: 92vh;
-        border-radius: 14px 14px 0 0;
+        max-height: 90vh;
+        border-radius: 14px;
         max-width: 100%;
     }
 

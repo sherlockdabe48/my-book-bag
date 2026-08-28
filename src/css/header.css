@@ -48,10 +48,6 @@
 }
 
 @media (max-width: 660px) {
-    .header__search-icon-btn {
-        display: none;
-    }
-
     .header-container {
         padding: 0 12px;
     }

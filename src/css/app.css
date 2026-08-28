@@ -9,7 +9,6 @@
 @import 'book-in-shelf.css';
 @import 'book-in-bag.css';
 @import 'search-page.css';
-@import 'mobile-search-box.css';
 @import 'search-book.css';
 
 *, *::before, *::after {
@@ -20,7 +19,7 @@
 body {
     padding: 0;
     margin: 0;
-    background-color: #f6f6f8;
+    background-color: #f6f6f6;
     color: #515151;
     overflow-x: hidden;
     /* Safari: clamp body to viewport width */
