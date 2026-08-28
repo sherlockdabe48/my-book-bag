@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
+import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../utils/sound"
 
 type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt" | "timesRead"> & {
   isActive: boolean
@@ -72,6 +73,8 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
 
   const inputRef = useRef<HTMLInputElement>(null)
   const isFinished = Number(progress) === Number(allPages)
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const alreadyReadToday = lastReadAt === todayStr
 
   function applyProgress(next: number) {
     const max = Number(allPages)
@@ -83,6 +86,9 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     if (next >= max && !isFinished) {
       handleIncrementTimesRead(id)
       setJustFinished(true)
+      playBookCloseSound()
+    } else {
+      playPageTurnSound()
     }
   }
 
@@ -118,6 +124,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     handleBagBookProgressChange(id, Number(allPages))
     handleIncrementTimesRead(id)
     setJustFinished(true)
+    playBookCloseSound()
   }
 
   function confirmReset() {
@@ -300,9 +307,11 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
           </div>
           <button
             className="book-in-bag__read-today-btn"
-            onClick={() => handleLogReadingSession(id)}
+            onClick={() => { playReadTodaySound(); handleLogReadingSession(id) }}
+            disabled={alreadyReadToday}
+            title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
           >
-            📖 I read today
+            {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
           </button>
         </div>
       </div>

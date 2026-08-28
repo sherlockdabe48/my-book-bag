@@ -1,6 +1,7 @@
 import { useContext, useRef, useState, useEffect, useCallback } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
+import { playBirdFlapSound } from "../utils/sound"
 
 type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt"> & {
   isLanding?: boolean
@@ -23,14 +24,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
 
   type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
-  const [skipRemoveConfirm, setSkipRemoveConfirm] = useState(false)
-  const [dontShowAgain, setDontShowAgain] = useState(false)
   const [touched, setTouched] = useState(false)
-
-  // Load "don't show again" preference from localStorage on mount
-  useEffect(() => {
-    setSkipRemoveConfirm(localStorage.getItem("myBookBag.skipRemoveConfirm") === "true")
-  }, [])
   const [urlInput, setUrlInput]           = useState("")
   const [pagesInput, setPagesInput]       = useState("")
   const [titleInput, setTitleInput]       = useState("")
@@ -166,14 +160,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setRecommendedByInput(recommendedBy); setEditMode("note") }}>My Note</button>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
-              onClick={() => {
-                if (skipRemoveConfirm) {
-                  handleBookDeleteFromShelf(id)
-                } else {
-                  setDontShowAgain(false)
-                  setEditMode("confirmRemove")
-                }
-              }}
+              onClick={() => setEditMode("confirmRemove")}
             >
               Remove
             </button>
@@ -252,13 +239,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <p className="book-in-shelf__edit-overlay-body">This book will be tossed away from your shelf.</p>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
-              onClick={() => {
-                if (dontShowAgain) {
-                  localStorage.setItem("myBookBag.skipRemoveConfirm", "true")
-                  setSkipRemoveConfirm(true)
-                }
-                handleBookDeleteFromShelf(id)
-              }}
+              onClick={() => { playBirdFlapSound(); handleBookDeleteFromShelf(id) }}
             >
               Yes, remove it
             </button>
@@ -268,14 +249,6 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             >
               Cancel
             </button>
-            <label className="book-in-shelf__edit-dont-show">
-              <input
-                type="checkbox"
-                checked={dontShowAgain}
-                onChange={(e) => setDontShowAgain(e.target.checked)}
-              />
-              Don't ask me again
-            </label>
           </div>
         )}
 
