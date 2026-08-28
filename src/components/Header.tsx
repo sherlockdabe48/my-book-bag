@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core"
 import ExportImport from "./ExportImport"
 import "../css/header.css"
 
@@ -5,13 +6,15 @@ interface HeaderProps {
   onOpenSearch: () => void
 }
 
+const isIOS = Capacitor.getPlatform() === "ios"
+
 export default function Header({ onOpenSearch }: HeaderProps) {
   return (
-    <div className="header-container">
-      <h1 className="header__logo">PagesBag</h1>
+    <div className={`header-container${isIOS ? " header-container--ios" : ""}`}>
+      {!isIOS && <h1 className="header__logo">PagesBag</h1>}
       <div className="header__right">
         <button
-          className="header__search-icon-btn"
+          className={`header__search-icon-btn${isIOS ? " header__search-icon-btn--ios" : ""}`}
           onClick={onOpenSearch}
           aria-label="Open search"
         >

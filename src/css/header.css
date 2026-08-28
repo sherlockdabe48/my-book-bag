@@ -11,6 +11,27 @@
     box-sizing: border-box;
 }
 
+/* iOS native: invisible — just reserves the safe-area inset so content
+   doesn't start under the notch. The buttons float as a fixed overlay. */
+.header-container--ios {
+    height: env(safe-area-inset-top);
+    min-height: env(safe-area-inset-top);
+    background: transparent;
+    padding: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+/* The two action buttons sit fixed in the top-right on iOS */
+.header-container--ios .header__right {
+    top: calc(env(safe-area-inset-top) + 10px);
+    margin-top: 96px;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 200;
+}
+
 .header__logo {
     color: white;
     font-family: 'Lora', Georgia, serif;
@@ -39,6 +60,10 @@
     color: #d4d4d4;
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.header__search-icon-btn--ios {
+    color: #484848;
 }
 
 .header__search-icon-btn:hover {

@@ -21,6 +21,10 @@
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
+.export-import__hamburger--ios {
+    color: #484848;
+}
+
 .export-import__hamburger:hover {
     background: rgba(255, 255, 255, 0.12);
     color: #ffffff;

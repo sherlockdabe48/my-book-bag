@@ -1,6 +1,7 @@
 import { type ChangeEvent, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import "../css/export-import.css"
+import { Capacitor } from "@capacitor/core"
 
 export default function ExportImport() {
   const { handleExportData, handleImportData } = useContext(bookBagContext)
@@ -8,6 +9,8 @@ export default function ExportImport() {
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle")
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  const isIOS = Capacitor.getPlatform() === "ios"
 
   function showStatus(result: "ok" | "error") {
     setStatus(result)
@@ -54,7 +57,7 @@ export default function ExportImport() {
   return (
     <div className="export-import" ref={menuRef}>
       <button
-        className="export-import__hamburger"
+        className={`export-import__hamburger${isIOS ? " export-import__hamburger--ios" : ""}`}
         onClick={() => setOpen((prev) => !prev)}
         title="Menu"
         type="button"

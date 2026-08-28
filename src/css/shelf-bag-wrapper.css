@@ -8,6 +8,10 @@
     overflow: hidden;
 }
 
+.shelf-bag-wrapper--ios {
+    margin-top: -32px;
+}
+
 /* When shelf is hidden, center the Bag panel */
 .shelf-bag-wrapper--shelf-hidden {
     justify-content: center;

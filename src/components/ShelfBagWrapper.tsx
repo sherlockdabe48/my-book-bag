@@ -3,6 +3,7 @@ import Shelf from "./Shelf"
 import Bag from "./Bag"
 import type { Book } from "../types/book"
 import type { BAG_TIERS } from "../hooks/useBookBag"
+import { Capacitor } from "@capacitor/core"
 
 interface ShelfBagWrapperProps {
   bagBooks: Book[]
@@ -32,8 +33,10 @@ export default function ShelfBagWrapper({
   recentlyAddedBagBookId,
 }: ShelfBagWrapperProps) {
 
+  const isIOS = Capacitor.getPlatform() === "ios"
+
   return (
-    <div className={`shelf-bag-wrapper${shelfCollapsed ? " shelf-bag-wrapper--shelf-hidden" : ""}`}>
+    <div className={`shelf-bag-wrapper${shelfCollapsed ? " shelf-bag-wrapper--shelf-hidden" : ""}${isIOS ? " shelf-bag-wrapper--ios" : ""}`}>
       <Bag
         bagBooks={bagBooks}
         bagCapacity={bagCapacity}
