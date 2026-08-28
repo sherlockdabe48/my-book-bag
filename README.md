@@ -1,10 +1,10 @@
-# My Book Bag
+# PagesBag
 
 A personal book management web app built with React. Search for any book via the Open Library API, add it to your shelf, move it to your reading bag, and track your page progress — all without an account or API key.
 
 🌐 **Live demo:** https://mybookbag.netlify.app/
 
-![My Book Bag Overall](./public/images/my-book-bag-overall.jpg)
+![PagesBag Overall](./public/images/my-book-bag-overall.jpg)
 
 ---
 
@@ -66,7 +66,7 @@ No API key or `.env` file is needed — the Open Library API is free and open.
 
 Search for any book by title or author. Results are filtered client-side to ensure they genuinely match your query. Click **Add to Shelf** to save a book.
 
-![My Book Bag Search](./public/images/my-book-bag-search.jpg)
+![PagesBag Search](./public/images/my-book-bag-search.jpg)
 
 ### Edit shelf books
 

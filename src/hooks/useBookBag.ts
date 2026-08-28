@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Book } from "../types/book"
 import { playShelfPlaceSound, playBagPlaceSound } from "../utils/sound"
+import { Capacitor } from "@capacitor/core"
+import { Filesystem, Directory } from "@capacitor/filesystem"
+import { Share } from "@capacitor/share"
 
 // ── Export / Import helpers ────────────────────────────────────────────────
 
@@ -21,15 +24,34 @@ export function buildExportPayload(shelfBooks: Book[], bagBooks: Book[]): Export
 }
 
 /** Download a JSON file to the user's device. */
-export function triggerJsonDownload(payload: ExportPayload) {
-  const json = JSON.stringify(payload, null, 2)
-  const blob = new Blob([json], { type: "application/json" })
-  const url  = URL.createObjectURL(blob)
-  const a    = document.createElement("a")
-  a.href     = url
-  a.download = `my-book-bag-${new Date().toISOString().slice(0, 10)}.json`
-  a.click()
-  URL.revokeObjectURL(url)
+export async function triggerJsonDownload(payload: ExportPayload) {
+  const json     = JSON.stringify(payload, null, 2)
+  const fileName = `my-book-bag-${new Date().toISOString().slice(0, 10)}.json`
+
+  if (Capacitor.isNativePlatform()) {
+    // On iOS: write to the Documents directory then open the share sheet
+    await Filesystem.writeFile({
+      path: fileName,
+      data: json,
+      directory: Directory.Documents,
+      encoding: "utf8" as never,
+    })
+    const { uri } = await Filesystem.getUri({ path: fileName, directory: Directory.Documents })
+    await Share.share({
+      title: "PagesBag export",
+      url: uri,
+      dialogTitle: "Save or share your book data",
+    })
+  } else {
+    // On web: classic anchor-download
+    const blob = new Blob([json], { type: "application/json" })
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement("a")
+    a.href     = url
+    a.download = fileName
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 }
 
 /** Parse and basic-validate an imported JSON file. Returns null on failure. */
@@ -323,7 +345,7 @@ export default function useBookBag(searchBooks: Book[]) {
   // ── Export / Import ──────────────────────────────────────────────────────
 
   const handleExportData = useCallback(() => {
-    triggerJsonDownload(buildExportPayload(shelfBooks, bagBooks))
+    void triggerJsonDownload(buildExportPayload(shelfBooks, bagBooks))
   }, [shelfBooks, bagBooks])
 
   const handleImportData = useCallback((raw: string): boolean => {
