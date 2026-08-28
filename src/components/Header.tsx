@@ -1,9 +1,7 @@
-import React from "react"
 import ExportImport from "./ExportImport"
 import "../css/header.css"
 
 interface HeaderProps {
-  inputRef: React.MutableRefObject<(HTMLInputElement | null)[]>
   onOpenSearch: () => void
 }
 

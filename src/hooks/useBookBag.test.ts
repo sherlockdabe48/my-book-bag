@@ -6,6 +6,7 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   id,
   title: `Book ${id}`,
   author: "Author",
+  publisher: "",
   allPages: 200,
   currentPage: 1,
   imageURL: "cover.jpg",
@@ -15,7 +16,6 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   note: "",
   recommendedBy: "",
   lastReadAt: "",
-  startedAt: "",
   timesRead: 0,
   ...overrides,
 })

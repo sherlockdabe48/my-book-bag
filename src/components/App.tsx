@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react"
+import React, { useMemo, useState } from "react"
 import type { Book } from "../types/book"
 import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
@@ -19,7 +19,6 @@ export interface BookBagContextValue {
   bagCapacity: number
   bagCount: number
   handleAddToBagFromShelf: (id: string) => void
-  handleBookSelect: (id: string) => void
   handleBookDeleteFromShelf: (id: string) => void
   handleMoveToShelfFromBag: (id: string, note?: string) => void
   handleBagBookProgressChange: (id: string, currentPage: number) => void
@@ -44,7 +43,6 @@ export const bookBagContext = React.createContext<BookBagContextValue>({} as Boo
 export const toggleClassContext = React.createContext<ToggleClassContextValue>({} as ToggleClassContextValue)
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 function App() {
-  const inputRef = useRef<(HTMLInputElement | null)[]>([])
   const [modalOpen, setModalOpen] = useState(false)
 
   const {
@@ -70,7 +68,6 @@ function App() {
     totalFinished,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
-    handleBookSelect,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -111,7 +108,6 @@ function App() {
     bagCapacity,
     bagCount: bagBooks.length,
     handleAddToBagFromShelf,
-    handleBookSelect,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -130,7 +126,6 @@ function App() {
     bagCapacity,
     bagBooks.length,
     handleAddToBagFromShelf,
-    handleBookSelect,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -156,7 +151,7 @@ function App() {
       <bookBagContext.Provider value={bookBagContextValue}>
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
-            <Header inputRef={inputRef} onOpenSearch={handleOpenSearch} />
+            <Header onOpenSearch={handleOpenSearch} />
             {modalOpen && (
               <SearchPage
                 loading={loading}
@@ -176,7 +171,6 @@ function App() {
                 bagBooks={bagBooks}
                 shelfBooks={shelfBooks}
                 shelfHighLight={shelfHighLight}
-                inputRef={inputRef}
                 bagCapacity={bagCapacity}
                 bagUpgraded={bagUpgraded}
                 bagTier={bagTier}

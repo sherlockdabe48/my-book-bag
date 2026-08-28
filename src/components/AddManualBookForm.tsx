@@ -122,7 +122,6 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
       note:          "",
       recommendedBy: "",
       lastReadAt:    "",
-      startedAt:     "",
       timesRead:     0,
     }
 

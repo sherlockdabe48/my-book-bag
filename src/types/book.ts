@@ -12,6 +12,5 @@ export interface Book {
   note: string
   recommendedBy: string
   lastReadAt: string   // ISO date string, e.g. "2026-01-15", or "" if never
-  startedAt: string    // ISO date string when reading started, or ""
   timesRead: number    // how many times the reader has finished this book
 }

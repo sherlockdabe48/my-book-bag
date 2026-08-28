@@ -1,27 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import Header from "./components/Header"
 import BookInBag from "./components/BookInBag"
-import { bookBagContext, searchBookContext } from "./components/App"
-
-describe("Header", () => {
-  test("submits the typed search value", () => {
-    const handleGetSearchInputValue = jest.fn()
-    const inputRef = { current: [] as (HTMLInputElement | null)[] }
-
-    render(
-      <searchBookContext.Provider value={{ handleGetSearchInputValue, handleClearSearchInputValue: jest.fn(), handleMoveToShelfFromSearch: jest.fn() }}>
-        <Header inputRef={inputRef} />
-      </searchBookContext.Provider>
-    )
-
-    fireEvent.change(screen.getByPlaceholderText("Find other book..."), {
-      target: { value: "The Hobbit" },
-    })
-    fireEvent.submit(screen.getByRole("textbox"))
-
-    expect(handleGetSearchInputValue).toHaveBeenCalledWith("The Hobbit")
-  })
-})
+import { bookBagContext } from "./components/App"
 
 describe("BookInBag", () => {
   const baseProps = {
@@ -34,7 +13,6 @@ describe("BookInBag", () => {
     note: "",
     recommendedBy: "",
     lastReadAt: "",
-    startedAt: "",
     timesRead: 0,
   }
 
@@ -51,7 +29,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         <BookInBag {...baseProps} isActive={false} />
       </bookBagContext.Provider>
@@ -70,7 +48,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookSelect: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         <BookInBag {...baseProps} currentPage={300} isActive={true} />
       </bookBagContext.Provider>

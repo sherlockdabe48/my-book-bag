@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import type { RefObject } from "react"
 import SearchBook from "./SearchBook"
 import AddManualBookForm from "./AddManualBookForm"
 import type { SearchBook as SearchBookType } from "../hooks/useSearch"
@@ -11,7 +12,7 @@ interface SearchBookListProps {
   hasMore: boolean
   shelfBooks: Book[]
   onLoadMore: () => void
-  scrollContainerRef?: React.RefObject<HTMLDivElement>
+  scrollContainerRef?: RefObject<HTMLDivElement | null>
 }
 
 export default function SearchBookList({

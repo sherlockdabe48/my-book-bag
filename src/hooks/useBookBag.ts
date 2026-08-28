@@ -200,10 +200,6 @@ export default function useBookBag(searchBooks: Book[]) {
     })
   }, [bagCapacity, shelfBooks])
 
-  const handleBookSelect = useCallback((_id: string) => {
-    // selection tracking removed — kept for API compatibility
-  }, [])
-
   const handleMoveToShelfFromSearch = useCallback((id: string) => {
     const book = searchBooks.find((b) => b.id === id)
     if (!book) return
@@ -325,7 +321,6 @@ export default function useBookBag(searchBooks: Book[]) {
     totalFinished,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
-    handleBookSelect,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,

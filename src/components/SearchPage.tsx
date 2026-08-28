@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import { type FormEvent, type MouseEvent, useContext, useEffect, useRef, useState } from "react"
 import SearchBookList from "./SearchBookList"
 import { searchBookContext } from "./App"
 import type { SearchBook } from "../hooks/useSearch"
@@ -51,16 +51,14 @@ export default function SearchPage({
     setInputValue(searchInputValue)
   }, [searchInputValue])
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (inputValue.trim()) handleGetSearchInputValue(inputValue.trim())
   }
 
-  function handleBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
+  function handleBackdropClick(e: MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) handleClearSearchInputValue()
   }
-
-  const hasResults = !loading && !searchError && searchBooks.length > 0
 
   return (
     <div className="search-modal__backdrop" onClick={handleBackdropClick} aria-modal="true" role="dialog" aria-label="Find a Book">

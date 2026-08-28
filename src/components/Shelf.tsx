@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import ShelfBookList from "./ShelfBookList"
 import AddManualBookForm from "./AddManualBookForm"
 import type { Book } from "../types/book"

@@ -74,6 +74,7 @@ function mapDoc(doc: OpenLibraryDoc): SearchBook {
     title:       doc.title,
     subtitle:    doc.subtitle ?? false,
     author:      doc.author_name ? doc.author_name.join(", ") : "N/A",
+    publisher:   "",
     allPages:    doc.number_of_pages_median ?? "N/A",
     currentPage: 1,
     imageURL:    doc.cover_i
@@ -85,7 +86,6 @@ function mapDoc(doc: OpenLibraryDoc): SearchBook {
     note:        "",
     recommendedBy: "",
     lastReadAt:  "",
-    startedAt:   "",
     timesRead:   0,
   }
 }

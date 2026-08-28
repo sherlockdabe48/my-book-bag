@@ -200,6 +200,7 @@ function makeBook(overrides: Partial<SearchBook> = {}): SearchBook {
     title: "Default Title",
     subtitle: false,
     author: "Default Author",
+    publisher: "",
     allPages: 100,
     currentPage: 1,
     imageURL: "",
@@ -209,7 +210,6 @@ function makeBook(overrides: Partial<SearchBook> = {}): SearchBook {
     note: "",
     recommendedBy: "",
     lastReadAt: "",
-    startedAt: "",
     timesRead: 0,
     ...overrides,
   }
