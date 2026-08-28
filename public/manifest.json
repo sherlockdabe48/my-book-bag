@@ -1,0 +1,17 @@
+{
+  "name": "My Book Bag",
+  "short_name": "Book Bag",
+  "description": "Track the books on your shelf and in your reading bag.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/images/Group 2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
