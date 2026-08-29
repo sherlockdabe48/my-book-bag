@@ -68,15 +68,7 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
       ))}
       <div className="btn--container">
         {isFull ? (
-          <div className="bag-full-notice">
-            <p className="bag-full-notice__title">🎒 Your bag is full ({bagCapacity}/{bagCapacity})</p>
-            <p className="bag-full-notice__sub">
-              {nextTier
-                ? <>Finish <strong>{nextTier.booksFinished - totalFinished}</strong> more book{nextTier.booksFinished - totalFinished !== 1 ? "s" : ""} to unlock a <strong>{nextTier.label}</strong> ({nextTier.capacity} slots).</>
-                : <>You've reached the maximum bag size. You're a Master! 🏆</>
-              }
-            </p>
-          </div>
+          <></>
         ) : (
           <button
             className="btn btn--add btn--see-more"
