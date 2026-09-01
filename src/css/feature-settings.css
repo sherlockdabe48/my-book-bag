@@ -109,12 +109,28 @@
     font-size: 0.83rem;
     font-weight: 500;
     color: #e0e0e0;
+    display: flex;
+    align-items: center;
 }
 
 .feature-settings__item-desc {
     font-size: 0.73rem;
     color: #888;
     line-height: 1.4;
+}
+
+/* ── Locked state ─────────────────────────────────────────────────── */
+.feature-settings__item--locked {
+    opacity: 0.45;
+}
+
+.feature-settings__item-desc--locked {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.feature-settings__toggle--locked {
+    cursor: not-allowed;
 }
 
 /* ── Toggle switch ────────────────────────────────────────────────── */
@@ -153,7 +169,8 @@
 
 /* ── Hide descriptions on very short screens to save vertical space ── */
 @media (max-height: 620px) {
-    .feature-settings__item-desc {
+    /* Hide regular descriptions but keep locked "Unlocks at …" hints visible */
+    .feature-settings__item-desc:not(.feature-settings__item-desc--locked) {
         display: none;
     }
 
