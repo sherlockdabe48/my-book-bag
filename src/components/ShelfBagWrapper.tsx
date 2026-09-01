@@ -27,7 +27,6 @@ interface ShelfBagWrapperProps {
 const TIER_READER   = BAG_TIERS.findIndex((t) => t.label === "Reader's Bag")
 const TIER_BOOKWORM = BAG_TIERS.findIndex((t) => t.label === "Bookworm Bag")
 const TIER_SCHOLAR  = BAG_TIERS.findIndex((t) => t.label === "Scholar's Bag")
-const TIER_MASTER   = BAG_TIERS.findIndex((t) => t.label === "Master's Bag")
 
 export default function ShelfBagWrapper({
   bagBooks,
@@ -96,7 +95,6 @@ export default function ShelfBagWrapper({
             tierIndex={tierIndex}
             tierBookworm={TIER_BOOKWORM}
             tierScholar={TIER_SCHOLAR}
-            tierMaster={TIER_MASTER}
             shelfCapacity={shelfCapacity}
             shelfTier={shelfTier}
             totalFinished={totalFinished}

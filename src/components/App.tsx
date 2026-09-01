@@ -7,11 +7,13 @@ import ClassicsPage from "./ClassicsPage"
 import StatsPage from "./StatsPage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
+import FeatureSettings from "./FeatureSettings"
 import "../css/App.css"
 import "../css/classics.css"
 import useSearch from "../hooks/useSearch"
 import useBookBag from "../hooks/useBookBag"
 import useSearchClassics from "../hooks/useSearchClassics"
+import useFeatureFlags, { type FeatureFlags } from "../hooks/useFeatureFlags"
 export interface SearchBookContextValue {
   handleGetSearchInputValue: (value: string) => void
   handleClearSearchInputValue: () => void
@@ -50,14 +52,26 @@ export interface ToggleClassContextValue {
   handleOpenShelf: () => void
 }
 
+export interface FeatureFlagsContextValue {
+  flags: FeatureFlags
+  toggleFlag: (key: keyof FeatureFlags) => void
+}
+
 export const bookBagContext = React.createContext<BookBagContextValue>({} as BookBagContextValue)
 export const toggleClassContext = React.createContext<ToggleClassContextValue>({} as ToggleClassContextValue)
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
+export const featureFlagsContext = React.createContext<FeatureFlagsContextValue>({
+  flags: { sortBooks: true, filterBooks: true, addOwnBook: true, bookTags: true, readingProgressBars: true, iReadToday: true, sounds: true },
+  toggleFlag: () => {},
+})
 function App() {
   const [modalOpen, setModalOpen] = useState(false)
   const [classicsOpen, setClassicsOpen] = useState(false)
   const [statsOpen, setStatsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [shelfCollapsed, setShelfCollapsed] = useState(false)
+
+  const { flags, toggleFlag } = useFeatureFlags()
 
   const {
     searchInputValue,
@@ -144,6 +158,14 @@ function App() {
     setStatsOpen(false)
   }, [])
 
+  const handleOpenSettings = useCallback(() => {
+    setSettingsOpen(true)
+  }, [])
+
+  const handleCloseSettings = useCallback(() => {
+    setSettingsOpen(false)
+  }, [])
+
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
     handleGetSearchInputValue,
     handleClearSearchInputValue: handleCloseModal,
@@ -209,12 +231,21 @@ function App() {
     handleOpenShelf,
   }), [handleActiveShelfHighLight, shelfCollapsed, handleOpenShelf])
 
+  const featureFlagsContextValue = useMemo<FeatureFlagsContextValue>(() => ({
+    flags,
+    toggleFlag,
+  }), [flags, toggleFlag])
+
   return (
     <Router>
       <bookBagContext.Provider value={bookBagContextValue}>
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
-            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} onOpenStats={handleOpenStats} totalFinished={totalFinished} />
+            <featureFlagsContext.Provider value={featureFlagsContextValue}>
+            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} onOpenStats={handleOpenStats} onOpenSettings={handleOpenSettings} totalFinished={totalFinished} />
+            {settingsOpen && (
+              <FeatureSettings flags={flags} onToggle={toggleFlag} onClose={handleCloseSettings} />
+            )}
             {statsOpen && (
               <StatsPage
                 shelfBooks={shelfBooks}
@@ -268,6 +299,7 @@ function App() {
                 recentlyAddedBagBookId={recentlyAddedBagBookId}
               />
             )}
+            </featureFlagsContext.Provider>
           </searchBookContext.Provider>
         </toggleClassContext.Provider>
       </bookBagContext.Provider>

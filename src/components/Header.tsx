@@ -9,12 +9,13 @@ interface HeaderProps {
   onOpenSearch: () => void
   onOpenClassics: () => void
   onOpenStats: () => void
+  onOpenSettings: () => void
   totalFinished: number
 }
 
 const isIOS = Capacitor.getPlatform() === "ios"
 
-export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, totalFinished }: HeaderProps) {
+export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOpenSettings, totalFinished }: HeaderProps) {
   const statsUnlocked = totalFinished >= STATS_UNLOCK_BOOKS
 
   return (
@@ -32,7 +33,7 @@ export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, tota
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
-        <ExportImport onOpenClassics={onOpenClassics} onOpenStats={onOpenStats} statsUnlocked={statsUnlocked} />
+        <ExportImport onOpenClassics={onOpenClassics} onOpenStats={onOpenStats} onOpenSettings={onOpenSettings} statsUnlocked={statsUnlocked} />
       </div>
     </div>
   )

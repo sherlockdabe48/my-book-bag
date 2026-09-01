@@ -2,7 +2,7 @@ import { useContext, useMemo, useState } from "react"
 import ShelfBookList from "./ShelfBookList"
 import AddManualBookForm from "./AddManualBookForm"
 import type { Book } from "../types/book"
-import { searchBookContext } from "./App"
+import { featureFlagsContext, searchBookContext } from "./App"
 import type { SHELF_TIERS } from "../hooks/useBookBag"
 import { getNextShelfTier } from "../hooks/useBookBag"
 
@@ -13,7 +13,6 @@ interface ShelfProps {
   tierIndex: number
   tierBookworm: number
   tierScholar: number
-  tierMaster: number
   shelfCapacity: number | null
   shelfTier: typeof SHELF_TIERS[number]
   totalFinished: number
@@ -32,8 +31,9 @@ const STATUS_LABEL: Record<FilterStatus, string> = {
 
 const STATUS_ORDER: Record<Book["status"], number> = { reading: 0, onRead: 1, finish: 2 }
 
-export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId, tierIndex, tierBookworm, tierScholar, tierMaster, shelfCapacity, shelfTier, totalFinished, totalWithNote }: ShelfProps) {
+export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBookId, tierIndex, tierBookworm, tierScholar, shelfCapacity, shelfTier, totalFinished, totalWithNote }: ShelfProps) {
   const { handleOpenSearch } = useContext(searchBookContext)
+  const { flags } = useContext(featureFlagsContext)
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
   const [filter, setFilter] = useState<FilterStatus>("all")
@@ -63,10 +63,10 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
       </h2>
       <div className={shelfHighLight ? "shelf-container__highlight" : ""}>
         <div className="shelf-container">
-          {shelfBooks.length > 0 && (tierIndex >= tierBookworm || tierIndex >= tierScholar) && (
+          {shelfBooks.length > 0 && (tierIndex >= tierBookworm || tierIndex >= tierScholar) && (flags.filterBooks || flags.sortBooks) && (
             <div className="shelf-controls">
               {/* Filter chips — Bookworm Bag+ */}
-              {tierIndex >= tierBookworm && (
+              {tierIndex >= tierBookworm && flags.filterBooks && (
                 <div className="shelf-controls__group">
                   {(["all", "onRead", "reading", "finish"] as FilterStatus[]).map((f) => (
                     <button
@@ -84,8 +84,8 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
                   ))}
                 </div>
               )}
-              {/* Tag filter chips — shown when any book has tags */}
-              {allTags.length > 0 && (
+              {/* Tag filter chips — shown when any book has tags and tags feature is on */}
+              {allTags.length > 0 && flags.bookTags && (
                 <div className="shelf-controls__group shelf-controls__group--tags">
                   <button
                     className={`shelf-controls__chip shelf-controls__chip--tag ${activeTag === null ? "shelf-controls__chip--active" : ""}`}
@@ -108,7 +108,7 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
                 </div>
               )}
               {/* Sort select — Scholar's Bag+ */}
-              {tierIndex >= tierScholar && (
+              {tierIndex >= tierScholar && flags.sortBooks && (
                 <div className="shelf-controls__sort">
                   <label className="shelf-controls__sort-label" htmlFor="shelf-sort">Sort</label>
                   <select
@@ -170,7 +170,7 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
             </button>
-            {tierIndex >= tierBookworm && (
+            {tierIndex >= tierBookworm && flags.addOwnBook && (
               <button className="btn btn--optional btn--see-more" onClick={() => setShowAddForm(true)}>
                 Add your own book{" "}
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle", marginLeft: "4px" }}>

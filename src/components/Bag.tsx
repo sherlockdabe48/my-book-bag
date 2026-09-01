@@ -40,7 +40,7 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
         </div>
       )}
       <div className="bag-container">
-        <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} totalFinished={totalFinished} recentlyAddedBagBookId={recentlyAddedBagBookId} />
+        <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} recentlyAddedBagBookId={recentlyAddedBagBookId} />
         {allHavePages && (
           <div className="bag-pages-bar-section">
             <div className="bag-pages-bar-header">

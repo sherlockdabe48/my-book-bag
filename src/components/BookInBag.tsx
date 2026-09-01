@@ -1,5 +1,5 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
-import { bookBagContext } from "./App"
+import { bookBagContext, featureFlagsContext } from "./App"
 import type { Book } from "../types/book"
 import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../utils/sound"
 
@@ -59,6 +59,7 @@ const REREAD_QUESTIONS = [
 ]
 
 export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
+  const { flags } = useContext(featureFlagsContext)
   const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead, shelfFull } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
@@ -114,13 +115,13 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     setProgress(next)
     setDraftProgress(next)
     handleBagBookProgressChange(id, next)
-    playPageTurnSound()
+    if (flags.sounds) playPageTurnSound()
   }
 
   function doFinish() {
     handleIncrementTimesRead(id)
     setJustFinished(true)
-    playBookCloseSound()
+    if (flags.sounds) playBookCloseSound()
   }
 
   function commitEdit() {
@@ -327,7 +328,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
           </div>
         )}
         {/* ── Progress section ───────────────────────── */}
-        <div className="book-in-bag__progress-section">
+        {flags.readingProgressBars && <div className="book-in-bag__progress-section">
           <div className="book-in-bag__progress-row">
             <div className="book-in-bag__scroller-wrap">
               <button
@@ -385,17 +386,17 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               </button>
             </div>
           )}
-          {!atLastPage && (
+          {!atLastPage && flags.iReadToday && (
             <button
               className="book-in-bag__read-today-btn"
-              onClick={() => { playReadTodaySound(); handleLogReadingSession(id) }}
+              onClick={() => { if (flags.sounds) playReadTodaySound(); handleLogReadingSession(id) }}
               disabled={alreadyReadToday}
               title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
             >
               {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
             </button>
           )}
-        </div>
+        </div>}
       </div>
     </div>
   )

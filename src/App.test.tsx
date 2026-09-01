@@ -52,16 +52,16 @@ describe("BookInBag", () => {
       <bookBagContext.Provider
         value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleAddToBagWithPages: jest.fn(), handleAddBookToShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleBookChangeTags: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
-        <BookInBag {...baseProps} currentPage={300} isActive={true} />
+        {/* timesRead > 0 makes everFinished = true, so atLastPage && everFinished → "Read Again" label */}
+        <BookInBag {...baseProps} currentPage={300} timesRead={1} isActive={true} />
       </bookBagContext.Provider>
     )
 
     // open the ⋯ menu first, then click "Read Again"
     fireEvent.click(screen.getByRole("button", { name: "Book actions" }))
     fireEvent.click(screen.getByText("Read Again"))
-    // confirm prompt appears — click the confirm button
-    fireEvent.click(screen.getByText("Yes, reset"))
 
+    // handleFinishBook resets progress to 1 immediately and opens the reflection step
     expect(handleBagBookProgressChange).toHaveBeenCalledWith("book-1", 1)
     expect(window.alert).not.toHaveBeenCalled()
   })
@@ -79,7 +79,7 @@ describe("BookInBag", () => {
           setShelfCollapsed: jest.fn(),
         }}
       >
-        <BagBookList bagBooks={[]} bagCapacity={3} totalFinished={0} />
+        <BagBookList bagBooks={[]} bagCapacity={3} />
       </toggleClassContext.Provider>
     )
 

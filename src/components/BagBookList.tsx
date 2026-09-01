@@ -2,18 +2,15 @@ import { useContext, useEffect, useRef } from "react"
 import BookInBag from "./BookInBag"
 import { toggleClassContext } from "./App"
 import type { Book } from "../types/book"
-import { getNextTier } from "../hooks/useBookBag"
 
 interface BagBookListProps {
   bagBooks: Book[]
   bagCapacity: number
-  totalFinished: number
   recentlyAddedBagBookId?: string | null
 }
 
-export default function BagBookList({ bagBooks, bagCapacity, totalFinished, recentlyAddedBagBookId }: BagBookListProps) {
+export default function BagBookList({ bagBooks, bagCapacity, recentlyAddedBagBookId }: BagBookListProps) {
   const { handleActiveShelfHighLight, handleOpenShelf } = useContext(toggleClassContext)
-  const nextTier = getNextTier(totalFinished)
   const isFull = bagBooks.length >= bagCapacity
 
   // Smooth-scroll to the top of the bag list when the first book changes

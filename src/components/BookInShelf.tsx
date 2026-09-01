@@ -1,5 +1,5 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
-import { bookBagContext } from "./App"
+import { bookBagContext, featureFlagsContext } from "./App"
 import type { Book } from "../types/book"
 import { playBirdFlapSound } from "../utils/sound"
 
@@ -8,6 +8,7 @@ type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "all
 }
 
 export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, tags: initialTags, isLanding }: BookInShelfProps) {
+  const { flags } = useContext(featureFlagsContext)
   const {
     bagCapacity,
     bagCount,
@@ -213,7 +214,9 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setAuthorInput(author); setEditMode("author") }}>Author</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("confirmCover")}>Cover</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setPagesInput(allPages === "N/A" ? "" : String(allPages)); setEditMode("pages") }}>Pages</button>
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setTagInput(""); setEditMode("tags") }}>Tags</button>
+            {flags.bookTags && (
+              <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setTagInput(""); setEditMode("tags") }}>Tags</button>
+            )}
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}
@@ -277,7 +280,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <p className="book-in-shelf__edit-overlay-body">This book will be tossed away from your shelf.</p>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
-              onClick={() => { playBirdFlapSound(); handleBookDeleteFromShelf(id) }}
+              onClick={() => { if (flags.sounds) playBirdFlapSound(); handleBookDeleteFromShelf(id) }}
             >
               Yes, remove it
             </button>
@@ -373,7 +376,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
       </div>
 
       {/* ── Below-cover tag pills ──────────────────────── */}
-      {tags.length > 0 && editMode === null && (
+      {tags.length > 0 && editMode === null && flags.bookTags && (
         <div className="book-in-shelf__below-tags">
           {tags.map((tag) => (
             <span key={tag} className="book-in-shelf__below-tag">{tag}</span>
