@@ -11,7 +11,7 @@ import FeatureSettings from "./FeatureSettings"
 import "../css/App.css"
 import "../css/classics.css"
 import useSearch from "../hooks/useSearch"
-import useBookBag from "../hooks/useBookBag"
+import useBookBag, { BAG_TIERS } from "../hooks/useBookBag"
 import useSearchClassics from "../hooks/useSearchClassics"
 import useFeatureFlags, { type FeatureFlags } from "../hooks/useFeatureFlags"
 export interface SearchBookContextValue {
@@ -244,7 +244,7 @@ function App() {
             <featureFlagsContext.Provider value={featureFlagsContextValue}>
             <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} onOpenStats={handleOpenStats} onOpenSettings={handleOpenSettings} totalFinished={totalFinished} />
             {settingsOpen && (
-              <FeatureSettings flags={flags} onToggle={toggleFlag} onClose={handleCloseSettings} />
+              <FeatureSettings flags={flags} tierIndex={BAG_TIERS.indexOf(bagTier)} onToggle={toggleFlag} onClose={handleCloseSettings} />
             )}
             {statsOpen && (
               <StatsPage
@@ -277,6 +277,7 @@ function App() {
                 searchError={searchError}
                 searchErrorType={searchErrorType}
                 onLoadMore={loadMore}
+                onOpenClassics={handleOpenClassics}
               />
             )}
             {!haveSomeBook && <WelcomeMessage />}

@@ -182,6 +182,43 @@
     line-height: 1.6;
 }
 
+/* ── Classics nudge ─────────────────────────────────── */
+.search-modal__classics-nudge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.search-modal__classics-nudge-or {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.search-modal__classics-nudge-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2328;
+    cursor: pointer;
+    transition: background 0.13s, border-color 0.13s, color 0.13s;
+}
+
+.search-modal__classics-nudge-btn:hover {
+    background: #1f2328;
+    border-color: #1f2328;
+    color: #ffffff;
+}
+
 /* ── Warning (soft, e.g. query too short) ───────────── */
 .search-modal__warning {
     text-align: center;

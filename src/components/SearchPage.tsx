@@ -14,6 +14,7 @@ interface SearchPageProps {
   searchError: string | null
   searchErrorType: "warning" | "error"
   onLoadMore: () => void
+  onOpenClassics: () => void
 }
 
 export default function SearchPage({
@@ -26,6 +27,7 @@ export default function SearchPage({
   searchError,
   searchErrorType,
   onLoadMore,
+  onOpenClassics,
 }: SearchPageProps) {
   const { handleGetSearchInputValue, handleClearSearchInputValue } = useContext(searchBookContext)
   const [inputValue, setInputValue] = useState(searchInputValue)
@@ -134,6 +136,23 @@ export default function SearchPage({
               </svg>
               <p className="search-modal__welcome-heading">Discover your next read</p>
               <p className="search-modal__welcome-sub">Search by title or author to find your next favourite book.</p>
+              <div className="search-modal__classics-nudge">
+                <span className="search-modal__classics-nudge-or">or</span>
+                <button
+                  className="search-modal__classics-nudge-btn"
+                  type="button"
+                  onClick={() => { handleClearSearchInputValue(); onOpenClassics() }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                  Browse Classics
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
         </div>
