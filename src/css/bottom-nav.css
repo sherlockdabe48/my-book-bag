@@ -1,0 +1,106 @@
+/* ── Bottom nav bar — mobile only (≤ 900px) ───────────────────────── */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(58px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    z-index: 150;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav__tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 0 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav__tab--active {
+    color: #2f2f2f;
+}
+
+.bottom-nav__tab:active {
+    opacity: 0.7;
+}
+
+.bottom-nav__icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom-nav__badge {
+    position: absolute;
+    top: -5px;
+    right: -9px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    background: #2f2f2f;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.bottom-nav__tab--active .bottom-nav__badge {
+    background: #2f2f2f;
+}
+
+.bottom-nav__badge--bump {
+    animation: badge-bump 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes badge-bump {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.55); }
+    55%  { transform: scale(0.88); }
+    75%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
+.bottom-nav__label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+/* ── Tab panels ───────────────────────────────────────────────────── */
+/* Both panels are always mounted; only the active one is visible.     */
+/* This preserves scroll position when switching tabs.                 */
+.sbw-tab-panel {
+    display: none;
+    width: 100%;
+}
+
+.sbw-tab-panel--active {
+    display: block;
+}
+
+/* ── Mobile wrapper overrides ─────────────────────────────────────── */
+.shelf-bag-wrapper--tabs {
+    display: block;
+    padding: 0;
+    /* Push content above the fixed bottom nav */
+    padding-bottom: calc(58px + env(safe-area-inset-bottom));
+}

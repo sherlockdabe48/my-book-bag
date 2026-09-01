@@ -10,6 +10,7 @@
 @import 'book-in-bag.css';
 @import 'search-page.css';
 @import 'search-book.css';
+@import 'bottom-nav.css';
 
 *, *::before, *::after {
     font-family: Rubik, sans-serif;
