@@ -151,6 +151,39 @@
 }
 
 /* ── I read today button ─────────────────────────── */
+.book-in-bag__finish-nudge {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.book-in-bag__finish-nudge-quote {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: #9ca3af;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.book-in-bag__finish-nudge-btn {
+    align-self: flex-start;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #fff;
+    background: #1f2328;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.book-in-bag__finish-nudge-btn:hover {
+    background: #32383f;
+}
+
 .book-in-bag__read-today-btn {
     align-self: flex-start;
     padding: 6px 14px;
@@ -441,6 +474,15 @@
     flex-direction: column;
     gap: 6px;
     margin-bottom: 8px;
+}
+
+.book-in-bag__reflection-question {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1f2328;
+    line-height: 1.45;
+    margin: 0 0 2px;
+    font-style: italic;
 }
 
 .book-in-bag__note-name-input {

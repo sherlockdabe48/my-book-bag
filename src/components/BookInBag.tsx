@@ -1,4 +1,4 @@
-import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../utils/sound"
@@ -28,6 +28,24 @@ function formatLastRead(dateStr: string): string {
 
 const READER_NAME_KEY = "myBookBag.readerName"
 
+const REFLECTION_QUESTIONS = [
+  "What's one thing in this book you disagree with?",
+  "Which character would you least want to be, and why?",
+  "What did this book change your mind about, if anything?",
+  "What would you tell a friend who asked if they should read this?",
+  "What question does this book leave unanswered?",
+  "Was there a moment you wanted to stop reading? What caused it?",
+  "What's the one sentence you'd underline if you could only pick one?",
+  "Did the ending feel earned? Why or why not?",
+  "What did the author assume about you as a reader?",
+  "If you could ask the author one question, what would it be?",
+  "What will you remember about this book in five years?",
+  "Who should read this, and who definitely shouldn't?",
+  "What emotion did this book leave you with?",
+  "Was there a character you wanted to shake some sense into?",
+  "What did this book make you want to do or read next?",
+]
+
 export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
   const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead, shelfFull } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
@@ -40,7 +58,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   const coverRef = useRef<HTMLDivElement>(null)
 
   // ── Note flow state ──────────────────────────────
-  type NoteStep = "idle" | "writing" | "saved"
+  type NoteStep = "idle" | "writing" | "saved" | "reflecting"
   const [noteStep, setNoteStep] = useState<NoteStep>("idle")
   const [noteDraft, setNoteDraft] = useState("")
   const [readerName, setReaderName] = useState(() => localStorage.getItem(READER_NAME_KEY) ?? "")
@@ -73,7 +91,8 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
 
   const inputRef = useRef<HTMLInputElement>(null)
   const maxPages = allPages === "N/A" ? null : Number(allPages)
-  const isFinished = maxPages !== null && Number(progress) === maxPages
+  const atLastPage = maxPages !== null && Number(progress) >= maxPages
+  const everFinished = timesRead > 0
   const todayStr = new Date().toISOString().slice(0, 10)
   const alreadyReadToday = lastReadAt === todayStr
 
@@ -84,13 +103,13 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     setProgress(next)
     setDraftProgress(next)
     handleBagBookProgressChange(id, next)
-    if (next >= maxPages && !isFinished) {
-      handleIncrementTimesRead(id)
-      setJustFinished(true)
-      playBookCloseSound()
-    } else {
-      playPageTurnSound()
-    }
+    playPageTurnSound()
+  }
+
+  function doFinish() {
+    handleIncrementTimesRead(id)
+    setJustFinished(true)
+    playBookCloseSound()
   }
 
   function commitEdit() {
@@ -116,13 +135,33 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
     })
   }
 
+  const reflectionQuestion = useMemo(
+    () => REFLECTION_QUESTIONS[Math.floor(Math.random() * REFLECTION_QUESTIONS.length)],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
   function handleFinishBook() {
-    if (isFinished) {
+    if (atLastPage && everFinished) {
       setConfirmReadAgain(true)
       return
     }
-    if (maxPages === null) return
-    applyProgress(maxPages)
+    setNoteDraft("")
+    setNoteStep("reflecting")
+    setMenuOpen(false)
+  }
+
+  function commitFinish() {
+    if (noteDraft.trim()) {
+      const name = readerName.trim() || "Reader"
+      if (readerName.trim()) localStorage.setItem(READER_NAME_KEY, readerName.trim())
+      const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })
+      const signed = `${reflectionQuestion}\n${noteDraft.trimEnd()}\n\n— ${name}, ${date}`
+      setNote(signed)
+      handleBookChangeNote(id, signed)
+    }
+    doFinish()
+    setNoteStep("idle")
   }
 
   function confirmReset() {
@@ -185,8 +224,8 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               <>
                 <p className="book-in-bag__menu-label">Actions</p>
                 <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
-                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished && maxPages !== null) setMenuOpen(false) }}>
-                  {isFinished ? "Read Again" : "Finish"}
+                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook() }}>
+                  {atLastPage && everFinished ? "Read Again" : "Finish"}
                 </button>
                 <button
                   className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf"
@@ -219,8 +258,32 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
           </dl>
         </div>
 
-        {isFinished && justFinished && (
+        {justFinished && (
           <p className="book-in-bag__finished-banner">{finishedBanner(timesRead)}</p>
+        )}
+        {noteStep === "reflecting" && (
+          <div className="book-in-bag__note-editor">
+            <p className="book-in-bag__reflection-question">{reflectionQuestion}</p>
+            <textarea
+              className="book-in-bag__note-textarea"
+              placeholder="Your answer… (or skip to finish without a note)"
+              value={noteDraft}
+              onChange={(e) => setNoteDraft(e.target.value)}
+              rows={3}
+              autoFocus
+            />
+            <input
+              className="book-in-bag__note-name-input"
+              type="text"
+              placeholder="Your name (for the signature)"
+              value={readerName}
+              onChange={(e) => setReaderName(e.target.value)}
+            />
+            <div className="book-in-bag__note-actions">
+              <button className="book-in-bag__note-save-btn" onClick={commitFinish}>Finish & save</button>
+              <button className="book-in-bag__note-cancel-btn" onClick={() => { doFinish(); setNoteStep("idle") }}>Skip</button>
+            </div>
+          </div>
         )}
         {noteStep === "writing" && (
           <div className="book-in-bag__note-editor">
@@ -309,14 +372,24 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               style={{ width: maxPages ? `${Math.min(100, (Number(progress) / maxPages) * 100)}%` : "0%" }}
             />
           </div>
-          <button
-            className="book-in-bag__read-today-btn"
-            onClick={() => { playReadTodaySound(); handleLogReadingSession(id) }}
-            disabled={alreadyReadToday}
-            title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
-          >
-            {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
-          </button>
+          {atLastPage && !everFinished && noteStep !== "reflecting" && (
+            <div className="book-in-bag__finish-nudge">
+              <p className="book-in-bag__finish-nudge-quote">The last page doesn't finish itself — you do.</p>
+              <button className="book-in-bag__finish-nudge-btn" onClick={handleFinishBook}>
+                Finish this book →
+              </button>
+            </div>
+          )}
+          {!atLastPage && (
+            <button
+              className="book-in-bag__read-today-btn"
+              onClick={() => { playReadTodaySound(); handleLogReadingSession(id) }}
+              disabled={alreadyReadToday}
+              title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
+            >
+              {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
+            </button>
+          )}
         </div>
       </div>
     </div>
