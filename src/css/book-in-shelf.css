@@ -318,6 +318,64 @@
     border: 1px solid rgba(253, 230, 138, 0.5);
 }
 
+/* ── Tags edit overlay ────────────────────────────── */
+.book-in-shelf__edit-overlay--tags {
+    justify-content: flex-start;
+    padding-top: 12px;
+    gap: 6px;
+}
+
+/* Tag pills inside the editor */
+.book-in-shelf__tag-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
+.book-in-shelf__tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px 2px 8px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 12px;
+    font-size: 0.68rem;
+    color: #fff;
+}
+
+.book-in-shelf__tag-pill-remove {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 0.6rem;
+    padding: 0;
+    line-height: 1;
+}
+.book-in-shelf__tag-pill-remove:hover { color: #fff; }
+
+/* Tag pills displayed below the cover */
+.book-in-shelf__below-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 5px;
+}
+
+.book-in-shelf__below-tag {
+    display: inline-block;
+    padding: 1px 7px;
+    background: #f0f4ff;
+    border: 1px solid #c7d3f5;
+    border-radius: 10px;
+    font-size: 0.62rem;
+    color: #3b5bdb;
+    font-weight: 500;
+}
+
 /* ── Note textarea (shelf edit overlay) ───────────── */
 .book-in-shelf__edit-overlay--note {
     justify-content: flex-start;

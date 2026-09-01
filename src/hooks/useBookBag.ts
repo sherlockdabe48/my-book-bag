@@ -449,6 +449,11 @@ export default function useBookBag(searchBooks: Book[]) {
     setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, recommendedBy })))
   }, [])
 
+  const handleBookChangeTags = useCallback((id: string, tags: string[]) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, tags })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, tags })))
+  }, [])
+
   const handleIncrementTimesRead = useCallback((id: string) => {
     setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, timesRead: (b.timesRead ?? 0) + 1 })))
   }, [])
@@ -513,6 +518,7 @@ export default function useBookBag(searchBooks: Book[]) {
     handleBookChangeAuthor,
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
+    handleBookChangeTags,
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,

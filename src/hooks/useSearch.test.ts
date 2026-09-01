@@ -124,7 +124,7 @@ describe("useSearch", () => {
     expect(result.current.searchBooks).toHaveLength(25)
   })
 
-  test("filters out books missing author, page count, or cover", async () => {
+  test("filters out books missing author or page count, but shows books without a cover", async () => {
     const noAuthor = { key: "/works/OL1W", title: "Unknown", number_of_pages_median: 100, cover_i: 111 }
     const noPages  = { key: "/works/OL2W", title: "Unknown", author_name: ["Someone"], cover_i: 222 }
     const noCover  = { key: "/works/OL3W", title: "Unknown", author_name: ["Someone"], number_of_pages_median: 100 }
@@ -136,8 +136,10 @@ describe("useSearch", () => {
     act(() => { result.current.handleGetSearchInputValue("unknown") })
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    expect(result.current.searchBooks).toHaveLength(1)
-    expect(result.current.searchBooks[0].id).toBe("/works/OL4W")
+    expect(result.current.searchBooks).toHaveLength(2)
+    expect(result.current.searchBooks.map((b) => b.id)).toEqual(
+      expect.arrayContaining(["/works/OL3W", "/works/OL4W"])
+    )
   })
 
   test("sets generic error message on network failure", async () => {
@@ -211,6 +213,7 @@ function makeBook(overrides: Partial<SearchBook> = {}): SearchBook {
     recommendedBy: "",
     lastReadAt: "",
     timesRead: 0,
+    tags: [],
     ...overrides,
   }
 }

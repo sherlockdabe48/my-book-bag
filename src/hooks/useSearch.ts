@@ -87,6 +87,7 @@ function mapDoc(doc: OpenLibraryDoc): SearchBook {
     recommendedBy: "",
     lastReadAt:  "",
     timesRead:   0,
+    tags:        [],
   }
 }
 
@@ -96,8 +97,7 @@ function applyFilters(docs: OpenLibraryDoc[], query: string): SearchBook[] {
     .filter((b) =>
       matchesQuery(b, query) &&
       b.author !== "N/A" &&
-      b.allPages !== "N/A" &&
-      !b.imageURL.includes("mybookbag-image-cover-sample-01")
+      b.allPages !== "N/A"
     )
 }
 

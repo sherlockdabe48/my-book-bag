@@ -59,7 +59,7 @@ export default function ClassicsBook({
   const book: Book = {
     id, title, author, publisher, allPages, currentPage,
     imageURL, description, isbn, status, note,
-    recommendedBy, lastReadAt, timesRead,
+    recommendedBy, lastReadAt, timesRead, tags: [],
   }
 
   return (

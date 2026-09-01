@@ -37,16 +37,24 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
   const [showAddForm, setShowAddForm] = useState(false)
   const [sort, setSort] = useState<SortKey>("added")
   const [filter, setFilter] = useState<FilterStatus>("all")
+  const [activeTag, setActiveTag] = useState<string | null>(null)
+
+  const allTags = useMemo(() => {
+    const seen = new Set<string>()
+    for (const b of shelfBooks) for (const t of (b.tags ?? [])) seen.add(t)
+    return [...seen].sort()
+  }, [shelfBooks])
 
   const filteredSorted = useMemo(() => {
     let books = filter === "all" ? shelfBooks : shelfBooks.filter((b) => b.status === filter)
+    if (activeTag !== null) books = books.filter((b) => (b.tags ?? []).includes(activeTag))
     books = [...books]
     if (sort === "title")  books.sort((a, b) => a.title.localeCompare(b.title))
     if (sort === "author") books.sort((a, b) => a.author.localeCompare(b.author))
     if (sort === "status") books.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status])
     // "added" keeps insertion order (no sort)
     return books
-  }, [shelfBooks, sort, filter])
+  }, [shelfBooks, sort, filter, activeTag])
 
   return (
     <div>
@@ -72,6 +80,29 @@ export default function Shelf({ shelfBooks, shelfHighLight, recentlyAddedShelfBo
                           {shelfBooks.filter((b) => b.status === f).length}
                         </span>
                       )}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {/* Tag filter chips — shown when any book has tags */}
+              {allTags.length > 0 && (
+                <div className="shelf-controls__group shelf-controls__group--tags">
+                  <button
+                    className={`shelf-controls__chip shelf-controls__chip--tag ${activeTag === null ? "shelf-controls__chip--active" : ""}`}
+                    onClick={() => setActiveTag(null)}
+                  >
+                    All tags
+                  </button>
+                  {allTags.map((tag) => (
+                    <button
+                      key={tag}
+                      className={`shelf-controls__chip shelf-controls__chip--tag ${activeTag === tag ? "shelf-controls__chip--active" : ""}`}
+                      onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                    >
+                      {tag}
+                      <span className="shelf-controls__chip-count">
+                        {shelfBooks.filter((b) => (b.tags ?? []).includes(tag)).length}
+                      </span>
                     </button>
                   ))}
                 </div>

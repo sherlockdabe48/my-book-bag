@@ -13,4 +13,5 @@ export interface Book {
   recommendedBy: string
   lastReadAt: string   // ISO date string, e.g. "2026-01-15", or "" if never
   timesRead: number    // how many times the reader has finished this book
+  tags: string[]       // user-assigned genre/category labels
 }

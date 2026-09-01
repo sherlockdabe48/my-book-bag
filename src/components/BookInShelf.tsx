@@ -1,13 +1,13 @@
-import { type ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext } from "./App"
 import type { Book } from "../types/book"
 import { playBirdFlapSound } from "../utils/sound"
 
-type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt"> & {
+type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt" | "tags"> & {
   isLanding?: boolean
 }
 
-export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, isLanding }: BookInShelfProps) {
+export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, tags: initialTags, isLanding }: BookInShelfProps) {
   const {
     bagCapacity,
     bagCount,
@@ -20,10 +20,11 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     handleBookChangeAuthor,
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
+    handleBookChangeTags,
   } = useContext(bookBagContext)
   const bagFull = bagCount >= bagCapacity
 
-  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover" | "pagesBeforeBag"
+  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "tags" | "confirmRemove" | "confirmCover" | "pagesBeforeBag"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
   const [touched, setTouched] = useState(false)
   const [urlInput, setUrlInput]           = useState("")
@@ -32,8 +33,13 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   const [authorInput, setAuthorInput]     = useState("")
   const [noteInput, setNoteInput]         = useState("")
   const [recommendedByInput, setRecommendedByInput] = useState("")
+  const [tags, setTags]                   = useState<string[]>(initialTags ?? [])
+  const [tagInput, setTagInput]           = useState("")
   const fileInputRef                      = useRef<HTMLInputElement>(null)
   const containerRef                      = useRef<HTMLDivElement>(null)
+
+  // Keep local tags in sync when parent updates (e.g. import)
+  useEffect(() => { setTags(initialTags ?? []) }, [initialTags])
 
   const closeAll = useCallback(() => {
     setEditMode(null)
@@ -44,7 +50,30 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     setAuthorInput("")
     setNoteInput("")
     setRecommendedByInput("")
+    setTagInput("")
   }, [])
+
+  function addTag(raw: string) {
+    const trimmed = raw.trim().toLowerCase()
+    if (!trimmed || tags.includes(trimmed)) { setTagInput(""); return }
+    const next = [...tags, trimmed]
+    setTags(next)
+    handleBookChangeTags(id, next)
+    setTagInput("")
+  }
+
+  function removeTag(tag: string) {
+    const next = tags.filter((t) => t !== tag)
+    setTags(next)
+    handleBookChangeTags(id, next)
+  }
+
+  function handleTagKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(tagInput) }
+    if (e.key === "Backspace" && tagInput === "" && tags.length > 0) {
+      removeTag(tags[tags.length - 1])
+    }
+  }
 
   // Close edit menu / hide dots when clicking or tapping outside this book card
   useEffect(() => {
@@ -176,7 +205,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           </div>
         )}
 
-        {/* ── Edit Book sub-menu: Title / Author / Cover / Pages ── */}
+        {/* ── Edit Book sub-menu: Title / Author / Cover / Pages / Tags ── */}
         {editMode === "editBook" && (
           <div className="book-in-shelf__edit-overlay">
             <p className="book-in-shelf__edit-overlay-label">Edit book</p>
@@ -184,6 +213,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setAuthorInput(author); setEditMode("author") }}>Author</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("confirmCover")}>Cover</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setPagesInput(allPages === "N/A" ? "" : String(allPages)); setEditMode("pages") }}>Pages</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setTagInput(""); setEditMode("tags") }}>Tags</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}
@@ -283,6 +313,39 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           </div>
         )}
 
+        {/* ── Tags editor ────────────────────────────────── */}
+        {editMode === "tags" && (
+          <div className="book-in-shelf__edit-overlay book-in-shelf__edit-overlay--tags">
+            <p className="book-in-shelf__edit-overlay-label">Tags</p>
+            {tags.length > 0 && (
+              <div className="book-in-shelf__tag-pills">
+                {tags.map((tag) => (
+                  <span key={tag} className="book-in-shelf__tag-pill">
+                    {tag}
+                    <button
+                      className="book-in-shelf__tag-pill-remove"
+                      aria-label={`Remove tag ${tag}`}
+                      onClick={() => removeTag(tag)}
+                    >✕</button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <input
+              className="book-in-shelf__edit-input"
+              type="text"
+              placeholder="e.g. fiction, history…"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              autoFocus
+            />
+            <p className="book-in-shelf__edit-overlay-body">Press Enter or comma to add · Backspace to remove last</p>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={() => { if (tagInput.trim()) addTag(tagInput); setEditMode("editBook") }}>Done</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => { setTagInput(""); setEditMode("editBook") }}>← Back</button>
+          </div>
+        )}
+
         {/* ── Note editor ────────────────────────────────── */}
         {editMode === "note" && (
           <div className="book-in-shelf__edit-overlay book-in-shelf__edit-overlay--note">
@@ -308,6 +371,15 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           </div>
         )}
       </div>
+
+      {/* ── Below-cover tag pills ──────────────────────── */}
+      {tags.length > 0 && editMode === null && (
+        <div className="book-in-shelf__below-tags">
+          {tags.map((tag) => (
+            <span key={tag} className="book-in-shelf__below-tag">{tag}</span>
+          ))}
+        </div>
+      )}
 
       {/* ── Below-cover meta: last read + progress ─────── */}
       {lastReadAt && (status === "reading" || status === "finish") && (

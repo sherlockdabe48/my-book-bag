@@ -69,6 +69,17 @@
     }
 }
 
+/* ── Tag filter group ────────────────────────────── */
+.shelf-controls__group--tags {
+    padding-top: 6px;
+    border-top: 1px solid #e5e7eb;
+    flex-basis: 100%;
+}
+
+.shelf-controls__chip--tag {
+    font-size: 0.73rem;
+}
+
 /* ── Sort / filter controls ──────────────────────── */
 .shelf-controls {
     display: flex;

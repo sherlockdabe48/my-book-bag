@@ -40,6 +40,7 @@ function mapDoc(doc: SearchDoc): ClassicsBook {
     recommendedBy:    "",
     lastReadAt:       "",
     timesRead:        0,
+    tags:             [],
     firstPublishYear: doc.first_publish_year ?? false,
   }
 }
