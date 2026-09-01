@@ -66,6 +66,12 @@
     color: #ffffff;
 }
 
+.export-import__divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 4px 0;
+}
+
 .export-import__file-input {
     display: none;
 }

@@ -28,6 +28,13 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
     firstBookIdRef.current = firstBookId
   }, [firstBookId])
 
+  // Scroll newly-added book into view
+  useEffect(() => {
+    if (!recentlyAddedBagBookId) return
+    const el = listRef.current?.querySelector<HTMLElement>(`[data-book-id="${recentlyAddedBagBookId}"]`)
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+  }, [recentlyAddedBagBookId])
+
   function goToShelf() {
     handleOpenShelf?.()
     handleActiveShelfHighLight()
@@ -59,12 +66,13 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
   return (
     <div className="bag-book-list" ref={listRef}>
       {bagBooks.map((bagBook, index) => (
-        <BookInBag
-          key={bagBook.id}
-          {...bagBook}
-          isActive={index === 0}
-          isLanding={bagBook.id === recentlyAddedBagBookId}
-        />
+        <div key={bagBook.id} data-book-id={bagBook.id}>
+          <BookInBag
+            {...bagBook}
+            isActive={index === 0}
+            isLanding={bagBook.id === recentlyAddedBagBookId}
+          />
+        </div>
       ))}
       <div className="btn--container">
         {isFull ? (
