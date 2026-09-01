@@ -19,6 +19,7 @@
     width: 100%;
     max-width: 380px;
     max-height: calc(100dvh - 48px);
+    overflow: hidden;
     padding: 20px 20px 24px;
     box-sizing: border-box;
     display: flex;
@@ -77,8 +78,8 @@
     gap: 2px;
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* allow the list to shrink and scroll when the panel hits max-height */
-    flex: 1 1 0;
+    /* shrink and scroll when the panel is height-constrained */
+    flex: 1 1 auto;
     min-height: 0;
 }
 
