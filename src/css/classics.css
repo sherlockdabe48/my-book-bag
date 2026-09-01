@@ -1,0 +1,32 @@
+/* ── Title icon ─────────────────────────────────────── */
+.classics-modal__title-icon {
+    vertical-align: middle;
+    margin-right: 7px;
+    margin-bottom: 2px;
+    color: #b08d57;
+}
+
+/* ── Filter + sort row ───────────────────────────────── */
+.classics-modal__filter-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.classics-modal__sort-select {
+    flex-shrink: 0;
+    padding: 10px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: #fff;
+    color: #1f2328;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.classics-modal__sort-select:focus {
+    border-color: #3b82d4;
+    box-shadow: 0 0 0 3px rgba(59, 130, 212, 0.12);
+}

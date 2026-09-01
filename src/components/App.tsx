@@ -3,11 +3,14 @@ import type { Book } from "../types/book"
 import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
 import SearchPage from "./SearchPage"
+import ClassicsPage from "./ClassicsPage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
 import "../css/App.css"
+import "../css/classics.css"
 import useSearch from "../hooks/useSearch"
 import useBookBag from "../hooks/useBookBag"
+import useSearchClassics from "../hooks/useSearchClassics"
 export interface SearchBookContextValue {
   handleGetSearchInputValue: (value: string) => void
   handleClearSearchInputValue: () => void
@@ -20,6 +23,7 @@ export interface BookBagContextValue {
   bagCount: number
   shelfFull: boolean
   handleAddToBagFromShelf: (id: string) => void
+  handleAddBookToShelf: (book: Book) => void
   handleBookDeleteFromShelf: (id: string) => void
   handleMoveToShelfFromBag: (id: string, note?: string) => void
   handleBagBookProgressChange: (id: string, currentPage: number) => void
@@ -48,6 +52,7 @@ export const toggleClassContext = React.createContext<ToggleClassContextValue>({
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 function App() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [classicsOpen, setClassicsOpen] = useState(false)
   const [shelfCollapsed, setShelfCollapsed] = useState(false)
 
   const {
@@ -64,6 +69,15 @@ function App() {
   } = useSearch()
 
   const {
+    classics,
+    hasMore: classicsHasMore,
+    loading: classicsLoading,
+    loadingMore: classicsLoadingMore,
+    error: classicsError,
+    loadMore: classicsLoadMore,
+  } = useSearchClassics()
+
+  const {
     bagBooks,
     shelfBooks,
     recentlyAddedBagBookId,
@@ -78,6 +92,7 @@ function App() {
     totalWithNote,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
+    handleAddBookToShelf,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -106,6 +121,14 @@ function App() {
     setModalOpen(false)
   }, [handleClearSearchInputValue])
 
+  const handleOpenClassics = useCallback(() => {
+    setClassicsOpen(true)
+  }, [])
+
+  const handleCloseClassics = useCallback(() => {
+    setClassicsOpen(false)
+  }, [])
+
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
     handleGetSearchInputValue,
     handleClearSearchInputValue: handleCloseModal,
@@ -118,6 +141,7 @@ function App() {
     bagCount: bagBooks.length,
     shelfFull: shelfCapacity !== null && shelfBooks.length >= shelfCapacity,
     handleAddToBagFromShelf,
+    handleAddBookToShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -138,6 +162,7 @@ function App() {
     shelfCapacity,
     shelfBooks.length,
     handleAddToBagFromShelf,
+    handleAddBookToShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
@@ -170,7 +195,19 @@ function App() {
       <bookBagContext.Provider value={bookBagContextValue}>
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
-            <Header onOpenSearch={handleOpenSearch} />
+            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} />
+            {classicsOpen && (
+              <ClassicsPage
+                classics={classics}
+                loading={classicsLoading}
+                loadingMore={classicsLoadingMore}
+                hasMore={classicsHasMore}
+                error={classicsError}
+                shelfBooks={shelfBooks}
+                onLoadMore={classicsLoadMore}
+                onClose={handleCloseClassics}
+              />
+            )}
             {modalOpen && (
               <SearchPage
                 loading={loading}

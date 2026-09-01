@@ -399,6 +399,15 @@ export default function useBookBag(searchBooks: Book[]) {
     })
   }, [shelfCapacity, triggerShelfBookLanding])
 
+  const handleAddBookToShelf = useCallback((book: Book) => {
+    setShelfBooks((shelf) => {
+      if (shelf.some((b) => b.id === book.id)) return shelf
+      if (shelfCapacity !== null && shelf.length >= shelfCapacity) return shelf
+      triggerShelfBookLanding(book.id)
+      return [...shelf, book]
+    })
+  }, [shelfCapacity, triggerShelfBookLanding])
+
   // ── Export / Import ──────────────────────────────────────────────────────
 
   const handleExportData = useCallback(() => {
@@ -428,6 +437,7 @@ export default function useBookBag(searchBooks: Book[]) {
     totalWithNote,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
+    handleAddBookToShelf,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,
     handleBagBookProgressChange,
