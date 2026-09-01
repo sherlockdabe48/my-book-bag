@@ -105,10 +105,6 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
 
   function handleNoteSubmit() {
     handleBookChangeNote(id, noteInput)
-    closeAll()
-  }
-
-  function handleRecommendedBySubmit() {
     handleBookChangeRecommendedBy(id, recommendedByInput)
     closeAll()
   }
@@ -282,9 +278,9 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
               placeholder="Recommended by (a friend, a blog, …)"
               value={recommendedByInput}
               onChange={(e) => setRecommendedByInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { handleNoteSubmit(); handleRecommendedBySubmit() } }}
+              onKeyDown={(e) => { if (e.key === "Enter") handleNoteSubmit() }}
             />
-            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={() => { handleNoteSubmit(); handleRecommendedBySubmit() }}>Save</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handleNoteSubmit}>Save</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("menu")}>← Back</button>
           </div>
         )}

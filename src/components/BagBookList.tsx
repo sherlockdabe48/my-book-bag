@@ -20,13 +20,13 @@ export default function BagBookList({ bagBooks, bagCapacity, totalFinished, rece
   // (i.e. a book has been floated to the top after progress/read-today)
   const firstBookIdRef = useRef<string | undefined>(undefined)
   const listRef = useRef<HTMLDivElement>(null)
+  const firstBookId = bagBooks[0]?.id
   useEffect(() => {
-    const newFirstId = bagBooks[0]?.id
-    if (firstBookIdRef.current !== undefined && firstBookIdRef.current !== newFirstId) {
+    if (firstBookIdRef.current !== undefined && firstBookIdRef.current !== firstBookId) {
       listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
     }
-    firstBookIdRef.current = newFirstId
-  }, [bagBooks[0]?.id])
+    firstBookIdRef.current = firstBookId
+  }, [firstBookId])
 
   function goToShelf() {
     handleOpenShelf?.()

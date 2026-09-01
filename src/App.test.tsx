@@ -133,14 +133,14 @@ describe("BookInBag", () => {
           <SearchBook
             id="book-1"
             title="The Hobbit"
-            subtitle=""
+            subtitle={false}
             author="J.R.R. Tolkien"
             publisher=""
-            description=""
+            description={false}
             allPages={300}
             currentPage={0}
             imageURL="cover.jpg"
-            isbn=""
+            isbn={false}
             status="onRead"
             note=""
             recommendedBy=""

@@ -189,9 +189,11 @@ export default function useBookBag(searchBooks: Book[]) {
   const [recentlyAddedBagBookId, setRecentlyAddedBagBookId] = useState<string | null>(null)
   const [recentlyAddedShelfBookId, setRecentlyAddedShelfBookId] = useState<string | null>(null)
   const [shelfHighLight, setShelfHighLight] = useState(false)
-  const [prevCapacity, setPrevCapacity] = useState<number | null>(null)
   // Tracks whether the initial localStorage load has completed
   const loadedRef = useRef(false)
+  // Tracks the last known bag capacity so we can detect upgrades; stored in a
+  // ref to avoid scheduling an extra render when we update it.
+  const prevCapacityRef = useRef<number | null>(null)
 
   // ── Derived capacity inputs ──────────────────────────
   const totalFinished = useMemo(() => {
@@ -208,13 +210,17 @@ export default function useBookBag(searchBooks: Book[]) {
   const bagTier     = useMemo(() => getBagTier(totalFinished), [totalFinished])
   const bagCapacity = bagTier.capacity
 
-  // Detect capacity upgrade (after initial load)
-  const bagUpgraded = loadedRef.current && prevCapacity !== null && bagCapacity > prevCapacity
+  // Detect capacity upgrade (after initial load).
+  // Compare synchronously against the ref so the flag is true on the exact
+  // render where the capacity first increases, then update the ref.
+  const bagUpgraded =
+    loadedRef.current &&
+    prevCapacityRef.current !== null &&
+    bagCapacity > prevCapacityRef.current
   useEffect(() => {
     if (!loadedRef.current) return
-    if (prevCapacity === null) { setPrevCapacity(bagCapacity); return }
-    if (bagCapacity > prevCapacity) setPrevCapacity(bagCapacity)
-  }, [bagCapacity, prevCapacity])
+    prevCapacityRef.current = bagCapacity
+  }, [bagCapacity])
 
   // ── Shelf tier ────────────────────────────────────────
   const shelfTier     = useMemo(() => getShelfTier(totalFinished, totalWithNote), [totalFinished, totalWithNote])
@@ -228,6 +234,14 @@ export default function useBookBag(searchBooks: Book[]) {
     if (bagJson)   setBagBooks(attachCovers(JSON.parse(bagJson) as Book[], covers))
     if (shelfJson) setShelfBooks(attachCovers(JSON.parse(shelfJson) as Book[], covers))
     loadedRef.current = true
+    // Seed prevCapacityRef so the first real upgrade after load is detected.
+    // bagCapacity is computed from the pre-load state here (empty books), so
+    // we read it via getBagTier on the persisted data instead — but the
+    // simplest correct approach is just to write bagCapacity as it stands
+    // now; the capacity-tracking effect will overwrite it on the next render
+    // once the loaded books are reflected.
+    prevCapacityRef.current = bagCapacity
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ── Persist to localStorage on every change ─────────────

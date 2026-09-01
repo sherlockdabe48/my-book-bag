@@ -72,18 +72,19 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   }, [menuOpen, closeMenu])
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const isFinished = Number(progress) === Number(allPages)
+  const maxPages = allPages === "N/A" ? null : Number(allPages)
+  const isFinished = maxPages !== null && Number(progress) === maxPages
   const todayStr = new Date().toISOString().slice(0, 10)
   const alreadyReadToday = lastReadAt === todayStr
 
   function applyProgress(next: number) {
-    const max = Number(allPages)
+    if (maxPages === null) return
     if (Number.isNaN(next) || next < 0) next = 0
-    if (next > max) next = max
+    if (next > maxPages) next = maxPages
     setProgress(next)
     setDraftProgress(next)
     handleBagBookProgressChange(id, next)
-    if (next >= max && !isFinished) {
+    if (next >= maxPages && !isFinished) {
       handleIncrementTimesRead(id)
       setJustFinished(true)
       playBookCloseSound()
@@ -120,11 +121,8 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
       setConfirmReadAgain(true)
       return
     }
-    setProgress(Number(allPages))
-    handleBagBookProgressChange(id, Number(allPages))
-    handleIncrementTimesRead(id)
-    setJustFinished(true)
-    playBookCloseSound()
+    if (maxPages === null) return
+    applyProgress(maxPages)
   }
 
   function confirmReset() {
@@ -187,7 +185,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               <>
                 <p className="book-in-bag__menu-label">Actions</p>
                 <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
-                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished) setMenuOpen(false) }}>
+                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook(); if (!isFinished && maxPages !== null) setMenuOpen(false) }}>
                   {isFinished ? "Read Again" : "Finish"}
                 </button>
                 <button
@@ -222,7 +220,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
         </div>
 
         {isFinished && justFinished && (
-          <p className="book-in-bag__finished-banner">{finishedBanner(timesRead + 1)}</p>
+          <p className="book-in-bag__finished-banner">{finishedBanner(timesRead)}</p>
         )}
         {noteStep === "writing" && (
           <div className="book-in-bag__note-editor">
@@ -267,7 +265,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               <button
                 className="book-in-bag__scroller-btn"
                 onClick={() => applyProgress(Number(progress) - 1)}
-                disabled={Number(progress) <= 0}
+                disabled={Number(progress) <= 0 || maxPages === null}
                 aria-label="Previous page"
               >−</button>
               <input
@@ -277,18 +275,19 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
                 pattern="[0-9]*"
                 value={isEditing ? draftProgress : progress}
                 min={0}
-                max={Number(allPages)}
+                max={maxPages ?? undefined}
                 className="book-in-bag__scroller-input"
                 onChange={handleDraftChange}
                 onFocus={startEditing}
                 onBlur={commitEdit}
                 onKeyDown={handleKeyDown}
                 aria-label="Current page"
+                disabled={maxPages === null}
               />
               <button
                 className="book-in-bag__scroller-btn"
                 onClick={() => applyProgress(Number(progress) + 1)}
-                disabled={Number(progress) >= Number(allPages)}
+                disabled={maxPages === null || Number(progress) >= maxPages}
                 aria-label="Next page"
               >+</button>
             </div>
@@ -302,12 +301,12 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
             role="progressbar"
             aria-valuenow={Number(progress)}
             aria-valuemin={0}
-            aria-valuemax={Number(allPages)}
+            aria-valuemax={maxPages ?? 0}
             aria-label={`Page ${progress} of ${allPages}`}
           >
             <div
               className="book-in-bag__progress-bar"
-              style={{ width: `${Math.min(100, (Number(progress) / Number(allPages)) * 100)}%` }}
+              style={{ width: maxPages ? `${Math.min(100, (Number(progress) / maxPages) * 100)}%` : "0%" }}
             />
           </div>
           <button
