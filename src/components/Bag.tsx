@@ -10,10 +10,11 @@ interface BagProps {
   bagUpgraded: boolean
   bagTier: typeof BAG_TIERS[number]
   totalFinished: number
+  readingStreak: number
   recentlyAddedBagBookId?: string | null
 }
 
-export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, totalFinished, recentlyAddedBagBookId }: BagProps) {
+export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, totalFinished, readingStreak, recentlyAddedBagBookId }: BagProps) {
   const [showUpgrade, setShowUpgrade] = useState(false)
   const isFull = bagBooks.length >= bagCapacity
   const nextTier = getNextTier(totalFinished)
@@ -42,6 +43,11 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
           {nextTier && (
             <span className="bag-slot-text">
               · Finish {nextTier.booksFinished - totalFinished} more book{nextTier.booksFinished - totalFinished !== 1 ? "s" : ""} to unlock {nextTier.label}
+            </span>
+          )}
+          {readingStreak > 0 && (
+            <span className="bag-slot-text bag-streak">
+              · {readingStreak} day streak
             </span>
           )}
         </div>

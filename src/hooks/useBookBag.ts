@@ -119,6 +119,41 @@ const BAG_BOOKS_KEY   = "myBookBag.bagBooks"
 const SHELF_BOOKS_KEY = "myBookBag.shelfBooks"
 const COVERS_KEY      = "myBookBag.covers"
 
+// ── Reading streak ─────────────────────────────────────────────────────────
+
+/**
+ * Returns the current reading streak in days.
+ * A streak counts consecutive calendar days (ending today or yesterday) on
+ * which at least one book was read (i.e. has that date as its `lastReadAt`).
+ */
+export function computeStreak(books: Book[]): number {
+  const dates = new Set(
+    books
+      .map((b) => b.lastReadAt)
+      .filter((d) => !!d),
+  )
+  if (dates.size === 0) return 0
+
+  const today     = new Date()
+  const todayStr  = today.toISOString().slice(0, 10)
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yestStr = yesterday.toISOString().slice(0, 10)
+
+  // Streak is only alive if there's a read today or yesterday
+  if (!dates.has(todayStr) && !dates.has(yestStr)) return 0
+
+  let streak  = 0
+  const cursor = new Date(dates.has(todayStr) ? today : yesterday)
+  while (true) {
+    const key = cursor.toISOString().slice(0, 10)
+    if (!dates.has(key)) break
+    streak++
+    cursor.setDate(cursor.getDate() - 1)
+  }
+  return streak
+}
+
 // ── localStorage helpers ───────────────────────────────────────────────────
 
 /** Persist a value; silently drops the write on QuotaExceededError. */
@@ -186,6 +221,9 @@ function attachCovers(books: Book[], covers: Record<string, string>): Book[] {
 export default function useBookBag(searchBooks: Book[]) {
   const [bagBooks, setBagBooks]     = useState<Book[]>([])
   const [shelfBooks, setShelfBooks] = useState<Book[]>([])
+  // Mirror of shelfBooks kept in a ref so callbacks can always read the
+  // latest value without stale closure issues.
+  const shelfBooksRef = useRef<Book[]>([])
   const [recentlyAddedBagBookId, setRecentlyAddedBagBookId] = useState<string | null>(null)
   const [recentlyAddedShelfBookId, setRecentlyAddedShelfBookId] = useState<string | null>(null)
   const [shelfHighLight, setShelfHighLight] = useState(false)
@@ -204,6 +242,10 @@ export default function useBookBag(searchBooks: Book[]) {
   const totalWithNote = useMemo(() => {
     const all = [...bagBooks, ...shelfBooks]
     return all.filter((b) => b.note && b.note.trim().length > 0).length
+  }, [bagBooks, shelfBooks])
+
+  const readingStreak = useMemo(() => {
+    return computeStreak([...bagBooks, ...shelfBooks])
   }, [bagBooks, shelfBooks])
 
   // ── Bag tier ─────────────────────────────────────────
@@ -231,18 +273,24 @@ export default function useBookBag(searchBooks: Book[]) {
     const covers    = loadCovers()
     const bagJson   = localStorage.getItem(BAG_BOOKS_KEY)
     const shelfJson = localStorage.getItem(SHELF_BOOKS_KEY)
-    if (bagJson)   setBagBooks(attachCovers(JSON.parse(bagJson) as Book[], covers))
-    if (shelfJson) setShelfBooks(attachCovers(JSON.parse(shelfJson) as Book[], covers))
+    const loadedBag   = bagJson   ? attachCovers(JSON.parse(bagJson)   as Book[], covers) : []
+    const loadedShelf = shelfJson ? attachCovers(JSON.parse(shelfJson) as Book[], covers) : []
+    if (bagJson)   setBagBooks(loadedBag)
+    if (shelfJson) setShelfBooks(loadedShelf)
+
+    // Seed prevCapacityRef from the *actual* persisted data so that the
+    // capacity-upgrade detector doesn't fire on page load for users who have
+    // already earned a higher tier.
+    const loadedFinished = [...loadedBag, ...loadedShelf]
+      .reduce((sum, b) => sum + (b.timesRead ?? 0), 0)
+    prevCapacityRef.current = getBagTier(loadedFinished).capacity
+
     loadedRef.current = true
-    // Seed prevCapacityRef so the first real upgrade after load is detected.
-    // bagCapacity is computed from the pre-load state here (empty books), so
-    // we read it via getBagTier on the persisted data instead — but the
-    // simplest correct approach is just to write bagCapacity as it stands
-    // now; the capacity-tracking effect will overwrite it on the next render
-    // once the loaded books are reflected.
-    prevCapacityRef.current = bagCapacity
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Keep the ref in sync so callbacks can read latest shelf state
+  useEffect(() => { shelfBooksRef.current = shelfBooks }, [shelfBooks])
 
   // ── Persist to localStorage on every change ─────────────
   // Skip the first render — state is still the empty initial value at that
@@ -277,15 +325,15 @@ export default function useBookBag(searchBooks: Book[]) {
   }, [])
 
   const handleAddToBagFromShelf = useCallback((id: string) => {
+    const book = shelfBooksRef.current.find((b) => b.id === id)
+    if (!book) return
     setBagBooks((bag) => {
       if (bag.length >= bagCapacity) return bag   // strict block — bag full
       setShelfBooks((shelf) => shelf.filter((b) => b.id !== id))
-      const book = shelfBooks.find((b) => b.id === id)
-      if (!book) return bag
       triggerBagBookLanding(id)
       return [...bag, book]
     })
-  }, [bagCapacity, shelfBooks, triggerBagBookLanding])
+  }, [bagCapacity, triggerBagBookLanding])
 
   const triggerShelfBookLanding = useCallback((id: string) => {
     setRecentlyAddedShelfBookId(id)
@@ -366,6 +414,21 @@ export default function useBookBag(searchBooks: Book[]) {
     setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, allPages })))
   }, [])
 
+  // Sets pages and moves to bag atomically — used when the user enters a page
+  // count as part of the "Add to Bag" flow, so the updated value is never stale.
+  const handleAddToBagWithPages = useCallback((id: string, allPages: number) => {
+    let book: Book | undefined
+    setShelfBooks((shelf) => {
+      book = shelf.find((b) => b.id === id)
+      return shelf.filter((b) => b.id !== id)
+    })
+    setBagBooks((bag) => {
+      if (!book || bag.length >= bagCapacity) return bag
+      triggerBagBookLanding(id)
+      return [...bag, { ...book, allPages }]
+    })
+  }, [bagCapacity, triggerBagBookLanding])
+
   const handleBookChangeTitle = useCallback((id: string, title: string) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, title })))
     setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, title })))
@@ -435,8 +498,10 @@ export default function useBookBag(searchBooks: Book[]) {
     shelfTier,
     totalFinished,
     totalWithNote,
+    readingStreak,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
+    handleAddToBagWithPages,
     handleAddBookToShelf,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,

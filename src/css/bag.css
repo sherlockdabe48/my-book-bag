@@ -35,6 +35,11 @@
     font-weight: 600;
 }
 
+.bag-streak {
+    color: #b08d57;
+    font-weight: 600;
+}
+
 /* ── Upgrade banner ──────────────────────────────── */
 .bag-upgrade-banner {
     margin: 0 40px 12px;

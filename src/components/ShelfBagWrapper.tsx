@@ -16,6 +16,7 @@ interface ShelfBagWrapperProps {
   shelfTier: typeof SHELF_TIERS[number]
   totalFinished: number
   totalWithNote: number
+  readingStreak: number
   shelfCollapsed: boolean
   setShelfCollapsed: React.Dispatch<React.SetStateAction<boolean>>
   recentlyAddedShelfBookId?: string | null
@@ -39,6 +40,7 @@ export default function ShelfBagWrapper({
   shelfTier,
   totalFinished,
   totalWithNote,
+  readingStreak,
   shelfCollapsed,
   setShelfCollapsed,
   recentlyAddedShelfBookId,
@@ -58,6 +60,7 @@ export default function ShelfBagWrapper({
         bagUpgraded={bagUpgraded}
         bagTier={bagTier}
         totalFinished={totalFinished}
+        readingStreak={readingStreak}
         recentlyAddedBagBookId={recentlyAddedBagBookId}
       />
       <div className={`shelf-panel${shelfCollapsed ? " shelf-panel--collapsed" : ""}`}>

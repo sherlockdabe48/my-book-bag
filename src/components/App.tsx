@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
 import SearchPage from "./SearchPage"
 import ClassicsPage from "./ClassicsPage"
+import StatsPage from "./StatsPage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
 import "../css/App.css"
@@ -23,6 +24,7 @@ export interface BookBagContextValue {
   bagCount: number
   shelfFull: boolean
   handleAddToBagFromShelf: (id: string) => void
+  handleAddToBagWithPages: (id: string, allPages: number) => void
   handleAddBookToShelf: (book: Book) => void
   handleBookDeleteFromShelf: (id: string) => void
   handleMoveToShelfFromBag: (id: string, note?: string) => void
@@ -53,6 +55,7 @@ export const searchBookContext = React.createContext<SearchBookContextValue>({} 
 function App() {
   const [modalOpen, setModalOpen] = useState(false)
   const [classicsOpen, setClassicsOpen] = useState(false)
+  const [statsOpen, setStatsOpen] = useState(false)
   const [shelfCollapsed, setShelfCollapsed] = useState(false)
 
   const {
@@ -90,8 +93,10 @@ function App() {
     shelfTier,
     totalFinished,
     totalWithNote,
+    readingStreak,
     handleActiveShelfHighLight,
     handleAddToBagFromShelf,
+    handleAddToBagWithPages,
     handleAddBookToShelf,
     handleMoveToShelfFromSearch,
     handleMoveToShelfFromBag,
@@ -129,6 +134,14 @@ function App() {
     setClassicsOpen(false)
   }, [])
 
+  const handleOpenStats = useCallback(() => {
+    setStatsOpen(true)
+  }, [])
+
+  const handleCloseStats = useCallback(() => {
+    setStatsOpen(false)
+  }, [])
+
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
     handleGetSearchInputValue,
     handleClearSearchInputValue: handleCloseModal,
@@ -141,6 +154,7 @@ function App() {
     bagCount: bagBooks.length,
     shelfFull: shelfCapacity !== null && shelfBooks.length >= shelfCapacity,
     handleAddToBagFromShelf,
+    handleAddToBagWithPages,
     handleAddBookToShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
@@ -162,6 +176,7 @@ function App() {
     shelfCapacity,
     shelfBooks.length,
     handleAddToBagFromShelf,
+    handleAddToBagWithPages,
     handleAddBookToShelf,
     handleBookDeleteFromShelf,
     handleMoveToShelfFromBag,
@@ -195,7 +210,15 @@ function App() {
       <bookBagContext.Provider value={bookBagContextValue}>
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
-            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} />
+            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} onOpenStats={handleOpenStats} totalFinished={totalFinished} />
+            {statsOpen && (
+              <StatsPage
+                shelfBooks={shelfBooks}
+                bagBooks={bagBooks}
+                readingStreak={readingStreak}
+                onClose={handleCloseStats}
+              />
+            )}
             {classicsOpen && (
               <ClassicsPage
                 classics={classics}
@@ -234,6 +257,7 @@ function App() {
                 shelfTier={shelfTier}
                 totalFinished={totalFinished}
                 totalWithNote={totalWithNote}
+                readingStreak={readingStreak}
                 shelfCollapsed={shelfCollapsed}
                 setShelfCollapsed={setShelfCollapsed}
                 recentlyAddedShelfBookId={recentlyAddedShelfBookId}

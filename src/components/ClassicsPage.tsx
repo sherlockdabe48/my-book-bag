@@ -1,6 +1,7 @@
 import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react"
 import ClassicsBookList from "./ClassicsBookList"
 import type { ClassicsBook } from "../hooks/useSearchClassics"
+import useSearchClassicsQuery from "../hooks/useSearchClassicsQuery"
 import type { Book } from "../types/book"
 
 interface ClassicsPageProps {
@@ -24,22 +25,21 @@ export default function ClassicsPage({
   onLoadMore,
   onClose,
 }: ClassicsPageProps) {
-  const bodyRef    = useRef<HTMLDivElement>(null)
-  const filterRef  = useRef<HTMLInputElement>(null)
+  const bodyRef   = useRef<HTMLDivElement>(null)
+  const filterRef = useRef<HTMLInputElement>(null)
   const [filterQuery, setFilterQuery] = useState("")
   type SortKey = "default" | "year-asc" | "year-desc"
   const [sort, setSort] = useState<SortKey>("default")
 
-  const filteredClassics = useMemo(() => {
-    const q = filterQuery.trim().toLowerCase()
-    let result = q
-      ? classics.filter(
-          (b) =>
-            b.title.toLowerCase().includes(q) ||
-            b.author.toLowerCase().includes(q),
-        )
-      : [...classics]
+  const isSearching = filterQuery.trim().length > 0
 
+  // Server-side search — only active when user has typed something
+  const { results: searchResults, loading: searchLoading, error: searchError } =
+    useSearchClassicsQuery(filterQuery)
+
+  // Sorted browse list (used when query is empty)
+  const sortedClassics = useMemo(() => {
+    const result = [...classics]
     if (sort === "year-asc") {
       result.sort((a, b) =>
         (a.firstPublishYear || Infinity) - (b.firstPublishYear || Infinity),
@@ -49,9 +49,15 @@ export default function ClassicsPage({
         (b.firstPublishYear || -Infinity) - (a.firstPublishYear || -Infinity),
       )
     }
-
     return result
-  }, [classics, filterQuery, sort])
+  }, [classics, sort])
+
+  // What to show in the list
+  const displayList   = isSearching ? searchResults  : sortedClassics
+  const displayLoading  = isSearching ? searchLoading   : loading
+  const displayLoadingMore = isSearching ? false          : loadingMore
+  const displayHasMore    = isSearching ? false          : hasMore
+  const displayError      = isSearching ? searchError    : error
 
   // Close on Escape
   useEffect(() => {
@@ -64,6 +70,11 @@ export default function ClassicsPage({
 
   function handleBackdropClick(e: MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) onClose()
+  }
+
+  function handleQueryChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setFilterQuery(e.target.value)
+    bodyRef.current?.scrollTo({ top: 0 })
   }
 
   return (
@@ -92,12 +103,12 @@ export default function ClassicsPage({
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="6"  y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
 
-        {/* Filter + sort bar */}
+        {/* Filter + sort bar — shown once the initial browse load is done */}
         {!loading && !error && classics.length > 0 && (
           <div className="search-modal__search-bar classics-modal__filter-bar">
             <div className="search-modal__input-wrap">
@@ -109,47 +120,59 @@ export default function ClassicsPage({
                 ref={filterRef}
                 className="search-modal__input"
                 type="text"
-                placeholder="Filter by title or author…"
+                placeholder="Search all classics by title or author…"
                 value={filterQuery}
-                onChange={(e) => { setFilterQuery(e.target.value); bodyRef.current?.scrollTo({ top: 0 }) }}
-                aria-label="Filter classics"
+                onChange={handleQueryChange}
+                aria-label="Search classics"
               />
             </div>
-            <select
-              className="classics-modal__sort-select"
-              value={sort}
-              onChange={(e) => { setSort(e.target.value as SortKey); bodyRef.current?.scrollTo({ top: 0 }) }}
-              aria-label="Sort classics"
-            >
-              <option value="default">Default</option>
-              <option value="year-asc">Year: oldest first</option>
-              <option value="year-desc">Year: newest first</option>
-            </select>
+            {/* Sort only makes sense in browse mode */}
+            {!isSearching && (
+              <select
+                className="classics-modal__sort-select"
+                value={sort}
+                onChange={(e) => { setSort(e.target.value as SortKey); bodyRef.current?.scrollTo({ top: 0 }) }}
+                aria-label="Sort classics"
+              >
+                <option value="default">Default</option>
+                <option value="year-asc">Year: oldest first</option>
+                <option value="year-desc">Year: newest first</option>
+              </select>
+            )}
           </div>
         )}
 
         {/* Meta bar */}
         {!loading && !error && classics.length > 0 && (
           <div className="search-modal__meta">
-            <span className="search-modal__query">Classics · Open Library</span>
-            <span className="search-modal__count">
-              {filterQuery.trim()
-                ? `${filteredClassics.length} of ${classics.length}`
-                : `${classics.length} loaded`}
-            </span>
+            {isSearching ? (
+              <>
+                <span className="search-modal__query">Search · Open Library</span>
+                {!searchLoading && (
+                  <span className="search-modal__count">
+                    {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <span className="search-modal__query">Classics · Open Library</span>
+                <span className="search-modal__count">{classics.length} loaded</span>
+              </>
+            )}
           </div>
         )}
 
         {/* Body */}
         <div className="search-modal__body" ref={bodyRef}>
-          {error ? (
-            <p className="search-page__error">{error}</p>
+          {displayError ? (
+            <p className="search-page__error">{displayError}</p>
           ) : (
             <ClassicsBookList
-              classics={filteredClassics}
-              loading={loading}
-              loadingMore={loadingMore}
-              hasMore={hasMore}
+              classics={displayList}
+              loading={displayLoading}
+              loadingMore={displayLoadingMore}
+              hasMore={displayHasMore}
               shelfBooks={shelfBooks}
               onLoadMore={onLoadMore}
               onClose={onClose}

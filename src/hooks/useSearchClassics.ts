@@ -64,13 +64,12 @@ function applyFilters(works: SubjectWork[]): ClassicsBook[] {
 }
 
 export default function useSearchClassics() {
-  const [classics, setClassics]           = useState<ClassicsBook[]>([])
-  const [hasMore, setHasMore]             = useState(false)
-  const [loading, setLoading]             = useState(false)
-  const [loadingMore, setLoadingMore]     = useState(false)
-  const [error, setError]                 = useState<string | null>(null)
+  const [classics, setClassics]       = useState<ClassicsBook[]>([])
+  const [hasMore, setHasMore]         = useState(false)
+  const [loading, setLoading]         = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError]             = useState<string | null>(null)
 
-  // Tracks the next offset for "load more"
   const nextOffsetRef = useRef(0)
 
   // Initial fetch on mount
@@ -87,8 +86,8 @@ export default function useSearchClassics() {
         signal: controller.signal,
       })
       .then((res) => {
-        const works: SubjectWork[]  = res.data.works   ?? []
-        const workCount: number     = res.data.work_count ?? 0
+        const works: SubjectWork[] = res.data.works      ?? []
+        const workCount: number    = res.data.work_count ?? 0
         nextOffsetRef.current = FETCH_LIMIT
         setClassics(applyFilters(works))
         setHasMore(FETCH_LIMIT < workCount)
@@ -123,8 +122,8 @@ export default function useSearchClassics() {
         params: { limit: FETCH_LIMIT, offset },
       })
       .then((res) => {
-        const works: SubjectWork[]  = res.data.works      ?? []
-        const workCount: number     = res.data.work_count ?? 0
+        const works: SubjectWork[] = res.data.works      ?? []
+        const workCount: number    = res.data.work_count ?? 0
         nextOffsetRef.current = offset + FETCH_LIMIT
         setClassics((prev) => [...prev, ...applyFilters(works)])
         setHasMore(offset + FETCH_LIMIT < workCount)

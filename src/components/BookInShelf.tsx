@@ -12,6 +12,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     bagCapacity,
     bagCount,
     handleAddToBagFromShelf,
+    handleAddToBagWithPages,
     handleBookDeleteFromShelf,
     handleBookChangeCover,
     handleBookChangePages,
@@ -22,7 +23,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   } = useContext(bookBagContext)
   const bagFull = bagCount >= bagCapacity
 
-  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover"
+  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "confirmRemove" | "confirmCover" | "pagesBeforeBag"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
   const [touched, setTouched] = useState(false)
   const [urlInput, setUrlInput]           = useState("")
@@ -89,6 +90,13 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     closeAll()
   }
 
+  function handlePagesBeforeBagSubmit() {
+    const n = parseInt(pagesInput, 10)
+    if (!Number.isFinite(n) || n < 1) return
+    handleAddToBagWithPages(id, n)
+    closeAll()
+  }
+
   function handleTitleSubmit() {
     const trimmed = titleInput.trim()
     if (!trimmed) return
@@ -141,7 +149,11 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
           <div className="book-in-shelf__overlay">
             <button
               className={`book-in-shelf__overlay-btn book-in-shelf__overlay-btn--add${bagFull ? " book-in-shelf__overlay-btn--disabled" : ""}`}
-              onClick={() => !bagFull && handleAddToBagFromShelf(id)}
+              onClick={() => {
+                if (bagFull) return
+                if (allPages === "N/A") { setPagesInput(""); setEditMode("pagesBeforeBag") }
+                else handleAddToBagFromShelf(id)
+              }}
               title={bagFull ? `Bag is full (${bagCount}/${bagCapacity}) — finish a book to unlock more space` : undefined}
             >
               {bagFull ? "🎒 Bag full" : "Add to Bag"}
@@ -257,6 +269,17 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <input className="book-in-shelf__edit-input" type="number" inputMode="numeric" pattern="[0-9]*" min={1} placeholder="e.g. 320" value={pagesInput} onChange={(e) => setPagesInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handlePagesSubmit()} autoFocus />
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handlePagesSubmit}>Save</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => setEditMode("editBook")}>← Back</button>
+          </div>
+        )}
+
+        {/* ── Pages prompt before adding to bag ──────────── */}
+        {editMode === "pagesBeforeBag" && (
+          <div className="book-in-shelf__edit-overlay">
+            <p className="book-in-shelf__edit-overlay-label">How long is this book?</p>
+            <p className="book-in-shelf__edit-overlay-body">Enter the page count so you can track progress while reading.</p>
+            <input className="book-in-shelf__edit-input" type="number" inputMode="numeric" pattern="[0-9]*" min={1} placeholder="e.g. 320" value={pagesInput} onChange={(e) => setPagesInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handlePagesBeforeBagSubmit()} autoFocus />
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={handlePagesBeforeBagSubmit}>Add to Bag</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={closeAll}>Cancel</button>
           </div>
         )}
 

@@ -29,6 +29,8 @@ export default function SearchBook({
         className="search-book__book-image"
         src={imageURL}
         alt={title}
+        loading="lazy"
+        onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = "hidden" }}
       />
       <div className="search-book__details">
         <div className="search-book__meta">
