@@ -46,12 +46,23 @@ const REFLECTION_QUESTIONS = [
   "What did this book make you want to do or read next?",
 ]
 
+const REREAD_QUESTIONS = [
+  "What did you notice this time that you missed before?",
+  "Did your opinion of the main character change on this read?",
+  "Which part hit differently knowing how it ends?",
+  "What did you underline this time that you skipped before?",
+  "Has your life changed enough since the first read to change how you read it?",
+  "What would you tell your past self who was reading this for the first time?",
+  "Did the author earn your trust more or less this time?",
+  "What felt obvious on re-read that confused you the first time?",
+  "Is this still the same book you remember reading?",
+]
+
 export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
   const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead, shelfFull } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
   const [isEditing, setIsEditing] = useState(false)
   const [draftProgress, setDraftProgress] = useState(currentPage)
-  const [confirmReadAgain, setConfirmReadAgain] = useState(false)
   const [justFinished, setJustFinished] = useState(false)
   const [note, setNote] = useState(initialNote)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -136,15 +147,23 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   }
 
   const reflectionQuestion = useMemo(
-    () => REFLECTION_QUESTIONS[Math.floor(Math.random() * REFLECTION_QUESTIONS.length)],
+    () => {
+      const pool = everFinished ? REREAD_QUESTIONS : REFLECTION_QUESTIONS
+      return pool[Math.floor(Math.random() * pool.length)]
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
+  function resetForReread() {
+    setProgress(1)
+    handleBagBookProgressChange(id, 1)
+    setJustFinished(false)
+  }
+
   function handleFinishBook() {
     if (atLastPage && everFinished) {
-      setConfirmReadAgain(true)
-      return
+      resetForReread()
     }
     setNoteDraft("")
     setNoteStep("reflecting")
@@ -156,19 +175,13 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
       const name = readerName.trim() || "Reader"
       if (readerName.trim()) localStorage.setItem(READER_NAME_KEY, readerName.trim())
       const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })
-      const signed = `${reflectionQuestion}\n${noteDraft.trimEnd()}\n\n— ${name}, ${date}`
-      setNote(signed)
-      handleBookChangeNote(id, signed)
+      const entry = `${reflectionQuestion}\n${noteDraft.trimEnd()}\n\n— ${name}, ${date}`
+      const appended = note.trim() ? `${note.trim()}\n\n───\n\n${entry}` : entry
+      setNote(appended)
+      handleBookChangeNote(id, appended)
     }
     doFinish()
     setNoteStep("idle")
-  }
-
-  function confirmReset() {
-    setProgress(1)
-    handleBagBookProgressChange(id, 1)
-    setConfirmReadAgain(false)
-    setJustFinished(false)
   }
 
   function openNoteWriter() {
@@ -214,28 +227,20 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
         {/* ── Action menu over cover ──────────────────── */}
         {menuOpen && (
           <div className="book-in-bag__action-menu">
-            {confirmReadAgain ? (
-              <>
-                <p className="book-in-bag__menu-label">Read again?</p>
-                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--danger" onClick={() => { confirmReset(); setMenuOpen(false) }}>Yes, reset</button>
-                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={() => setConfirmReadAgain(false)}>Cancel</button>
-              </>
-            ) : (
-              <>
-                <p className="book-in-bag__menu-label">Actions</p>
-                <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
-                <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook() }}>
-                  {atLastPage && everFinished ? "Read Again" : "Finish"}
-                </button>
-                <button
-                  className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf"
-                  onClick={() => { handleMoveToShelfFromBag(id, note); setMenuOpen(false) }}
-                  disabled={shelfFull}
-                  title={shelfFull ? "Your shelf is full — upgrade it by finishing more books and adding notes" : undefined}
-                >Back to Shelf{shelfFull ? " (shelf full)" : ""}</button>
-                <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={closeMenu}>Cancel</button>
-              </>
-            )}
+            <>
+              <p className="book-in-bag__menu-label">Actions</p>
+              <button className="book-in-bag__menu-btn" onClick={() => { openNoteWriter(); setMenuOpen(false) }}>✏️ My note</button>
+              <button className="book-in-bag__menu-btn" onClick={() => { handleFinishBook() }}>
+                {atLastPage && everFinished ? "Read Again" : "Finish"}
+              </button>
+              <button
+                className="book-in-bag__menu-btn book-in-bag__menu-btn--shelf"
+                onClick={() => { handleMoveToShelfFromBag(id, note); setMenuOpen(false) }}
+                disabled={shelfFull}
+                title={shelfFull ? "Your shelf is full — upgrade it by finishing more books and adding notes" : undefined}
+              >Back to Shelf{shelfFull ? " (shelf full)" : ""}</button>
+              <button className="book-in-bag__menu-btn book-in-bag__menu-btn--cancel" onClick={closeMenu}>Cancel</button>
+            </>
           </div>
         )}
       </div>
@@ -372,7 +377,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               style={{ width: maxPages ? `${Math.min(100, (Number(progress) / maxPages) * 100)}%` : "0%" }}
             />
           </div>
-          {atLastPage && !everFinished && noteStep !== "reflecting" && (
+          {atLastPage && noteStep !== "reflecting" && (
             <div className="book-in-bag__finish-nudge">
               <p className="book-in-bag__finish-nudge-quote">The last page doesn't finish itself — you do.</p>
               <button className="book-in-bag__finish-nudge-btn" onClick={handleFinishBook}>
