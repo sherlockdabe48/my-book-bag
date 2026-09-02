@@ -1,4 +1,4 @@
-import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+import React, { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { bookBagContext, featureFlagsContext } from "./App"
 import type { Book } from "../types/book"
 import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../utils/sound"
@@ -6,6 +6,7 @@ import { playPageTurnSound, playBookCloseSound, playReadTodaySound } from "../ut
 type BookInBagProps = Pick<Book, "id" | "title" | "author" | "currentPage" | "allPages" | "imageURL" | "note" | "recommendedBy" | "lastReadAt" | "timesRead"> & {
   isActive: boolean
   isLanding?: boolean
+  coverImgRef?: React.RefObject<HTMLImageElement>
 }
 
 function finishedBanner(times: number): string {
@@ -58,7 +59,7 @@ const REREAD_QUESTIONS = [
   "Is this still the same book you remember reading?",
 ]
 
-export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding }: BookInBagProps) {
+export default function BookInBag({ id, title, author, currentPage, allPages, imageURL, note: initialNote, recommendedBy, lastReadAt, timesRead, isActive, isLanding, coverImgRef }: BookInBagProps) {
   const { flags } = useContext(featureFlagsContext)
   const { handleMoveToShelfFromBag, handleBagBookProgressChange, handleLogReadingSession, handleBookChangeNote, handleBookChangeRecommendedBy, handleIncrementTimesRead, shelfFull } = useContext(bookBagContext)
   const [progress, setProgress] = useState(currentPage)
@@ -207,7 +208,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   return (
     <div className={`book-in-bag__container${isLanding ? " book-in-bag__container--landing" : ""}`}>
       <div className="book-in-bag__cover-wrapper" ref={coverRef}>
-        <img className="book-image-in-bag" src={imageURL} alt={title} loading="lazy" />
+        <img className="book-image-in-bag" src={imageURL} alt={title} loading="lazy" ref={coverImgRef} />
         <div className={`book-in-bag__bookmark ${isActive ? "book-in-bag__bookmark--active" : ""}`} aria-label={isActive ? "Currently reading" : "In your bag"}>
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 3a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2H5z"/>

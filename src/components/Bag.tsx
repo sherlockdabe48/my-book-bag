@@ -19,11 +19,6 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
   const isFull = bagBooks.length >= bagCapacity
   const nextTier = getNextTier(totalFinished)
 
-  const allHavePages = bagBooks.length > 1 && bagBooks.every((b) => b.allPages !== "N/A")
-  const totalCurrentPages = allHavePages ? bagBooks.reduce((sum, b) => sum + b.currentPage, 0) : 0
-  const totalAllPages = allHavePages ? bagBooks.reduce((sum, b) => sum + (b.allPages as number), 0) : 0
-  const pagesPercent = allHavePages && totalAllPages > 0 ? Math.min(100, (totalCurrentPages / totalAllPages) * 100) : 0
-
   useEffect(() => {
     if (!bagUpgraded) return
     setShowUpgrade(true)
@@ -41,17 +36,6 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
       )}
       <div className="bag-container">
         <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} recentlyAddedBagBookId={recentlyAddedBagBookId} />
-        {allHavePages && (
-          <div className="bag-pages-bar-section">
-            <div className="bag-pages-bar-header">
-              <span className="bag-pages-bar-label">Total pages</span>
-              <span className="bag-pages-bar-count">{totalCurrentPages.toLocaleString()} / {totalAllPages.toLocaleString()}</span>
-            </div>
-            <div className="bag-pages-bar-wrapper" role="progressbar" aria-valuenow={totalCurrentPages} aria-valuemin={0} aria-valuemax={totalAllPages} aria-label={`${totalCurrentPages} of ${totalAllPages} total pages read`}>
-              <div className="bag-pages-bar" style={{ width: `${pagesPercent}%` }} />
-            </div>
-          </div>
-        )}
         <div className="bag-slot-line">
           <span className={`bag-slot-text${isFull ? " bag-slot-text--full" : ""}`}>
             {bagBooks.length} / {bagCapacity} slots · {bagTier.label}

@@ -5,7 +5,8 @@
     padding: 24px;
     box-sizing: border-box;
     width: 100%;
-    overflow: hidden;
+    /* overflow:hidden was clipping the horizontal carousel scroll track */
+    overflow: visible;
 }
 
 .shelf-bag-wrapper--ios {

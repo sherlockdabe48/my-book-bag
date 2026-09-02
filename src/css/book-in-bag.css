@@ -225,11 +225,16 @@
 }
 
 @media (max-width: 600px) {
+    /* Each book fills its slide wrapper */
     .book-in-bag__container {
         flex-direction: column;
         align-items: center;
         padding: 20px 16px;
         gap: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        /* pass horizontal swipes up to the scroll track */
+        touch-action: pan-x;
     }
 
     .book-in-bag__cover-wrapper {

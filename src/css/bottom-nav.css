@@ -91,10 +91,14 @@
 .sbw-tab-panel {
     display: none;
     width: 100%;
+    min-width: 0;
+    /* display:none already hides it — overflow:hidden would clip scroll */
 }
 
 .sbw-tab-panel--active {
-    display: block;
+    /* flex keeps width:100% flowing correctly into the carousel track */
+    display: flex;
+    flex-direction: column;
 }
 
 /* ── Mobile wrapper overrides ─────────────────────────────────────── */
