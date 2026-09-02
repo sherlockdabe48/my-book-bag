@@ -381,6 +381,10 @@
     margin: 0;
 }
 
+.book-in-bag__title--long {
+    font-size: 1rem;
+}
+
 .book-in-bag__dl {
     display: flex;
     flex-direction: column;

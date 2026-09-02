@@ -103,6 +103,14 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   }, [menuOpen, closeMenu])
 
   const inputRef = useRef<HTMLInputElement>(null)
+  const titleRef = useRef<HTMLParagraphElement>(null)
+
+  useEffect(() => {
+    const el = titleRef.current
+    if (!el) return
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight)
+    el.classList.toggle("book-in-bag__title--long", el.scrollHeight > lineHeight * 3)
+  }, [title])
   const maxPages = allPages === "N/A" ? null : Number(allPages)
   const atLastPage = maxPages !== null && Number(progress) >= maxPages
   const everFinished = timesRead > 0
@@ -250,7 +258,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
 
         {/* ── Book meta ──────────────────────────────── */}
         <div className="book-in-bag__meta-block">
-          <p className="book-in-bag__title">{title}</p>
+          <p className="book-in-bag__title" ref={titleRef}>{title}</p>
           <dl className="book-in-bag__dl">
             <div className="book-in-bag__dl-row">
               <dt>By</dt>
