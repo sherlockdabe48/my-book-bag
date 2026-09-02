@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli"
 
 const config: CapacitorConfig = {
-  appId: "com.adelierbag",
-  appName: "AdélierBag",
+  appId: "com.mybookbag",
+  appName: "MyBookBag",
   webDir: "dist",
   // Allow localhost during local dev (npx cap run ios with live-reload)
   server: {

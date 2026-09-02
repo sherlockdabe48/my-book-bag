@@ -20,7 +20,7 @@ export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOp
 
   return (
     <div className={`header-container${isIOS ? " header-container--ios" : ""}`}>
-      {!isIOS && <h1 className="header__logo">AdélierBag</h1>}
+      {!isIOS && <h1 className="header__logo">MyBookBag</h1>}
       <div className="header__right">
         <button
           className={`header__search-icon-btn${isIOS ? " header__search-icon-btn--ios" : ""}`}

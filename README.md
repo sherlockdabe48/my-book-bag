@@ -1,8 +1,8 @@
-# AdélierBag
+# MyBookBag
 
-A feature-rich, personal book management and progress tracking web app built with React, TypeScript, and Vite. AdélierBag leverages the free Open Library API to let you search, organize, and monitor your reading progress. It features gamified progression, custom feature toggling, full offline capability (PWA), native mobile builds (Capacitor), and tactile sound design—all without requiring any account, server login, or API keys.
+A feature-rich, personal book management and progress tracking web app built with React, TypeScript, and Vite. MyBookBag leverages the free Open Library API to let you search, organize, and monitor your reading progress. It features gamified progression, custom feature toggling, full offline capability (PWA), native mobile builds (Capacitor), and tactile sound design—all without requiring any account, server login, or API keys.
 
-🌐 **Live demo:** https://adelierbag.netlify.app/
+🌐 **Live demo:** https://mybookbag.netlify.app/
 
 ![AdélierBag Overall](./public/images/my-book-bag-overall.jpg)
 
@@ -19,7 +19,7 @@ A feature-rich, personal book management and progress tracking web app built wit
 
 ### 📚 Manual Creation
 - **Custom Additions:** Add books not found in Open Library. Specify custom titles, authors, publishers, page counts, and cover images (either URL or image uploads).
-- **Dynamic Cover Generator:** If no cover image is provided, the app dynamically constructs and colors a beautiful, theme-matching SVG cover embedded as a Data URI. It features the AdélierBag icon, book title, and author.
+- **Dynamic Cover Generator:** If no cover image is provided, the app dynamically constructs and colors a beautiful, theme-matching SVG cover embedded as a Data URI. It features the MyBookBag icon, book title, and author.
 
 ### 🗂️ Shelf Management
 - **Milestone Upgrades:** Start with a 5-book limit (`Small Shelf`) and expand it up to unlimited capacity (`Master's Shelf`) by finishing books and adding personal reading notes!
@@ -51,7 +51,7 @@ A feature-rich, personal book management and progress tracking web app built wit
 
 ## 🔊 Rich Sound Design (Web Audio API)
 
-AdélierBag features a rich, responsive Web Audio setup that introduces tactile physical dimensions to book-organizing interactions:
+MyBookBag features a rich, responsive Web Audio setup that introduces tactile physical dimensions to book-organizing interactions:
 
 - **Synthesized Wood Thump (`playShelfPlaceSound`):** Real-time synthesizer sweep and biquad-bandpass friction noise simulating a heavy hardcover book settling onto a wooden shelf.
 - **Synthesized Canvas Slide (`playBagPlaceSound`):** Gentle, lowpass-filtered noise and soft sub-envelope representing a book slipping into a fabric tote bag.
@@ -66,7 +66,7 @@ AdélierBag features a rich, responsive Web Audio setup that introduces tactile 
 
 ## 🛠️ Tech Stack & Architecture
 
-AdélierBag is designed to operate completely serverless and client-contained:
+MyBookBag is designed to operate completely serverless and client-contained:
 
 | Domain | Technology | Description |
 |---|---|---|
@@ -85,7 +85,7 @@ AdélierBag is designed to operate completely serverless and client-contained:
 
 ## ⚡ Offline-First PWA
 
-AdélierBag functions completely offline. Powered by a service worker with custom Workbox caching rules configured in `vite.config.js`:
+MyBookBag functions completely offline. Powered by a service worker with custom Workbox caching rules configured in `vite.config.js`:
 1. **App Shell Pre-caching:** Pre-caches all HTML, JS, CSS, system fonts, and static SVGs for near-instant offline boots.
 2. **Open Library Queries (Stale-While-revalidate):** Book searches and subjects are cached for up to 7 days, enabling you to browse and view books even with weak or missing connections.
 3. **Cover Images (Cache-First):** Fetched book covers from the Open Library CDN are stored locally on the device for up to 30 days.
@@ -94,7 +94,7 @@ AdélierBag functions completely offline. Powered by a service worker with custo
 
 ## 📱 Mobile Native Integration (Capacitor)
 
-AdélierBag is equipped with **Capacitor**, letting you compile the web shell into native mobile clients (fully configured for iOS):
+MyBookBag is equipped with **Capacitor**, letting you compile the web shell into native mobile clients (fully configured for iOS):
 - **Backup & Restore:** Data is portable! Export all your shelf, bag, and reading logs into a JSON package. On iOS, Capacitor hooks into `@capacitor/filesystem` and `@capacitor/share` to write back-up files into the native `Documents` folder and open the native iOS Share Sheet automatically. On Web, it defaults to a standard browser download.
 - **Safe Layouts:** Adaptive styling automatically adjusts margins, spacing, and hamburger overlays to account for native safe-area insets on mobile notches and home indicators.
 
@@ -205,7 +205,7 @@ npm run cap:run
 
 ## 🧪 Running Tests
 
-AdélierBag uses **Jest** and **React Testing Library** for rigorous coverage of hooks, context triggers, and core layout components.
+MyBookBag uses **Jest** and **React Testing Library** for rigorous coverage of hooks, context triggers, and core layout components.
 
 To execute the test suite:
 ```bash

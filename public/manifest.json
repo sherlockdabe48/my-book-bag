@@ -1,6 +1,6 @@
 {
-  "name": "AdélierBag",
-  "short_name": "AdélierBag",
+  "name": "MyBookBag",
+  "short_name": "MyBookBag",
   "description": "Track the books on your shelf and in your reading bag.",
   "start_url": "/",
   "display": "standalone",
