@@ -1,0 +1,256 @@
+/* ── Backdrop ─────────────────────────────────────────────────────── */
+.upgrade-bag-modal__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 16px;
+    animation: ubm-fadein 0.15s ease;
+}
+
+/* ── Panel ────────────────────────────────────────────────────────── */
+.upgrade-bag-modal__panel {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    max-height: calc(100dvh - 48px);
+    overflow: hidden;
+    padding: 24px 22px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    animation: ubm-slidein 0.18s ease;
+    color: #e0e0e0;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+.upgrade-bag-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.upgrade-bag-modal__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upgrade-bag-modal__close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.12s, background 0.12s;
+}
+
+.upgrade-bag-modal__close-btn:hover {
+    color: #f0f0f0;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.upgrade-bag-modal__subtitle {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0 0 16px;
+    line-height: 1.4;
+}
+
+/* ── Body ─────────────────────────────────────────────────────────── */
+.upgrade-bag-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* ── Tier Overview Card ───────────────────────────────────────────── */
+.upgrade-bag-modal__tier-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.upgrade-bag-modal__tier-side {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.upgrade-bag-modal__tier-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+}
+
+.upgrade-bag-modal__tier-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f0f0f0;
+}
+
+.upgrade-bag-modal__tier-cap {
+    font-size: 0.8rem;
+    color: #3b82d4;
+    font-weight: 500;
+}
+
+.upgrade-bag-modal__arrow {
+    color: #888;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Requirement Section ──────────────────────────────────────────── */
+.upgrade-bag-modal__req-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upgrade-bag-modal__req-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #d1d5db;
+    margin: 0;
+}
+
+.upgrade-bag-modal__req-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: #e5e7eb;
+}
+
+.upgrade-bag-modal__req-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.upgrade-bag-modal__req-badge--met {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.upgrade-bag-modal__req-badge--pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.upgrade-bag-modal__progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.upgrade-bag-modal__progress-fill {
+    height: 100%;
+    background: #3b82d4;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.upgrade-bag-modal__progress-fill--complete {
+    background: #4ade80;
+}
+
+.upgrade-bag-modal__req-hint {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* ── Max tier notice ──────────────────────────────────────────────── */
+.upgrade-bag-modal__max-notice {
+    background: rgba(59, 130, 214, 0.1);
+    border: 1px solid rgba(59, 130, 214, 0.3);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: #93c5fd;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ── Footer / Actions ─────────────────────────────────────────────── */
+.upgrade-bag-modal__footer {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.upgrade-bag-modal__upgrade-btn {
+    flex: 1;
+    padding: 10px 16px;
+    background: #3b82d4;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.upgrade-bag-modal__upgrade-btn:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.upgrade-bag-modal__upgrade-btn:disabled {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #6b7280;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ── Animations ───────────────────────────────────────────────────── */
+@keyframes ubm-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes ubm-slidein {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}

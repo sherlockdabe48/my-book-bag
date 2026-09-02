@@ -8,6 +8,7 @@ import StatsPage from "./StatsPage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
 import FeatureSettings from "./FeatureSettings"
+import UpgradeBagModal from "./UpgradeBagModal"
 import "../css/App.css"
 import "../css/classics.css"
 import useSearch from "../hooks/useSearch"
@@ -69,6 +70,7 @@ function App() {
   const [classicsOpen, setClassicsOpen] = useState(false)
   const [statsOpen, setStatsOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [upgradeBagOpen, setUpgradeBagOpen] = useState(false)
   const [shelfCollapsed, setShelfCollapsed] = useState(false)
 
   const { flags, toggleFlag } = useFeatureFlags()
@@ -129,6 +131,7 @@ function App() {
     handleAddManualBook,
     handleExportData,
     handleImportData,
+    handleUpgradeBag,
   } = useBookBag(searchBooks)
 
   const haveSomeBook = bagBooks.length > 0 || shelfBooks.length > 0
@@ -164,6 +167,14 @@ function App() {
 
   const handleCloseSettings = useCallback(() => {
     setSettingsOpen(false)
+  }, [])
+
+  const handleOpenUpgradeBag = useCallback(() => {
+    setUpgradeBagOpen(true)
+  }, [])
+
+  const handleCloseUpgradeBag = useCallback(() => {
+    setUpgradeBagOpen(false)
   }, [])
 
   const searchBookContextValue = useMemo<SearchBookContextValue>(() => ({
@@ -242,7 +253,23 @@ function App() {
         <toggleClassContext.Provider value={toggleClassContextValue}>
           <searchBookContext.Provider value={searchBookContextValue}>
             <featureFlagsContext.Provider value={featureFlagsContextValue}>
-            <Header onOpenSearch={handleOpenSearch} onOpenClassics={handleOpenClassics} onOpenStats={handleOpenStats} onOpenSettings={handleOpenSettings} totalFinished={totalFinished} />
+            <Header
+              onOpenSearch={handleOpenSearch}
+              onOpenClassics={handleOpenClassics}
+              onOpenStats={handleOpenStats}
+              onOpenSettings={handleOpenSettings}
+              onOpenUpgradeBag={handleOpenUpgradeBag}
+              totalFinished={totalFinished}
+            />
+            {upgradeBagOpen && (
+              <UpgradeBagModal
+                bagTier={bagTier}
+                tierIndex={BAG_TIERS.indexOf(bagTier)}
+                totalFinished={totalFinished}
+                onUpgrade={handleUpgradeBag}
+                onClose={handleCloseUpgradeBag}
+              />
+            )}
             {settingsOpen && (
               <FeatureSettings flags={flags} tierIndex={BAG_TIERS.indexOf(bagTier)} onToggle={toggleFlag} onClose={handleCloseSettings} />
             )}

@@ -222,15 +222,6 @@ export default function BagBookList({ bagBooks, bagCapacity, recentlyAddedBagBoo
           </button>
         )}
       </div>
-
-      {/* Pick from shelf button — always below the carousel on mobile */}
-      {!isFull && (
-        <div className="btn--container">
-          <button className="btn btn--add btn--see-more" onClick={goToShelf}>
-            Pick from shelf
-          </button>
-        </div>
-      )}
     </>
   )
 }

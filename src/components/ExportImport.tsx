@@ -7,10 +7,11 @@ interface ExportImportProps {
   onOpenClassics: () => void
   onOpenStats: () => void
   onOpenSettings: () => void
+  onOpenUpgradeBag: () => void
   statsUnlocked: boolean
 }
 
-export default function ExportImport({ onOpenClassics, onOpenStats, onOpenSettings, statsUnlocked }: ExportImportProps) {
+export default function ExportImport({ onOpenClassics, onOpenStats, onOpenSettings, onOpenUpgradeBag, statsUnlocked }: ExportImportProps) {
   const { handleExportData, handleImportData } = useContext(bookBagContext)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle")
@@ -76,6 +77,14 @@ export default function ExportImport({ onOpenClassics, onOpenStats, onOpenSettin
 
       {open && (
         <div className="export-import__dropdown">
+          <button
+            className="export-import__dropdown-item"
+            onClick={() => { setOpen(false); onOpenUpgradeBag() }}
+            type="button"
+          >
+            <UpgradeBagIcon />
+            <span>Upgrade Bag</span>
+          </button>
           <button
             className="export-import__dropdown-item"
             onClick={() => { setOpen(false); onOpenClassics() }}
@@ -184,6 +193,18 @@ function ImportIcon() {
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="7 10 12 15 17 10" />
       <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  )
+}
+
+function UpgradeBagIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 8h16l-1.5 11a2 2 0 0 1-2 1.5H7.5a2 2 0 0 1-2-1.5L4 8z"/>
+      <path d="M9 8c0-3 1-5 3-5"/>
+      <path d="M15 8c0-3-1-5-3-5"/>
+      <line x1="12" y1="11" x2="12" y2="17" />
+      <polyline points="9 14 12 11 15 14" />
     </svg>
   )
 }

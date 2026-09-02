@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import BagBookList from "./BagBookList"
 import type { Book } from "../types/book"
 import type { BAG_TIERS } from "../hooks/useBookBag"
-import { getNextTier } from "../hooks/useBookBag"
 
 interface BagProps {
   bagBooks: Book[]
@@ -14,10 +13,8 @@ interface BagProps {
   recentlyAddedBagBookId?: string | null
 }
 
-export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, totalFinished, readingStreak, recentlyAddedBagBookId }: BagProps) {
+export default function Bag({ bagBooks, bagCapacity, bagUpgraded, recentlyAddedBagBookId }: BagProps) {
   const [showUpgrade, setShowUpgrade] = useState(false)
-  const isFull = bagBooks.length >= bagCapacity
-  const nextTier = getNextTier(totalFinished)
 
   useEffect(() => {
     if (!bagUpgraded) return
@@ -36,21 +33,6 @@ export default function Bag({ bagBooks, bagCapacity, bagUpgraded, bagTier, total
       )}
       <div className="bag-container">
         <BagBookList bagBooks={bagBooks} bagCapacity={bagCapacity} recentlyAddedBagBookId={recentlyAddedBagBookId} />
-        <div className="bag-slot-line">
-          <span className={`bag-slot-text${isFull ? " bag-slot-text--full" : ""}`}>
-            {bagBooks.length} / {bagCapacity} slots · {bagTier.label}
-          </span>
-          {nextTier && (
-            <span className="bag-slot-text">
-              · Finish {nextTier.booksFinished - totalFinished} more book{nextTier.booksFinished - totalFinished !== 1 ? "s" : ""} to unlock {nextTier.label}
-            </span>
-          )}
-          {readingStreak > 0 && (
-            <span className="bag-slot-text bag-streak">
-              · {readingStreak} day streak
-            </span>
-          )}
-        </div>
       </div>
     </div>
   )

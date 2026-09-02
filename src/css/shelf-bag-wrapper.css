@@ -70,6 +70,7 @@
     .shelf-bag-wrapper {
         flex-direction: column;
         padding: 16px;
+        padding-top: calc(env(safe-area-inset-top) + 16px);
         gap: 16px;
     }
 

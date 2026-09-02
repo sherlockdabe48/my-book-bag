@@ -105,6 +105,7 @@
 .shelf-bag-wrapper--tabs {
     display: block;
     padding: 0;
+    padding-top: calc(env(safe-area-inset-top) + 16px);
     /* Push content above the fixed bottom nav */
     padding-bottom: calc(58px + env(safe-area-inset-bottom));
 }

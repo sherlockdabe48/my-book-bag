@@ -136,4 +136,32 @@ describe("useBookBag", () => {
 
     jest.useRealTimers()
   })
+
+  test("does not automatically upgrade bag tier when requirement is met, requires handleUpgradeBag", () => {
+    const finishedBook1 = makeBook("b1", { timesRead: 1 })
+    const { result } = renderHook(() => useBookBag([finishedBook1]))
+
+    // Put finished book in shelf
+    act(() => result.current.handleMoveToShelfFromSearch("b1"))
+    expect(result.current.totalFinished).toBe(1)
+    // Tier remains at Starter Bag (capacity 1) until explicitly upgraded
+    expect(result.current.bagTier.label).toBe("Starter Bag")
+    expect(result.current.bagCapacity).toBe(1)
+
+    // Explicit upgrade
+    act(() => result.current.handleUpgradeBag())
+    expect(result.current.bagTier.label).toBe("Reader's Bag")
+    expect(result.current.bagCapacity).toBe(2)
+  })
+
+  test("handleUpgradeBag does not upgrade if requirements not met", () => {
+    const { result } = renderHook(() => useBookBag([]))
+    expect(result.current.totalFinished).toBe(0)
+    expect(result.current.bagTier.label).toBe("Starter Bag")
+
+    // Attempt upgrade without finishing any books
+    act(() => result.current.handleUpgradeBag())
+    expect(result.current.bagTier.label).toBe("Starter Bag")
+    expect(result.current.bagCapacity).toBe(1)
+  })
 })

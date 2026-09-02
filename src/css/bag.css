@@ -52,33 +52,6 @@
     transition: width 0.3s ease;
 }
 
-/* ── Muted slot footer line (inside bag-container) ── */
-.bag-slot-line {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding: 10px 40px 14px;
-    border-top: 1px solid #f0f0f0;
-    margin-top: 4px;
-}
-
-.bag-slot-text {
-    font-size: 0.72rem;
-    color: #9ca3af;
-}
-
-.bag-slot-text--full {
-    color: #d97706;
-    font-weight: 600;
-}
-
-.bag-streak {
-    color: #b08d57;
-    font-weight: 600;
-}
-
 /* ── Upgrade banner ──────────────────────────────── */
 .bag-upgrade-banner {
     margin: 0 40px 12px;
@@ -94,10 +67,6 @@
 @media (max-width: 900px) {
     .bag-pages-bar-section {
         padding: 10px 16px 12px;
-    }
-
-    .bag-slot-line {
-        padding: 10px 16px 14px;
     }
 }
 
@@ -152,7 +121,6 @@
         height: 72vw;
         padding: 0;
         border: none;
-        border-radius: 3px;
         overflow: hidden;
         cursor: pointer;
         opacity: 0;
@@ -162,7 +130,8 @@
 
     /* Left peek — slides out to the left when hidden, in from the left when visible */
     .bag-peek--left {
-        left: 4px;
+        left: 0px;
+        border-radius: 0px 3px 3px 0px;
         transform: translateY(-50%) translateX(-100%);
         transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1),
                     opacity 0.45s ease;
@@ -170,7 +139,8 @@
 
     /* Right peek — slides out to the right when hidden, in from the right when visible */
     .bag-peek--right {
-        right: 4px;
+        right: 0px;
+        border-radius: 3px 0px 0px 3px;
         transform: translateY(-50%) translateX(100%);
         transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1),
                     opacity 0.45s ease;
@@ -207,6 +177,7 @@
     /* ── Dot indicators — absolute overlay at top of carousel ── */
     .bag-dots {
         position: absolute;
+        margin-top: 4px;
         top: 0px;
         left: 0;
         right: 0;

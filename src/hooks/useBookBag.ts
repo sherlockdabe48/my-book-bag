@@ -83,8 +83,8 @@ export function getBagTier(totalFinished: number) {
   return tier
 }
 
-export function getNextTier(totalFinished: number) {
-  return BAG_TIERS.find((t) => t.booksFinished > totalFinished) ?? null
+export function getNextTier(currentTierIndex: number) {
+  return BAG_TIERS[currentTierIndex + 1] ?? null
 }
 
 // ── Shelf capacity tiers ───────────────────────────────────────────────────
@@ -118,6 +118,7 @@ export function getNextShelfTier(totalFinished: number, totalWithNote: number) {
 const BAG_BOOKS_KEY   = "myBookBag.bagBooks"
 const SHELF_BOOKS_KEY = "myBookBag.shelfBooks"
 const COVERS_KEY      = "myBookBag.covers"
+const BAG_TIER_INDEX_KEY = "myBookBag.bagTierIndex"
 
 // ── Reading streak ─────────────────────────────────────────────────────────
 
@@ -233,6 +234,9 @@ export default function useBookBag(searchBooks: Book[]) {
   // ref to avoid scheduling an extra render when we update it.
   const prevCapacityRef = useRef<number | null>(null)
 
+  // Explicit user-unlocked bag tier index (defaults to 0: Starter Bag)
+  const [bagTierIndex, setBagTierIndex] = useState<number>(0)
+
   // ── Derived capacity inputs ──────────────────────────
   const totalFinished = useMemo(() => {
     const all = [...bagBooks, ...shelfBooks]
@@ -249,7 +253,7 @@ export default function useBookBag(searchBooks: Book[]) {
   }, [bagBooks, shelfBooks])
 
   // ── Bag tier ─────────────────────────────────────────
-  const bagTier     = useMemo(() => getBagTier(totalFinished), [totalFinished])
+  const bagTier     = BAG_TIERS[bagTierIndex] ?? BAG_TIERS[0]
   const bagCapacity = bagTier.capacity
 
   // Detect capacity upgrade (after initial load).
@@ -273,17 +277,21 @@ export default function useBookBag(searchBooks: Book[]) {
     const covers    = loadCovers()
     const bagJson   = localStorage.getItem(BAG_BOOKS_KEY)
     const shelfJson = localStorage.getItem(SHELF_BOOKS_KEY)
+    const tierJson  = localStorage.getItem(BAG_TIER_INDEX_KEY)
     const loadedBag   = bagJson   ? attachCovers(JSON.parse(bagJson)   as Book[], covers) : []
     const loadedShelf = shelfJson ? attachCovers(JSON.parse(shelfJson) as Book[], covers) : []
     if (bagJson)   setBagBooks(loadedBag)
     if (shelfJson) setShelfBooks(loadedShelf)
 
-    // Seed prevCapacityRef from the *actual* persisted data so that the
-    // capacity-upgrade detector doesn't fire on page load for users who have
-    // already earned a higher tier.
-    const loadedFinished = [...loadedBag, ...loadedShelf]
-      .reduce((sum, b) => sum + (b.timesRead ?? 0), 0)
-    prevCapacityRef.current = getBagTier(loadedFinished).capacity
+    let initialTierIndex = 0
+    if (tierJson !== null) {
+      const parsed = parseInt(tierJson, 10)
+      if (!isNaN(parsed) && parsed >= 0 && parsed < BAG_TIERS.length) {
+        initialTierIndex = parsed
+      }
+    }
+    setBagTierIndex(initialTierIndex)
+    prevCapacityRef.current = (BAG_TIERS[initialTierIndex] ?? BAG_TIERS[0]).capacity
 
     loadedRef.current = true
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -299,8 +307,9 @@ export default function useBookBag(searchBooks: Book[]) {
     if (!loadedRef.current) return
 
     // Save books without imageURL (covers saved separately)
-    safeSet(BAG_BOOKS_KEY,   JSON.stringify(bagBooks.map(stripCover)))
-    safeSet(SHELF_BOOKS_KEY, JSON.stringify(shelfBooks.map(stripCover)))
+    safeSet(BAG_BOOKS_KEY,        JSON.stringify(bagBooks.map(stripCover)))
+    safeSet(SHELF_BOOKS_KEY,      JSON.stringify(shelfBooks.map(stripCover)))
+    safeSet(BAG_TIER_INDEX_KEY,   String(bagTierIndex))
 
     // Build and save the unified covers map
     const covers: Record<string, string> = {}
@@ -482,6 +491,19 @@ export default function useBookBag(searchBooks: Book[]) {
     void triggerJsonDownload(buildExportPayload(shelfBooks, bagBooks))
   }, [shelfBooks, bagBooks])
 
+  const handleUpgradeBag = useCallback(() => {
+    setBagTierIndex((prev) => {
+      const nextIndex = prev + 1
+      if (nextIndex < BAG_TIERS.length) {
+        const next = BAG_TIERS[nextIndex]
+        if (totalFinished >= next.booksFinished) {
+          return nextIndex
+        }
+      }
+      return prev
+    })
+  }, [totalFinished])
+
   const handleImportData = useCallback((raw: string): boolean => {
     const payload = parseImportFile(raw)
     if (!payload) return false
@@ -524,5 +546,6 @@ export default function useBookBag(searchBooks: Book[]) {
     handleAddManualBook,
     handleExportData,
     handleImportData,
+    handleUpgradeBag,
   }
 }

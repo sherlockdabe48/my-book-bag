@@ -10,17 +10,18 @@ interface HeaderProps {
   onOpenClassics: () => void
   onOpenStats: () => void
   onOpenSettings: () => void
+  onOpenUpgradeBag: () => void
   totalFinished: number
 }
 
 const isIOS = Capacitor.getPlatform() === "ios"
 
-export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOpenSettings, totalFinished }: HeaderProps) {
+export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOpenSettings, onOpenUpgradeBag, totalFinished }: HeaderProps) {
   const statsUnlocked = totalFinished >= STATS_UNLOCK_BOOKS
 
   return (
     <div className={`header-container${isIOS ? " header-container--ios" : ""}`}>
-      {!isIOS && <h1 className="header__logo">MyBookBag</h1>}
+      <h1 className="header__logo">MyBookBag</h1>
       <div className="header__right">
         <button
           className={`header__search-icon-btn${isIOS ? " header__search-icon-btn--ios" : ""}`}
@@ -33,7 +34,13 @@ export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOp
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
-        <ExportImport onOpenClassics={onOpenClassics} onOpenStats={onOpenStats} onOpenSettings={onOpenSettings} statsUnlocked={statsUnlocked} />
+        <ExportImport
+          onOpenClassics={onOpenClassics}
+          onOpenStats={onOpenStats}
+          onOpenSettings={onOpenSettings}
+          onOpenUpgradeBag={onOpenUpgradeBag}
+          statsUnlocked={statsUnlocked}
+        />
       </div>
     </div>
   )
