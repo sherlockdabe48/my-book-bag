@@ -38,7 +38,7 @@ export async function triggerJsonDownload(payload: ExportPayload) {
     })
     const { uri } = await Filesystem.getUri({ path: fileName, directory: Directory.Documents })
     await Share.share({
-      title: "PagesBag export",
+      title: "AdélierBag export",
       url: uri,
       dialogTitle: "Save or share your book data",
     })
