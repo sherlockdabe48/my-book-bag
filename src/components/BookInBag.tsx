@@ -66,6 +66,7 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   const [isEditing, setIsEditing] = useState(false)
   const [draftProgress, setDraftProgress] = useState(currentPage)
   const [justFinished, setJustFinished] = useState(false)
+  const [finishedFading, setFinishedFading] = useState(false)
   const [note, setNote] = useState(initialNote)
   const [menuOpen, setMenuOpen] = useState(false)
   const coverRef = useRef<HTMLDivElement>(null)
@@ -130,7 +131,13 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
   function doFinish() {
     handleIncrementTimesRead(id)
     setJustFinished(true)
+    setFinishedFading(false)
     if (flags.sounds) playBookCloseSound()
+    const fadeTimer = setTimeout(() => setFinishedFading(true), 5000)
+    const hideTimer = setTimeout(() => setJustFinished(false), 6000)
+    // timers are intentionally not cleaned up on unmount — banner disappearing
+    // naturally is fine; the component remounts fresh if the user navigates away
+    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
   }
 
   function commitEdit() {
@@ -276,7 +283,11 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
         )}
 
         {justFinished && (
-          <p className="book-in-bag__finished-banner">{finishedBanner(timesRead)}</p>
+          <p
+            className={`book-in-bag__finished-banner${finishedFading ? " book-in-bag__finished-banner--fade-out" : ""}`}
+            onClick={() => { setFinishedFading(true); setTimeout(() => setJustFinished(false), 400) }}
+            title="Click to dismiss"
+          >{finishedBanner(timesRead)}</p>
         )}
         {noteStep === "reflecting" && (
           <div className="book-in-bag__note-editor">

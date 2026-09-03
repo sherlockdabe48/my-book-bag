@@ -62,6 +62,13 @@
     font-size: 0.85rem;
     color: #065f46;
     line-height: 1.5;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.bag-upgrade-banner--fade-out {
+    opacity: 0;
 }
 
 @media (max-width: 900px) {

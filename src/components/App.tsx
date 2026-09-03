@@ -104,7 +104,7 @@ function App() {
     recentlyAddedShelfBookId,
     shelfHighLight,
     bagCapacity,
-    bagUpgraded,
+    bagUpgradedAt,
     bagTier,
     shelfCapacity,
     shelfTier,
@@ -314,7 +314,7 @@ function App() {
                 shelfBooks={shelfBooks}
                 shelfHighLight={shelfHighLight}
                 bagCapacity={bagCapacity}
-                bagUpgraded={bagUpgraded}
+                bagUpgradedAt={bagUpgradedAt}
                 bagTier={bagTier}
                 shelfCapacity={shelfCapacity}
                 shelfTier={shelfTier}

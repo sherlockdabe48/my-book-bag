@@ -257,14 +257,15 @@ export default function useBookBag(searchBooks: Book[]) {
   const bagCapacity = bagTier.capacity
 
   // Detect capacity upgrade (after initial load).
-  // Compare synchronously against the ref so the flag is true on the exact
-  // render where the capacity first increases, then update the ref.
-  const bagUpgraded =
-    loadedRef.current &&
-    prevCapacityRef.current !== null &&
-    bagCapacity > prevCapacityRef.current
+  // We use a stable timestamp so downstream consumers get a value that never
+  // reverts — a plain boolean flips true→false on the very next render which
+  // breaks useEffect dependency comparisons.
+  const [bagUpgradedAt, setBagUpgradedAt] = useState<number | null>(null)
   useEffect(() => {
     if (!loadedRef.current) return
+    if (prevCapacityRef.current !== null && bagCapacity > prevCapacityRef.current) {
+      setBagUpgradedAt(Date.now())
+    }
     prevCapacityRef.current = bagCapacity
   }, [bagCapacity])
 
@@ -502,7 +503,7 @@ export default function useBookBag(searchBooks: Book[]) {
     recentlyAddedShelfBookId,
     shelfHighLight,
     bagCapacity,
-    bagUpgraded,
+    bagUpgradedAt,
     bagTier,
     shelfCapacity,
     shelfTier,

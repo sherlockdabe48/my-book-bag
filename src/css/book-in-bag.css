@@ -385,6 +385,13 @@
     padding: 5px 10px;
     margin: 0 0 6px;
     text-align: center;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.book-in-bag__finished-banner--fade-out {
+    opacity: 0;
 }
 
 /* ── Meta block (title + dl) ─────────────────────── */

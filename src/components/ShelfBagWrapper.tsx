@@ -12,7 +12,7 @@ interface ShelfBagWrapperProps {
   shelfBooks: Book[]
   shelfHighLight: boolean
   bagCapacity: number
-  bagUpgraded: boolean
+  bagUpgradedAt: number | null
   bagTier: typeof BAG_TIERS[number]
   shelfCapacity: number | null
   shelfTier: typeof SHELF_TIERS[number]
@@ -59,7 +59,7 @@ export default function ShelfBagWrapper({
   shelfBooks,
   shelfHighLight,
   bagCapacity,
-  bagUpgraded,
+  bagUpgradedAt,
   bagTier,
   shelfCapacity,
   shelfTier,
@@ -97,6 +97,15 @@ export default function ShelfBagWrapper({
     }
   }, [shelfHighLight, isMobile])
 
+  // When a book is added to the bag on mobile, switch to the bag tab so the
+  // carousel is visible before BagBookList tries to scroll to the new slide
+  useEffect(() => {
+    if (isMobile && recentlyAddedBagBookId) {
+      setActiveTab("bag")
+      try { localStorage.setItem(TAB_KEY, "bag") } catch { /* ignore */ }
+    }
+  }, [recentlyAddedBagBookId, isMobile])
+
   if (isMobile) {
     return (
       <div className={`shelf-bag-wrapper shelf-bag-wrapper--tabs${isIOS ? " shelf-bag-wrapper--ios" : ""}`}>
@@ -105,7 +114,7 @@ export default function ShelfBagWrapper({
           <Bag
             bagBooks={bagBooks}
             bagCapacity={bagCapacity}
-            bagUpgraded={bagUpgraded}
+            bagUpgradedAt={bagUpgradedAt}
             bagTier={bagTier}
             totalFinished={totalFinished}
             readingStreak={readingStreak}
@@ -141,7 +150,7 @@ export default function ShelfBagWrapper({
       <Bag
         bagBooks={bagBooks}
         bagCapacity={bagCapacity}
-        bagUpgraded={bagUpgraded}
+        bagUpgradedAt={bagUpgradedAt}
         bagTier={bagTier}
         totalFinished={totalFinished}
         readingStreak={readingStreak}

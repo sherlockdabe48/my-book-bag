@@ -101,14 +101,36 @@ export default function BagBookList({ bagBooks, bagCapacity, recentlyAddedBagBoo
   }, [firstBookId])
 
   // ── Scroll newly-added book into view ─────────────────────────────────────
+  // The bag tab panel may be hidden (display:none) when the book is added, so
+  // clientWidth is 0 and a plain scrollTo lands on slide 0. We watch the track
+  // with a ResizeObserver and perform the scroll as soon as it has a real width.
   useEffect(() => {
     if (!recentlyAddedBagBookId) return
     const idx = bagBooks.findIndex((b) => b.id === recentlyAddedBagBookId)
-    if (idx !== -1) {
-      slideRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
+    if (idx === -1) return
+
+    const track = listRef.current
+    if (!track) return
+
+    function doScroll() {
+      if (!track || track.clientWidth === 0) return
+      track.scrollTo({ left: idx * track.clientWidth, behavior: "instant" })
       setActiveIndex(idx)
       setSettledIndex(idx)
     }
+
+    // Try immediately (works if the panel is already visible)
+    doScroll()
+
+    // Also watch for when the panel becomes visible (clientWidth goes from 0 → real)
+    const ro = new ResizeObserver(() => {
+      if (track.clientWidth > 0) {
+        doScroll()
+        ro.disconnect()
+      }
+    })
+    ro.observe(track)
+    return () => ro.disconnect()
   }, [recentlyAddedBagBookId, bagBooks])
 
   // ── Measure cover position for peek alignment ─────────────────────────────
@@ -178,7 +200,7 @@ export default function BagBookList({ bagBooks, bagCapacity, recentlyAddedBagBoo
             >
               <BookInBag
                 {...bagBook}
-                isActive={index === 0}
+                isActive={index === activeIndex}
                 isLanding={bagBook.id === recentlyAddedBagBookId}
                 coverImgRef={index === activeIndex ? coverImgRef : undefined}
               />
