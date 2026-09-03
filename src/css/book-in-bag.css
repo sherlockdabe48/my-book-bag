@@ -254,6 +254,28 @@
     }
 }
 
+@media (max-width: 360px) {
+    .book-in-bag__progress-row {
+        font-size: 0.8rem;
+    }
+
+    .book-in-bag__scroller-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.95rem;
+    }
+
+    .book-in-bag__scroller-input {
+        width: 36px;
+        font-size: 0.8rem;
+    }
+
+    .book-in-bag__progress-text,
+    .book-in-bag__last-read {
+        font-size: 0.75rem;
+    }
+}
+
 /* ── ⋯ dots button on cover ──────────────────────── */
 .book-in-bag__dots-btn {
     position: absolute;
