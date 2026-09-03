@@ -234,7 +234,7 @@
         width: 100%;
         box-sizing: border-box;
         /* pass horizontal swipes up to the scroll track */
-        touch-action: pan-x;
+        touch-action: pan-x pan-y;
     }
 
     .book-in-bag__cover-wrapper {
