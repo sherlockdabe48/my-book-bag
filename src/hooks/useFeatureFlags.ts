@@ -8,6 +8,7 @@ export interface FeatureFlags {
   readingProgressBars: boolean
   iReadToday: boolean
   sounds: boolean
+  bookMeta: boolean
 }
 
 const STORAGE_KEY = "myBookBag.featureFlags"
@@ -20,6 +21,7 @@ const DEFAULTS: FeatureFlags = {
   readingProgressBars: true,
   iReadToday: true,
   sounds: true,
+  bookMeta: false,
 }
 
 function loadFlags(): FeatureFlags {

@@ -72,6 +72,12 @@ const FEATURES: FeatureItem[] = [
     description: "Play sound effects when turning pages, placing books, finishing, etc.",
     minTier: 0,
   },
+  {
+    key: "bookMeta",
+    label: "Book title & author",
+    description: "Show the title, author, and recommended-by text below the bag cover.",
+    minTier: 0,
+  },
 ]
 
 export default function FeatureSettings({ flags, tierIndex, onToggle, onClose }: FeatureSettingsProps) {

@@ -257,21 +257,23 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
       <div className="book-in-bag__detail-grid">
 
         {/* ── Book meta ──────────────────────────────── */}
-        <div className="book-in-bag__meta-block">
-          <p className="book-in-bag__title" ref={titleRef}>{title}</p>
-          <dl className="book-in-bag__dl">
-            <div className="book-in-bag__dl-row">
-              <dt>By</dt>
-              <dd>{author}</dd>
-            </div>
-            {recommendedBy && (
+        {flags.bookMeta && (
+          <div className="book-in-bag__meta-block">
+            <p className="book-in-bag__title" ref={titleRef}>{title}</p>
+            <dl className="book-in-bag__dl">
               <div className="book-in-bag__dl-row">
-                <dt>Rec. by</dt>
-                <dd>{recommendedBy}</dd>
+                <dt>By</dt>
+                <dd>{author}</dd>
               </div>
-            )}
-          </dl>
-        </div>
+              {recommendedBy && (
+                <div className="book-in-bag__dl-row">
+                  <dt>Rec. by</dt>
+                  <dd>{recommendedBy}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+        )}
 
         {justFinished && (
           <p className="book-in-bag__finished-banner">{finishedBanner(timesRead)}</p>

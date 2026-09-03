@@ -62,7 +62,7 @@ export const bookBagContext = React.createContext<BookBagContextValue>({} as Boo
 export const toggleClassContext = React.createContext<ToggleClassContextValue>({} as ToggleClassContextValue)
 export const searchBookContext = React.createContext<SearchBookContextValue>({} as SearchBookContextValue)
 export const featureFlagsContext = React.createContext<FeatureFlagsContextValue>({
-  flags: { sortBooks: true, filterBooks: true, addOwnBook: true, bookTags: true, readingProgressBars: true, iReadToday: true, sounds: true },
+  flags: { sortBooks: true, filterBooks: true, addOwnBook: true, bookTags: true, readingProgressBars: true, iReadToday: true, sounds: true, bookMeta: false },
   toggleFlag: () => {},
 })
 function App() {
