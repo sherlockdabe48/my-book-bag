@@ -174,46 +174,10 @@
     /* Right peek: flush left so only its left edge is visible */
     .bag-peek--right img { margin-left: 0; }
 
-    /* ── Dot indicators — absolute overlay at top of carousel ── */
-    .bag-dots {
-        position: absolute;
-        margin-top: 4px;
-        top: 0px;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 6px;
-        z-index: 3;
-        pointer-events: none;
-    }
-
-    .bag-dot {
-        pointer-events: auto;
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #d1d5db;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: transform 0.2s;
-        flex-shrink: 0;
-    }
-
-    /* Active dot: slightly larger, same colour */
-    .bag-dot--active {
-        transform: scale(1.35);
-    }
 }
 
-/* Hide dots and peek overlays on desktop */
+/* Hide peek overlays on desktop */
 @media (min-width: 601px) {
-    .bag-dots {
-        display: none;
-    }
-
     .bag-carousel-wrapper {
         display: contents;
     }

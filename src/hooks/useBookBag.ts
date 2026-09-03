@@ -384,29 +384,12 @@ export default function useBookBag(searchBooks: Book[]) {
 
   const handleBagBookProgressChange = useCallback((id: string, currentPage: number) => {
     const today = new Date().toISOString().slice(0, 10)
-    setBagBooks((bag) => {
-      const updated = bag.map((b) => (b.id !== id ? b : { ...b, currentPage, lastReadAt: today }))
-      // Float the just-read book to the top
-      const idx = updated.findIndex((b) => b.id === id)
-      if (idx > 0) {
-        const [book] = updated.splice(idx, 1)
-        updated.unshift(book)
-      }
-      return updated
-    })
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, currentPage, lastReadAt: today })))
   }, [])
 
   const handleLogReadingSession = useCallback((id: string) => {
     const today = new Date().toISOString().slice(0, 10)
-    setBagBooks((bag) => {
-      const updated = bag.map((b) => (b.id !== id ? b : { ...b, lastReadAt: today }))
-      const idx = updated.findIndex((b) => b.id === id)
-      if (idx > 0) {
-        const [book] = updated.splice(idx, 1)
-        updated.unshift(book)
-      }
-      return updated
-    })
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, lastReadAt: today })))
   }, [])
 
   const handleBookDeleteFromShelf = useCallback((id: string) => {

@@ -395,17 +395,17 @@ export default function BookInBag({ id, title, author, currentPage, allPages, im
               </button>
             </div>
           )}
-          {!atLastPage && flags.iReadToday && (
-            <button
-              className="book-in-bag__read-today-btn"
-              onClick={() => { if (flags.sounds) playReadTodaySound(); handleLogReadingSession(id) }}
-              disabled={alreadyReadToday}
-              title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
-            >
-              {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
-            </button>
-          )}
         </div>}
+        {!atLastPage && flags.iReadToday && (
+          <button
+            className="book-in-bag__read-today-btn"
+            onClick={() => { if (flags.sounds) playReadTodaySound(); handleLogReadingSession(id) }}
+            disabled={alreadyReadToday}
+            title={alreadyReadToday ? "You've already logged a reading session today" : undefined}
+          >
+            {alreadyReadToday ? "✅ Read today" : "📖 I read today"}
+          </button>
+        )}
       </div>
     </div>
   )

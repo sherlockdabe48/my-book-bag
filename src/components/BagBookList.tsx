@@ -186,19 +186,6 @@ export default function BagBookList({ bagBooks, bagCapacity, recentlyAddedBagBoo
           ))}
         </div>
 
-          {/* Dot indicators — overlaid at top of carousel */}
-          {bagBooks.length > 1 && (
-            <div className="bag-dots" aria-label="Book navigation">
-              {bagBooks.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`bag-dot${idx === activeIndex ? " bag-dot--active" : ""}`}
-                  onClick={() => scrollToSlide(idx)}
-                  aria-label={`Go to book ${idx + 1}`}
-                />
-              ))}
-            </div>
-          )}
   
           {/* Peek overlays — crossfade on settle */}
           {prevBook && (

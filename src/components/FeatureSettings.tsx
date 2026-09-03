@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { type ChangeEvent, useContext, useEffect, useRef, useState } from "react"
 import type { FeatureFlags } from "../hooks/useFeatureFlags"
+import { bookBagContext } from "./App"
 import "../css/feature-settings.css"
 
 interface FeatureSettingsProps {
@@ -74,6 +75,36 @@ const FEATURES: FeatureItem[] = [
 ]
 
 export default function FeatureSettings({ flags, tierIndex, onToggle, onClose }: FeatureSettingsProps) {
+  const { handleExportData, handleImportData } = useContext(bookBagContext)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [importStatus, setImportStatus] = useState<"idle" | "ok" | "error">("idle")
+
+  function handleExportClick() {
+    handleExportData()
+  }
+
+  function handleImportClick() {
+    fileInputRef.current?.click()
+  }
+
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const raw = ev.target?.result
+      if (typeof raw !== "string") { showImportStatus("error"); return }
+      showImportStatus(handleImportData(raw) ? "ok" : "error")
+    }
+    reader.readAsText(file)
+    e.target.value = ""
+  }
+
+  function showImportStatus(result: "ok" | "error") {
+    setImportStatus(result)
+    setTimeout(() => setImportStatus("idle"), 2500)
+  }
+
   useEffect(() => {
     const prevBody = document.body.style.overflow
     const prevHtml = document.documentElement.style.overflow
@@ -139,6 +170,29 @@ export default function FeatureSettings({ flags, tierIndex, onToggle, onClose }:
             )
           })}
         </ul>
+        <div className="feature-settings__data-section">
+          <p className="feature-settings__data-label">Data</p>
+          <div className="feature-settings__data-row">
+            <button className="feature-settings__data-btn" type="button" onClick={handleExportClick}>
+              <ExportIcon /> Export
+            </button>
+            <button className="feature-settings__data-btn" type="button" onClick={handleImportClick}>
+              <ImportIcon /> Import
+            </button>
+          </div>
+          {importStatus !== "idle" && (
+            <span className={`feature-settings__import-feedback feature-settings__import-feedback--${importStatus}`}>
+              {importStatus === "ok" ? "✓ Imported" : "✗ Invalid file"}
+            </span>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+        </div>
       </div>
     </div>
   )
@@ -149,6 +203,26 @@ function LockIcon() {
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginRight: "5px", verticalAlign: "middle", flexShrink: 0 }}>
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+function ExportIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginRight: "5px", verticalAlign: "middle", flexShrink: 0 }}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  )
+}
+
+function ImportIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ marginRight: "5px", verticalAlign: "middle", flexShrink: 0 }}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
     </svg>
   )
 }

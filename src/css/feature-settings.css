@@ -183,6 +183,58 @@
     }
 }
 
+/* ── Data section (Export / Import) ──────────────────────────────── */
+.feature-settings__data-section {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.feature-settings__data-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 8px;
+}
+
+.feature-settings__data-row {
+    display: flex;
+    gap: 8px;
+}
+
+.feature-settings__data-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.feature-settings__data-btn:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #f0f0f0;
+}
+
+.feature-settings__import-feedback {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.75rem;
+}
+
+.feature-settings__import-feedback--ok    { color: #4ade80; }
+.feature-settings__import-feedback--error { color: #f87171; }
+
 /* ── Animations ───────────────────────────────────────────────────── */
 @keyframes fs-fadein {
     from { opacity: 0; }
