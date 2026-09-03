@@ -185,7 +185,7 @@
 }
 
 .book-in-bag__read-today-btn {
-    align-self: flex-start;
+    align-self: center;
     padding: 6px 14px;
     font-size: 0.8rem;
     font-weight: 600;
