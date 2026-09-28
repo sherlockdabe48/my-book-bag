@@ -124,6 +124,7 @@ export default function AddManualBookForm({ onClose }: AddManualBookFormProps) {
       lastReadAt:    "",
       timesRead:     0,
       tags:          [],
+      quotes:        [],
     }
 
     handleAddManualBook(book)

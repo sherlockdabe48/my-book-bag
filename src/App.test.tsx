@@ -31,7 +31,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleAddToBagWithPages: jest.fn(), handleAddBookToShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleBookChangeTags: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleAddToBagWithPages: jest.fn(), handleAddBookToShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleBookChangeTags: jest.fn(), handleBookChangeQuotes: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         <BookInBag {...baseProps} isActive={false} />
       </bookBagContext.Provider>
@@ -50,7 +50,7 @@ describe("BookInBag", () => {
 
     render(
       <bookBagContext.Provider
-        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleAddToBagWithPages: jest.fn(), handleAddBookToShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleBookChangeTags: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
+        value={{ bagCapacity: 3, bagCount: 1, shelfFull: false, handleMoveToShelfFromBag: jest.fn(), handleBagBookProgressChange, handleAddToBagFromShelf: jest.fn(), handleAddToBagWithPages: jest.fn(), handleAddBookToShelf: jest.fn(), handleBookDeleteFromShelf: jest.fn(), handleBookChangeCover: jest.fn(), handleBookChangePages: jest.fn(), handleBookChangeTitle: jest.fn(), handleBookChangeAuthor: jest.fn(), handleBookChangeNote: jest.fn(), handleBookChangeRecommendedBy: jest.fn(), handleBookChangeTags: jest.fn(), handleBookChangeQuotes: jest.fn(), handleIncrementTimesRead: jest.fn(), handleLogReadingSession: jest.fn(), handleAddManualBook: jest.fn(), handleExportData: jest.fn(), handleImportData: jest.fn() }}
       >
         {/* timesRead > 0 makes everFinished = true, so atLastPage && everFinished → "Read Again" label */}
         <BookInBag {...baseProps} currentPage={300} timesRead={1} isActive={true} />
@@ -111,6 +111,7 @@ describe("BookInBag", () => {
         lastReadAt: "",
         timesRead: 0,
         tags: [],
+        quotes: [],
       },
     ]
 
@@ -148,6 +149,7 @@ describe("BookInBag", () => {
             lastReadAt=""
             timesRead={0}
             tags={[]}
+            quotes={[]}
             shelfBooks={shelfBooks}
           />
         </searchBookContext.Provider>

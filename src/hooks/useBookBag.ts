@@ -214,7 +214,11 @@ function stripCover(book: Book): Omit<Book, "imageURL"> & { imageURL: "" } {
 
 /** Reattach covers to a list of books using the covers map. */
 function attachCovers(books: Book[], covers: Record<string, string>): Book[] {
-  return books.map((b) => ({ ...b, imageURL: covers[b.id] ?? b.imageURL }))
+  return books.map((b) => ({
+    ...b,
+    imageURL: covers[b.id] ?? b.imageURL,
+    quotes: b.quotes ?? [],   // backfill for books saved before this field existed
+  }))
 }
 
 // ── Hook ───────────────────────────────────────────────────────────────────
@@ -370,7 +374,7 @@ export default function useBookBag(searchBooks: Book[]) {
       if (!book) return bag
       // Check shelf capacity before moving
       if (shelfCapacity !== null && shelfBooks.length >= shelfCapacity) return bag
-      const isFinished = Number(book.currentPage) === Number(book.allPages)
+      const isFinished = (book.timesRead ?? 0) > 0 || (book.allPages !== "N/A" && Number(book.currentPage) === Number(book.allPages))
       const isStarted  = Number(book.currentPage) > 1
       const updated: Book = {
         ...book,
@@ -445,6 +449,11 @@ export default function useBookBag(searchBooks: Book[]) {
   const handleBookChangeTags = useCallback((id: string, tags: string[]) => {
     setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, tags })))
     setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, tags })))
+  }, [])
+
+  const handleBookChangeQuotes = useCallback((id: string, quotes: Book["quotes"]) => {
+    setShelfBooks((shelf) => shelf.map((b) => (b.id !== id ? b : { ...b, quotes })))
+    setBagBooks((bag) => bag.map((b) => (b.id !== id ? b : { ...b, quotes })))
   }, [])
 
   const handleIncrementTimesRead = useCallback((id: string) => {
@@ -525,6 +534,7 @@ export default function useBookBag(searchBooks: Book[]) {
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
     handleBookChangeTags,
+    handleBookChangeQuotes,
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,

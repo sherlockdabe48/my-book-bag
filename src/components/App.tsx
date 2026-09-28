@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react"
-import type { Book } from "../types/book"
+import type { Book, BookQuote } from "../types/book"
 import { BrowserRouter as Router } from "react-router-dom"
 import Header from "./Header"
 import SearchPage from "./SearchPage"
 import ClassicsPage from "./ClassicsPage"
 import StatsPage from "./StatsPage"
+import CommonplacePage from "./CommonplacePage"
 import ShelfBagWrapper from "./ShelfBagWrapper"
 import WelcomeMessage from "./WelcomeMessage"
 import FeatureSettings from "./FeatureSettings"
@@ -39,6 +40,7 @@ export interface BookBagContextValue {
   handleBookChangeNote: (id: string, note: string) => void
   handleBookChangeRecommendedBy: (id: string, recommendedBy: string) => void
   handleBookChangeTags: (id: string, tags: string[]) => void
+  handleBookChangeQuotes: (id: string, quotes: BookQuote[]) => void
   handleIncrementTimesRead: (id: string) => void
   handleLogReadingSession: (id: string) => void
   handleAddManualBook: (book: Book) => void
@@ -69,6 +71,7 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false)
   const [classicsOpen, setClassicsOpen] = useState(false)
   const [statsOpen, setStatsOpen] = useState(false)
+  const [commonplaceOpen, setCommonplaceOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [upgradeBagOpen, setUpgradeBagOpen] = useState(false)
   const [shelfCollapsed, setShelfCollapsed] = useState(false)
@@ -126,6 +129,7 @@ function App() {
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
     handleBookChangeTags,
+    handleBookChangeQuotes,
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
@@ -169,6 +173,14 @@ function App() {
     setSettingsOpen(false)
   }, [])
 
+  const handleOpenCommonplace = useCallback(() => {
+    setCommonplaceOpen(true)
+  }, [])
+
+  const handleCloseCommonplace = useCallback(() => {
+    setCommonplaceOpen(false)
+  }, [])
+
   const handleOpenUpgradeBag = useCallback(() => {
     setUpgradeBagOpen(true)
   }, [])
@@ -201,6 +213,7 @@ function App() {
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
     handleBookChangeTags,
+    handleBookChangeQuotes,
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
@@ -224,6 +237,7 @@ function App() {
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
     handleBookChangeTags,
+    handleBookChangeQuotes,
     handleIncrementTimesRead,
     handleLogReadingSession,
     handleAddManualBook,
@@ -257,6 +271,7 @@ function App() {
               onOpenSearch={handleOpenSearch}
               onOpenClassics={handleOpenClassics}
               onOpenStats={handleOpenStats}
+              onOpenCommonplace={handleOpenCommonplace}
               onOpenSettings={handleOpenSettings}
               onOpenUpgradeBag={handleOpenUpgradeBag}
               totalFinished={totalFinished}
@@ -279,6 +294,13 @@ function App() {
                 bagBooks={bagBooks}
                 readingStreak={readingStreak}
                 onClose={handleCloseStats}
+              />
+            )}
+            {commonplaceOpen && (
+              <CommonplacePage
+                shelfBooks={shelfBooks}
+                bagBooks={bagBooks}
+                onClose={handleCloseCommonplace}
               />
             )}
             {classicsOpen && (

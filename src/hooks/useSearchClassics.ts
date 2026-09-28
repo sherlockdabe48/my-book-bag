@@ -50,6 +50,7 @@ function mapWork(work: SubjectWork): ClassicsBook {
     lastReadAt:     "",
     timesRead:      0,
     tags:           [],
+    quotes:         [],
     firstPublishYear: work.first_publish_year ?? false,
   }
 }

@@ -18,6 +18,7 @@ const makeBook = (id: string, overrides: Partial<Book> = {}): Book => ({
   lastReadAt: "",
   timesRead: 0,
   tags: [],
+  quotes: [],
   ...overrides,
 })
 
@@ -101,6 +102,18 @@ describe("useBookBag", () => {
 
     expect(result.current.bagBooks).toHaveLength(0)
     expect(result.current.shelfBooks).toHaveLength(1)
+  })
+
+  test("handleMoveToShelfFromBag marks status as finish if timesRead > 0 or at last page", () => {
+    const book = makeBook("s1", { allPages: 200, currentPage: 1, timesRead: 0 })
+    const { result } = renderHook(() => useBookBag([book]))
+
+    act(() => result.current.handleMoveToShelfFromSearch("s1"))
+    act(() => result.current.handleAddToBagFromShelf("s1"))
+    act(() => result.current.handleIncrementTimesRead("s1"))
+    act(() => result.current.handleMoveToShelfFromBag("s1"))
+
+    expect(result.current.shelfBooks[0].status).toBe("finish")
   })
 
   test("handleBagBookProgressChange updates currentPage", () => {

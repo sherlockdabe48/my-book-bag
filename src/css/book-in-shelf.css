@@ -376,6 +376,64 @@
     font-weight: 500;
 }
 
+/* ── Quotes edit overlay ──────────────────────────── */
+.book-in-shelf__edit-overlay--quotes {
+    justify-content: flex-start;
+    padding-top: 10px;
+    gap: 5px;
+}
+
+.book-in-shelf__quote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 110px;
+    overflow-y: auto;
+    margin-bottom: 2px;
+}
+
+.book-in-shelf__quote-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+.book-in-shelf__quote-text {
+    flex: 1;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.4;
+    font-style: italic;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.book-in-shelf__quote-page {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.45);
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding-top: 1px;
+}
+
+.book-in-shelf__quote-remove {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.45);
+    cursor: pointer;
+    font-size: 0.6rem;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.book-in-shelf__quote-remove:hover { color: #fff; }
+
 /* ── Note textarea (shelf edit overlay) ───────────── */
 .book-in-shelf__edit-overlay--note {
     justify-content: flex-start;

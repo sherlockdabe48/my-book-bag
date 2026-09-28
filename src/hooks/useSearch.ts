@@ -88,6 +88,7 @@ function mapDoc(doc: OpenLibraryDoc): SearchBook {
     lastReadAt:  "",
     timesRead:   0,
     tags:        [],
+    quotes:      [],
   }
 }
 

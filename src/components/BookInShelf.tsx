@@ -1,13 +1,13 @@
 import { type ChangeEvent, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { bookBagContext, featureFlagsContext } from "./App"
-import type { Book } from "../types/book"
+import type { Book, BookQuote } from "../types/book"
 import { playBirdFlapSound } from "../utils/sound"
 
-type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt" | "tags"> & {
+type BookInShelfProps = Pick<Book, "id" | "title" | "author" | "imageURL" | "allPages" | "currentPage" | "status" | "note" | "recommendedBy" | "lastReadAt" | "tags" | "quotes"> & {
   isLanding?: boolean
 }
 
-export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, tags: initialTags, isLanding }: BookInShelfProps) {
+export default function BookInShelf({ id, title, author, imageURL, allPages, currentPage, status, note: initialNote, recommendedBy, lastReadAt, tags: initialTags, quotes: initialQuotes, isLanding }: BookInShelfProps) {
   const { flags } = useContext(featureFlagsContext)
   const {
     bagCapacity,
@@ -22,10 +22,11 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     handleBookChangeNote,
     handleBookChangeRecommendedBy,
     handleBookChangeTags,
+    handleBookChangeQuotes,
   } = useContext(bookBagContext)
   const bagFull = bagCount >= bagCapacity
 
-  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "tags" | "confirmRemove" | "confirmCover" | "pagesBeforeBag"
+  type EditMode = "menu" | "editBook" | "cover" | "pages" | "title" | "author" | "note" | "recommendedBy" | "tags" | "quotes" | "confirmRemove" | "confirmCover" | "pagesBeforeBag"
   const [editMode, setEditMode]   = useState<EditMode | null>(null)
   const [touched, setTouched] = useState(false)
   const [urlInput, setUrlInput]           = useState("")
@@ -36,11 +37,15 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
   const [recommendedByInput, setRecommendedByInput] = useState("")
   const [tags, setTags]                   = useState<string[]>(initialTags ?? [])
   const [tagInput, setTagInput]           = useState("")
+  const [quotes, setQuotes]               = useState<BookQuote[]>(initialQuotes ?? [])
+  const [quoteInput, setQuoteInput]       = useState("")
+  const [quotePageInput, setQuotePageInput] = useState("")
   const fileInputRef                      = useRef<HTMLInputElement>(null)
   const containerRef                      = useRef<HTMLDivElement>(null)
 
-  // Keep local tags in sync when parent updates (e.g. import)
+  // Keep local state in sync when parent updates (e.g. import)
   useEffect(() => { setTags(initialTags ?? []) }, [initialTags])
+  useEffect(() => { setQuotes(initialQuotes ?? []) }, [initialQuotes])
 
   const closeAll = useCallback(() => {
     setEditMode(null)
@@ -52,7 +57,32 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
     setNoteInput("")
     setRecommendedByInput("")
     setTagInput("")
+    setQuoteInput("")
+    setQuotePageInput("")
   }, [])
+
+  function addQuote() {
+    const trimmed = quoteInput.trim()
+    if (!trimmed) return
+    const page = quotePageInput.trim() ? parseInt(quotePageInput.trim(), 10) : undefined
+    const newQuote: BookQuote = {
+      id: crypto.randomUUID(),
+      text: trimmed,
+      page: page && Number.isFinite(page) && page > 0 ? page : undefined,
+      addedAt: new Date().toISOString().slice(0, 10),
+    }
+    const next = [...quotes, newQuote]
+    setQuotes(next)
+    handleBookChangeQuotes(id, next)
+    setQuoteInput("")
+    setQuotePageInput("")
+  }
+
+  function removeQuote(qid: string) {
+    const next = quotes.filter((q) => q.id !== qid)
+    setQuotes(next)
+    handleBookChangeQuotes(id, next)
+  }
 
   function addTag(raw: string) {
     const trimmed = raw.trim().toLowerCase()
@@ -196,6 +226,7 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <p className="book-in-shelf__edit-overlay-label">Options</p>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => setEditMode("editBook")}>Edit Book</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setNoteInput(initialNote); setRecommendedByInput(recommendedBy); setEditMode("note") }}>My Note</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--light" onClick={() => { setQuoteInput(""); setQuotePageInput(""); setEditMode("quotes") }}>Quotes {quotes.length > 0 ? `(${quotes.length})` : ""}</button>
             <button
               className="book-in-shelf__edit-btn book-in-shelf__edit-btn--remove"
               onClick={() => setEditMode("confirmRemove")}
@@ -346,6 +377,49 @@ export default function BookInShelf({ id, title, author, imageURL, allPages, cur
             <p className="book-in-shelf__edit-overlay-body">Press Enter or comma to add · Backspace to remove last</p>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={() => { if (tagInput.trim()) addTag(tagInput); setEditMode("editBook") }}>Done</button>
             <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => { setTagInput(""); setEditMode("editBook") }}>← Back</button>
+          </div>
+        )}
+
+        {/* ── Quotes editor ──────────────────────────────── */}
+        {editMode === "quotes" && (
+          <div className="book-in-shelf__edit-overlay book-in-shelf__edit-overlay--quotes">
+            <p className="book-in-shelf__edit-overlay-label">Quotes & Passages</p>
+            {quotes.length > 0 && (
+              <div className="book-in-shelf__quote-list">
+                {quotes.map((q) => (
+                  <div key={q.id} className="book-in-shelf__quote-item">
+                    <span className="book-in-shelf__quote-text">"{q.text}"</span>
+                    {q.page && <span className="book-in-shelf__quote-page">p. {q.page}</span>}
+                    <button
+                      className="book-in-shelf__quote-remove"
+                      aria-label="Remove quote"
+                      onClick={() => removeQuote(q.id)}
+                    >✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <textarea
+              className="book-in-shelf__edit-textarea"
+              placeholder="Paste a passage or quote…"
+              value={quoteInput}
+              onChange={(e) => setQuoteInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addQuote() } }}
+              rows={3}
+              autoFocus
+            />
+            <p className="book-in-shelf__edit-overlay-body">Ctrl+Enter to add · newlines are preserved</p>
+            <input
+              className="book-in-shelf__edit-input"
+              type="number"
+              inputMode="numeric"
+              placeholder="Page number (optional)"
+              value={quotePageInput}
+              onChange={(e) => setQuotePageInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addQuote() } }}
+            />
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--save" onClick={addQuote}>Add Quote</button>
+            <button className="book-in-shelf__edit-btn book-in-shelf__edit-btn--cancel" onClick={() => { setQuoteInput(""); setQuotePageInput(""); setEditMode("menu") }}>← Back</button>
           </div>
         )}
 

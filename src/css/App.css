@@ -1,7 +1,5 @@
 @import 'font.css';
 @import 'buttons.css';
-@import "header.css";
-@import 'export-import.css';
 @import 'welcome-message.css';
 @import 'shelf-bag-wrapper.css';
 @import 'shelf.css';
@@ -10,8 +8,6 @@
 @import 'book-in-bag.css';
 @import 'search-page.css';
 @import 'search-book.css';
-@import 'bottom-nav.css';
-@import 'upgrade-bag-modal.css';
 
 *, *::before, *::after {
     font-family: Rubik, sans-serif;

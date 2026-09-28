@@ -9,6 +9,7 @@ interface HeaderProps {
   onOpenSearch: () => void
   onOpenClassics: () => void
   onOpenStats: () => void
+  onOpenCommonplace: () => void
   onOpenSettings: () => void
   onOpenUpgradeBag: () => void
   totalFinished: number
@@ -16,7 +17,7 @@ interface HeaderProps {
 
 const isIOS = Capacitor.getPlatform() === "ios"
 
-export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOpenSettings, onOpenUpgradeBag, totalFinished }: HeaderProps) {
+export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOpenCommonplace, onOpenSettings, onOpenUpgradeBag, totalFinished }: HeaderProps) {
   const statsUnlocked = totalFinished >= STATS_UNLOCK_BOOKS
 
   return (
@@ -37,6 +38,7 @@ export default function Header({ onOpenSearch, onOpenClassics, onOpenStats, onOp
         <ExportImport
           onOpenClassics={onOpenClassics}
           onOpenStats={onOpenStats}
+          onOpenCommonplace={onOpenCommonplace}
           onOpenSettings={onOpenSettings}
           onOpenUpgradeBag={onOpenUpgradeBag}
           statsUnlocked={statsUnlocked}

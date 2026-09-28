@@ -132,7 +132,6 @@ src/
 ├── components/
 │   ├── App.tsx                 # Root coordinator, context, and modal routes
 │   ├── Header.tsx              # Top navigational brand & desktop search
-│   ├── MobileSearchBox.tsx     # Compact overlay-aligned search bar
 │   ├── SearchPage.tsx          # Main Search modal wrapping results
 │   ├── SearchBookList.tsx      # Open Library query container
 │   ├── SearchBook.tsx          # Individual Open Library search cards
@@ -147,6 +146,7 @@ src/
 │   ├── Bag.tsx                 # Bag tray with capacity status & progress updates
 │   ├── BagBookList.tsx         # Bag books layout
 │   ├── BookInBag.tsx           # Bag card with live progress bar and "I read today" loggers
+│   ├── UpgradeBagModal.tsx     # Bag tier upgrade modal with progress and requirements display
 │   ├── ExportImport.tsx        # Hamburger dropdown for system configurations, imports, exports
 │   ├── FeatureSettings.tsx     # Settings modal showcasing toggles and gamified lock details
 │   ├── StatsPage.tsx           # Reading stats modal with active reading monthly SVG charts
@@ -212,7 +212,7 @@ To execute the test suite:
 npm test
 ```
 
-Currently, **43 tests** pass successfully across **4 main test suites**:
+Currently, **45 tests** pass successfully across **4 main test suites**:
 1. `useBookBag.test.ts` (Core logic, localized operations, streak calculations, JSON exports)
 2. `useSearch.test.ts` (Smart filtering, Open Library mapping, error handling)
 3. `useSearchClassics.test.ts` (Classics retrieval, ISBN parsing, state transitions)

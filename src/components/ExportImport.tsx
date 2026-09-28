@@ -5,12 +5,13 @@ import { Capacitor } from "@capacitor/core"
 interface ExportImportProps {
   onOpenClassics: () => void
   onOpenStats: () => void
+  onOpenCommonplace: () => void
   onOpenSettings: () => void
   onOpenUpgradeBag: () => void
   statsUnlocked: boolean
 }
 
-export default function ExportImport({ onOpenClassics, onOpenStats, onOpenSettings, onOpenUpgradeBag, statsUnlocked }: ExportImportProps) {
+export default function ExportImport({ onOpenClassics, onOpenStats, onOpenCommonplace, onOpenSettings, onOpenUpgradeBag, statsUnlocked }: ExportImportProps) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -62,6 +63,14 @@ export default function ExportImport({ onOpenClassics, onOpenStats, onOpenSettin
           )}
           <button
             className="export-import__dropdown-item"
+            onClick={() => { setOpen(false); onOpenCommonplace() }}
+            type="button"
+          >
+            <CommonplaceIcon />
+            <span>Commonplace Journal</span>
+          </button>
+          <button
+            className="export-import__dropdown-item"
             onClick={() => { setOpen(false); onOpenUpgradeBag() }}
             type="button"
           >
@@ -98,6 +107,15 @@ function StatsIcon() {
       <line x1="18" y1="20" x2="18" y2="10" />
       <line x1="12" y1="20" x2="12" y2="4"  />
       <line x1="6"  y1="20" x2="6"  y2="14" />
+    </svg>
+  )
+}
+
+function CommonplaceIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
     </svg>
   )
 }

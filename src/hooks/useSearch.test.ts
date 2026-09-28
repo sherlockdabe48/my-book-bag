@@ -214,6 +214,7 @@ function makeBook(overrides: Partial<SearchBook> = {}): SearchBook {
     lastReadAt: "",
     timesRead: 0,
     tags: [],
+    quotes: [],
     ...overrides,
   }
 }

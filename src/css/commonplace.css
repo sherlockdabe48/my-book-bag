@@ -1,0 +1,160 @@
+/* ── Title icon ───────────────────────────────────── */
+.commonplace__title-icon {
+    vertical-align: middle;
+    margin-right: 7px;
+    margin-bottom: 2px;
+    color: #7c5cd8;
+}
+
+/* ── Body ─────────────────────────────────────────── */
+.commonplace__body {
+    padding: 20px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ── Filter bar ───────────────────────────────────── */
+.commonplace__filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.commonplace__filter-pill {
+    padding: 4px 12px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #f7f8fa;
+    color: #57606a;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.commonplace__filter-pill:hover {
+    background: #eef0f3;
+    color: #1f2328;
+}
+
+.commonplace__filter-pill--active {
+    background: #7c5cd8;
+    border-color: #7c5cd8;
+    color: #fff;
+}
+
+.commonplace__filter-pill--active:hover {
+    background: #6d4fc9;
+    border-color: #6d4fc9;
+    color: #fff;
+}
+
+/* ── Quote list ───────────────────────────────────── */
+.commonplace__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ── Quote card ───────────────────────────────────── */
+.commonplace__card {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-left: 3px solid #7c5cd8;
+    border-radius: 6px;
+    padding: 14px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.commonplace__quote {
+    margin: 0;
+    font-size: 0.925rem;
+    color: #1f2328;
+    line-height: 1.65;
+    font-style: italic;
+    white-space: pre-wrap;
+}
+
+/* ── Source row ───────────────────────────────────── */
+.commonplace__meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.commonplace__thumb {
+    width: 28px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+    border: 1px solid #e5e7eb;
+}
+
+.commonplace__source {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.commonplace__book-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1f2328;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.commonplace__book-author {
+    font-size: 0.74rem;
+    color: #57606a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.commonplace__page {
+    font-size: 0.74rem;
+    color: #57606a;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.commonplace__date {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* ── Mobile ───────────────────────────────────────── */
+@media (max-width: 500px) {
+    .commonplace__body {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .commonplace__card {
+        padding: 12px 13px 10px;
+    }
+
+    .commonplace__quote {
+        font-size: 0.875rem;
+    }
+
+    .commonplace__date {
+        display: none;
+    }
+}

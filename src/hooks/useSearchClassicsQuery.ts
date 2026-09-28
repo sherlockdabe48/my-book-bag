@@ -41,6 +41,7 @@ function mapDoc(doc: SearchDoc): ClassicsBook {
     lastReadAt:       "",
     timesRead:        0,
     tags:             [],
+    quotes:           [],
     firstPublishYear: doc.first_publish_year ?? false,
   }
 }
